@@ -1,0 +1,13 @@
+Target dependency graph (8 targets)
+Target 'SwipeShareUITests' in project 'SwipeShare' (no dependencies)
+Target 'SwipeShareUITests' in project 'SwipeShare'
+➜ Explicit dependency on target 'SwipeShare' in project 'SwipeShare'
+Target 'SwipeShareUITests' in project 'SwipeShare'
+➜ Explicit dependency on target 'SwipeShare' in project 'SwipeShare'
+Target 'SwipeShareTests' in project 'SwipeShare' (no dependencies)
+Target 'SwipeShareTests' in project 'SwipeShare'
+➜ Explicit dependency on target 'SwipeShare' in project 'SwipeShare'
+Target 'SwipeShareTests' in project 'SwipeShare'
+➜ Explicit dependency on target 'SwipeShare' in project 'SwipeShare'
+Target 'SwipeShare' in project 'SwipeShare' (no dependencies)
+Target 'SwipeShare' in project 'SwipeShare' (no dependencies)
