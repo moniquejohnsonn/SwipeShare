@@ -1,5 +1,8 @@
-# Xcode
+# Xcode Derived Data and Module Cache
 DerivedData/
+ModuleCache.noindex/
+
+# Xcode specific files and directories
 *.xcworkspace
 !default.xcworkspace
 xcuserdata/
