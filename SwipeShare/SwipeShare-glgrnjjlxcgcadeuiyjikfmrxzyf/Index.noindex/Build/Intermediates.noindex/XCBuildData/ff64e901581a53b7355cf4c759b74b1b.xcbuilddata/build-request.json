@@ -1,0 +1,54 @@
+{
+  "buildCommand" : {
+    "command" : "prepareForIndexing",
+    "enableIndexBuildArena" : true,
+    "targets" : null
+  },
+  "configuredTargets" : [
+    {
+      "guid" : "b82d8044bfbd74de0d9525b6a345a46d94b9d7ac7988460b743d796382b0be0e"
+    },
+    {
+      "guid" : "b82d8044bfbd74de0d9525b6a345a46dccd289b4dfb44024cb19f63f5e815865"
+    },
+    {
+      "guid" : "b82d8044bfbd74de0d9525b6a345a46d1d2b09972ed3c4e09af2c1a83929ddaf"
+    }
+  ],
+  "containerPath" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare.xcodeproj",
+  "continueBuildingAfterErrors" : true,
+  "dependencyScope" : "workspace",
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "indexbuild",
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/Build/Products",
+      "derivedDataPath" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare",
+      "indexDataStoreFolderPath" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/PrecompiledHeaders",
+      "indexRegularBuildIntermediatesPath" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Build/Intermediates.noindex",
+      "indexRegularBuildProductsPath" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Build/Products",
+      "pchPath" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO",
+          "ENABLE_XOJIT_PREVIEWS" : "NO",
+          "ONLY_ACTIVE_ARCH" : "YES"
+        }
+      }
+    }
+  },
+  "qos" : "utility",
+  "schemeCommand" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

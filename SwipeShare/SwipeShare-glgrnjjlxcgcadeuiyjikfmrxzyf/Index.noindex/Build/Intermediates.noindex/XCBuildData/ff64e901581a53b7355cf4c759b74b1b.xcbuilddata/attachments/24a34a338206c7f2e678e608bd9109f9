@@ -1,0 +1,15 @@
+{
+  "" : {
+    "dependencies" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/Build/Intermediates.noindex/SwipeShare.build/Debug-maccatalyst/SwipeShareUITests.build/Objects-normal/arm64/SwipeShareUITests-master.d",
+    "diagnostics" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/Build/Intermediates.noindex/SwipeShare.build/Debug-maccatalyst/SwipeShareUITests.build/Objects-normal/arm64/SwipeShareUITests-master.dia",
+    "emit-module-dependencies" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/Build/Intermediates.noindex/SwipeShare.build/Debug-maccatalyst/SwipeShareUITests.build/Objects-normal/arm64/SwipeShareUITests-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/Build/Intermediates.noindex/SwipeShare.build/Debug-maccatalyst/SwipeShareUITests.build/Objects-normal/arm64/SwipeShareUITests-master-emit-module.dia",
+    "swift-dependencies" : "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShare-glgrnjjlxcgcadeuiyjikfmrxzyf/Index.noindex/Build/Intermediates.noindex/SwipeShare.build/Debug-maccatalyst/SwipeShareUITests.build/Objects-normal/arm64/SwipeShareUITests-master.swiftdeps"
+  },
+  "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShareUITests/SwipeShareUITests.swift" : {
+
+  },
+  "/Users/moniquejohnson/Documents/Columbia University/Fall 2024/Mobile App Development/robin/SwipeShare/SwipeShareUITests/SwipeShareUITestsLaunchTests.swift" : {
+
+  }
+}

@@ -1,0 +1,3 @@
+Target dependency graph (2 targets)
+Target 'SwipeShare' in project 'SwipeShare' (no dependencies)
+Target 'SwipeShare' in project 'SwipeShare' (no dependencies)

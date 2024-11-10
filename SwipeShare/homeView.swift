@@ -28,7 +28,7 @@ struct homeView: View {
                     // MARK: - Sign Up Button Action
                 }) {
                     Text("Sign Up")
-                        .font(.headline)
+                        .font(.custom("BalooBhaina2-Regular", size: 20))
                         .foregroundColor(.white)
                         .padding(.horizontal, 50)
                         .padding(.vertical, 20)
@@ -39,8 +39,10 @@ struct homeView: View {
                 // Login Text
                 HStack{
                     Text("Already have an account? ")
+                        .font(.custom("BalooBhaina2-Regular", size: 16))
                         .foregroundColor(.white)
                     Text("Log In")
+                        .font(.custom("BalooBhaina2-Regular", size: 16))
                         .foregroundColor(.white)
                         .underline()
                         .onTapGesture {

@@ -27,7 +27,7 @@ struct SwipeShareApp: App {
   var body: some Scene {
     WindowGroup {
       NavigationView {
-        ContentView()
+    
       }
     }
   }
