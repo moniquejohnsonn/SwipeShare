@@ -32,11 +32,8 @@ build/
 # Logs and temp files
 *.log
 *.tmp
-*.temp
 *.swp
 *.DS_Store
 
 # Environment and sensitive files
 .env
-.DS_Store
-*.key
