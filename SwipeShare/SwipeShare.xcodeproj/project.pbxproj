@@ -1,0 +1,633 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B443C8442CE11E0D006F9891 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B443C8432CE11E0D006F9891 /* FirebaseAuth */; };
+		B443C8462CE11E0D006F9891 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B443C8452CE11E0D006F9891 /* FirebaseCore */; };
+		B443C8482CE11E0D006F9891 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = B443C8472CE11E0D006F9891 /* FirebaseDatabase */; };
+		B443C84A2CE11E0D006F9891 /* FirebaseInAppMessaging-Beta in Frameworks */ = {isa = PBXBuildFile; productRef = B443C8492CE11E0D006F9891 /* FirebaseInAppMessaging-Beta */; };
+		B443C84C2CE11E0D006F9891 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = B443C84B2CE11E0D006F9891 /* FirebaseMessaging */; };
+		B443C84E2CE11E0D006F9891 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = B443C84D2CE11E0D006F9891 /* FirebaseStorage */; };
+		B443C8542CE12377006F9891 /* loadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B443C8532CE12377006F9891 /* loadingScreen.swift */; };
+		B443C8582CE1278A006F9891 /* homeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B443C8572CE1278A006F9891 /* homeView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B443C8242CE11D8F006F9891 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B443C80B2CE11D8D006F9891 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B443C8122CE11D8D006F9891;
+			remoteInfo = SwipeShare;
+		};
+		B443C82E2CE11D8F006F9891 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B443C80B2CE11D8D006F9891 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B443C8122CE11D8D006F9891;
+			remoteInfo = SwipeShare;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B443C8132CE11D8D006F9891 /* SwipeShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwipeShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B443C8232CE11D8F006F9891 /* SwipeShareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwipeShareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B443C82D2CE11D8F006F9891 /* SwipeShareUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwipeShareUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B443C8532CE12377006F9891 /* loadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = loadingScreen.swift; sourceTree = "<group>"; };
+		B443C8572CE1278A006F9891 /* homeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = homeView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B443C8152CE11D8D006F9891 /* SwipeShare */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SwipeShare;
+			sourceTree = "<group>";
+		};
+		B443C8262CE11D8F006F9891 /* SwipeShareTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SwipeShareTests;
+			sourceTree = "<group>";
+		};
+		B443C8302CE11D8F006F9891 /* SwipeShareUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SwipeShareUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B443C8102CE11D8D006F9891 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B443C8482CE11E0D006F9891 /* FirebaseDatabase in Frameworks */,
+				B443C8462CE11E0D006F9891 /* FirebaseCore in Frameworks */,
+				B443C84C2CE11E0D006F9891 /* FirebaseMessaging in Frameworks */,
+				B443C8442CE11E0D006F9891 /* FirebaseAuth in Frameworks */,
+				B443C84A2CE11E0D006F9891 /* FirebaseInAppMessaging-Beta in Frameworks */,
+				B443C84E2CE11E0D006F9891 /* FirebaseStorage in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B443C8202CE11D8F006F9891 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B443C82A2CE11D8F006F9891 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B443C80A2CE11D8D006F9891 = {
+			isa = PBXGroup;
+			children = (
+				B443C8532CE12377006F9891 /* loadingScreen.swift */,
+				B443C8572CE1278A006F9891 /* homeView.swift */,
+				B443C8152CE11D8D006F9891 /* SwipeShare */,
+				B443C8262CE11D8F006F9891 /* SwipeShareTests */,
+				B443C8302CE11D8F006F9891 /* SwipeShareUITests */,
+				B443C8142CE11D8D006F9891 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B443C8142CE11D8D006F9891 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B443C8132CE11D8D006F9891 /* SwipeShare.app */,
+				B443C8232CE11D8F006F9891 /* SwipeShareTests.xctest */,
+				B443C82D2CE11D8F006F9891 /* SwipeShareUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B443C8122CE11D8D006F9891 /* SwipeShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B443C8372CE11D8F006F9891 /* Build configuration list for PBXNativeTarget "SwipeShare" */;
+			buildPhases = (
+				B443C80F2CE11D8D006F9891 /* Sources */,
+				B443C8102CE11D8D006F9891 /* Frameworks */,
+				B443C8112CE11D8D006F9891 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B443C8152CE11D8D006F9891 /* SwipeShare */,
+			);
+			name = SwipeShare;
+			packageProductDependencies = (
+				B443C8432CE11E0D006F9891 /* FirebaseAuth */,
+				B443C8452CE11E0D006F9891 /* FirebaseCore */,
+				B443C8472CE11E0D006F9891 /* FirebaseDatabase */,
+				B443C8492CE11E0D006F9891 /* FirebaseInAppMessaging-Beta */,
+				B443C84B2CE11E0D006F9891 /* FirebaseMessaging */,
+				B443C84D2CE11E0D006F9891 /* FirebaseStorage */,
+			);
+			productName = SwipeShare;
+			productReference = B443C8132CE11D8D006F9891 /* SwipeShare.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B443C8222CE11D8F006F9891 /* SwipeShareTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B443C83A2CE11D8F006F9891 /* Build configuration list for PBXNativeTarget "SwipeShareTests" */;
+			buildPhases = (
+				B443C81F2CE11D8F006F9891 /* Sources */,
+				B443C8202CE11D8F006F9891 /* Frameworks */,
+				B443C8212CE11D8F006F9891 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B443C8252CE11D8F006F9891 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B443C8262CE11D8F006F9891 /* SwipeShareTests */,
+			);
+			name = SwipeShareTests;
+			packageProductDependencies = (
+			);
+			productName = SwipeShareTests;
+			productReference = B443C8232CE11D8F006F9891 /* SwipeShareTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B443C82C2CE11D8F006F9891 /* SwipeShareUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B443C83D2CE11D8F006F9891 /* Build configuration list for PBXNativeTarget "SwipeShareUITests" */;
+			buildPhases = (
+				B443C8292CE11D8F006F9891 /* Sources */,
+				B443C82A2CE11D8F006F9891 /* Frameworks */,
+				B443C82B2CE11D8F006F9891 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B443C82F2CE11D8F006F9891 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B443C8302CE11D8F006F9891 /* SwipeShareUITests */,
+			);
+			name = SwipeShareUITests;
+			packageProductDependencies = (
+			);
+			productName = SwipeShareUITests;
+			productReference = B443C82D2CE11D8F006F9891 /* SwipeShareUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B443C80B2CE11D8D006F9891 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					B443C8122CE11D8D006F9891 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					B443C8222CE11D8F006F9891 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = B443C8122CE11D8D006F9891;
+					};
+					B443C82C2CE11D8F006F9891 = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = B443C8122CE11D8D006F9891;
+					};
+				};
+			};
+			buildConfigurationList = B443C80E2CE11D8D006F9891 /* Build configuration list for PBXProject "SwipeShare" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B443C80A2CE11D8D006F9891;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B443C8422CE11E0D006F9891 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B443C8142CE11D8D006F9891 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B443C8122CE11D8D006F9891 /* SwipeShare */,
+				B443C8222CE11D8F006F9891 /* SwipeShareTests */,
+				B443C82C2CE11D8F006F9891 /* SwipeShareUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B443C8112CE11D8D006F9891 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B443C8212CE11D8F006F9891 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B443C82B2CE11D8F006F9891 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B443C80F2CE11D8D006F9891 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B443C8542CE12377006F9891 /* loadingScreen.swift in Sources */,
+				B443C8582CE1278A006F9891 /* homeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B443C81F2CE11D8F006F9891 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B443C8292CE11D8F006F9891 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B443C8252CE11D8F006F9891 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B443C8122CE11D8D006F9891 /* SwipeShare */;
+			targetProxy = B443C8242CE11D8F006F9891 /* PBXContainerItemProxy */;
+		};
+		B443C82F2CE11D8F006F9891 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B443C8122CE11D8D006F9891 /* SwipeShare */;
+			targetProxy = B443C82E2CE11D8F006F9891 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		B443C8352CE11D8F006F9891 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B443C8362CE11D8F006F9891 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B443C8382CE11D8F006F9891 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SwipeShare/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = COMSW4995.SwipeShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B443C8392CE11D8F006F9891 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SwipeShare/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = COMSW4995.SwipeShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B443C83B2CE11D8F006F9891 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = COMSW4995.SwipeShareTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwipeShare.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SwipeShare";
+			};
+			name = Debug;
+		};
+		B443C83C2CE11D8F006F9891 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = COMSW4995.SwipeShareTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SwipeShare.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SwipeShare";
+			};
+			name = Release;
+		};
+		B443C83E2CE11D8F006F9891 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = COMSW4995.SwipeShareUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SwipeShare;
+			};
+			name = Debug;
+		};
+		B443C83F2CE11D8F006F9891 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = COMSW4995.SwipeShareUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SwipeShare;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B443C80E2CE11D8D006F9891 /* Build configuration list for PBXProject "SwipeShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B443C8352CE11D8F006F9891 /* Debug */,
+				B443C8362CE11D8F006F9891 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B443C8372CE11D8F006F9891 /* Build configuration list for PBXNativeTarget "SwipeShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B443C8382CE11D8F006F9891 /* Debug */,
+				B443C8392CE11D8F006F9891 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B443C83A2CE11D8F006F9891 /* Build configuration list for PBXNativeTarget "SwipeShareTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B443C83B2CE11D8F006F9891 /* Debug */,
+				B443C83C2CE11D8F006F9891 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B443C83D2CE11D8F006F9891 /* Build configuration list for PBXNativeTarget "SwipeShareUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B443C83E2CE11D8F006F9891 /* Debug */,
+				B443C83F2CE11D8F006F9891 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B443C8422CE11E0D006F9891 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B443C8432CE11E0D006F9891 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B443C8422CE11E0D006F9891 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		B443C8452CE11E0D006F9891 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B443C8422CE11E0D006F9891 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		B443C8472CE11E0D006F9891 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B443C8422CE11E0D006F9891 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		B443C8492CE11E0D006F9891 /* FirebaseInAppMessaging-Beta */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B443C8422CE11E0D006F9891 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseInAppMessaging-Beta";
+		};
+		B443C84B2CE11E0D006F9891 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B443C8422CE11E0D006F9891 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		B443C84D2CE11E0D006F9891 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B443C8422CE11E0D006F9891 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = B443C80B2CE11D8D006F9891 /* Project object */;
+}
