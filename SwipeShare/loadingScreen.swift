@@ -9,7 +9,15 @@ import SwiftUI
 
 struct loadingScreen: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            Color(red: 0.027, green: 0.745, blue: 0.722).ignoresSafeArea()
+            
+            Image("LogoIcon")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 350, height: 400)
+            
+        }
     }
 }
 
