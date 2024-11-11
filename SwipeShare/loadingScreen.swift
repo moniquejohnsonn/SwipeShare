@@ -12,11 +12,26 @@ struct loadingScreen: View {
         ZStack {
             Color(red: 0.027, green: 0.745, blue: 0.722).ignoresSafeArea()
             
-            Image("LogoIcon")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 350, height: 400)
-            
+            VStack {
+                Spacer()
+                
+                Image("LogoIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 350, height: 400)
+                
+                Spacer()
+                
+                Text("Loading...")
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .padding(.top, 20)
+                
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(2)
+                Spacer()
+            }
         }
     }
 }
