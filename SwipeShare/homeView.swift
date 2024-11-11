@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct homeView: View {
+    @Binding var isAuthenticated: Bool
+    
     var body: some View {
         ZStack {
             Color(red: 0.027, green: 0.745, blue: 0.722)
@@ -25,10 +27,11 @@ struct homeView: View {
                 
                 // Sign Up Button
                 Button(action: {
-                    // MARK: - Sign Up Button Action
+                    // TODO: - Sign Up Button Action
+                    isAuthenticated = false
                 }) {
                     Text("Sign Up")
-                        .font(.custom("BalooBhaina2-Regular", size: 20))
+                        .font(.custom("BalooBhaina2-Bold", size: 20))
                         .foregroundColor(.white)
                         .padding(.horizontal, 50)
                         .padding(.vertical, 20)
@@ -36,18 +39,16 @@ struct homeView: View {
                         .cornerRadius(100)
                         .padding(.horizontal, 10)
                 }
-                // Login Text
                 HStack{
                     Text("Already have an account? ")
-                        .font(.custom("BalooBhaina2-Regular", size: 16))
+                        .font(.custom("BalooBhaina2-Medium", size: 16))
                         .foregroundColor(.white)
-                    Text("Log In")
-                        .font(.custom("BalooBhaina2-Regular", size: 16))
-                        .foregroundColor(.white)
-                        .underline()
-                        .onTapGesture {
-                            // MARK: - Log In Text Action
-                        }
+                    NavigationLink(destination: loginView(isAuthenticated: $isAuthenticated)) {
+                        Text("Log In")
+                            .font(.custom("BalooBhaina2-Medium", size: 16))
+                            .foregroundColor(.white)
+                            .underline()
+                    }
                 }
                 Spacer().frame(height: 40)
             }
@@ -56,5 +57,5 @@ struct homeView: View {
 }
 
 #Preview {
-    homeView()
+    homeView(isAuthenticated: .constant(false))
 }

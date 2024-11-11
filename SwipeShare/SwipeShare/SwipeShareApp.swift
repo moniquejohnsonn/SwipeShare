@@ -10,25 +10,43 @@ import FirebaseCore
 
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-
-    return true
-  }
+    static var isFirebaseConfigured = false
+    
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        AppDelegate.isFirebaseConfigured = true
+        
+        return true
+    }
 }
 
 @main
 struct SwipeShareApp: App {
-  // register app delegate for Firebase setup
-  @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
-
-  var body: some Scene {
-    WindowGroup {
-      NavigationView {
+    // register app delegate for Firebase setup
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @State private var isAuthenticated = false
+    @State private var isLoading = true
     
-      }
+    var body: some Scene {
+        WindowGroup {
+            NavigationView {
+                if isLoading {
+                    loadingScreen()
+                } else {
+                    if isAuthenticated {
+                        mainPage()
+                    } else {
+                        homeView(isAuthenticated: $isAuthenticated)
+                    }
+                }
+            }
+            .onAppear {
+                if AppDelegate.isFirebaseConfigured {
+                    self.isLoading = false
+                }
+            }
+        }
     }
-  }
 }
