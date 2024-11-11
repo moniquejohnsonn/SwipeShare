@@ -16,6 +16,8 @@
 		B4C47D782CE1B69500FB450F /* mainPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C47D772CE1B69500FB450F /* mainPage.swift */; };
 		C88A3C3F2CE25BF8000B4051 /* createAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88A3C3E2CE25BF0000B4051 /* createAccountView.swift */; };
 		C88A3CE52CE27900000B4051 /* createAccountView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88A3CE42CE278EE000B4051 /* createAccountView2.swift */; };
+		C88A3D1E2CE29A70000B4051 /* createAccountView3.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88A3D1D2CE29A66000B4051 /* createAccountView3.swift */; };
+		C88A3D212CE2ADF9000B4051 /* finalizeAccount1.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88A3D202CE2ADEE000B4051 /* finalizeAccount1.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +47,8 @@
 		B4C47D772CE1B69500FB450F /* mainPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainPage.swift; sourceTree = "<group>"; };
 		C88A3C3E2CE25BF0000B4051 /* createAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createAccountView.swift; sourceTree = "<group>"; };
 		C88A3CE42CE278EE000B4051 /* createAccountView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createAccountView2.swift; sourceTree = "<group>"; };
+		C88A3D1D2CE29A66000B4051 /* createAccountView3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createAccountView3.swift; sourceTree = "<group>"; };
+		C88A3D202CE2ADEE000B4051 /* finalizeAccount1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finalizeAccount1.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -115,6 +119,8 @@
 				B4C47D752CE1B09500FB450F /* loginView.swift */,
 				C88A3C3E2CE25BF0000B4051 /* createAccountView.swift */,
 				C88A3CE42CE278EE000B4051 /* createAccountView2.swift */,
+				C88A3D1D2CE29A66000B4051 /* createAccountView3.swift */,
+				C88A3D202CE2ADEE000B4051 /* finalizeAccount1.swift */,
 				B443C8152CE11D8D006F9891 /* SwipeShare */,
 				B443C8262CE11D8F006F9891 /* SwipeShareTests */,
 				B443C8302CE11D8F006F9891 /* SwipeShareUITests */,
@@ -287,7 +293,9 @@
 				B4C47D762CE1B09500FB450F /* loginView.swift in Sources */,
 				B4C47D782CE1B69500FB450F /* mainPage.swift in Sources */,
 				B443C8582CE1278A006F9891 /* homeView.swift in Sources */,
+				C88A3D1E2CE29A70000B4051 /* createAccountView3.swift in Sources */,
 				C88A3C3F2CE25BF8000B4051 /* createAccountView.swift in Sources */,
+				C88A3D212CE2ADF9000B4051 /* finalizeAccount1.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,7 +460,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"SwipeShare/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -480,7 +489,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"SwipeShare/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
