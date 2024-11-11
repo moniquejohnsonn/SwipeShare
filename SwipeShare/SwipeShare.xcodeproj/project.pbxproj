@@ -15,6 +15,7 @@
 		B4C47D762CE1B09500FB450F /* loginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C47D752CE1B09500FB450F /* loginView.swift */; };
 		B4C47D782CE1B69500FB450F /* mainPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C47D772CE1B69500FB450F /* mainPage.swift */; };
 		C88A3C3F2CE25BF8000B4051 /* createAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88A3C3E2CE25BF0000B4051 /* createAccountView.swift */; };
+		C88A3CE52CE27900000B4051 /* createAccountView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88A3CE42CE278EE000B4051 /* createAccountView2.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +44,7 @@
 		B4C47D752CE1B09500FB450F /* loginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = loginView.swift; sourceTree = "<group>"; };
 		B4C47D772CE1B69500FB450F /* mainPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainPage.swift; sourceTree = "<group>"; };
 		C88A3C3E2CE25BF0000B4051 /* createAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createAccountView.swift; sourceTree = "<group>"; };
+		C88A3CE42CE278EE000B4051 /* createAccountView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createAccountView2.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -112,6 +114,7 @@
 				B443C8572CE1278A006F9891 /* homeView.swift */,
 				B4C47D752CE1B09500FB450F /* loginView.swift */,
 				C88A3C3E2CE25BF0000B4051 /* createAccountView.swift */,
+				C88A3CE42CE278EE000B4051 /* createAccountView2.swift */,
 				B443C8152CE11D8D006F9891 /* SwipeShare */,
 				B443C8262CE11D8F006F9891 /* SwipeShareTests */,
 				B443C8302CE11D8F006F9891 /* SwipeShareUITests */,
@@ -280,6 +283,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B443C8542CE12377006F9891 /* loadingScreen.swift in Sources */,
+				C88A3CE52CE27900000B4051 /* createAccountView2.swift in Sources */,
 				B4C47D762CE1B09500FB450F /* loginView.swift in Sources */,
 				B4C47D782CE1B69500FB450F /* mainPage.swift in Sources */,
 				B443C8582CE1278A006F9891 /* homeView.swift in Sources */,

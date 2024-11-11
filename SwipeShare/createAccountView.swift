@@ -32,7 +32,7 @@ struct SignUpView: View {
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(Color(.white))
                         .frame(width: 93, height: 35)
-                        .background(Color(red: 0.33, green: 0.85, blue: 0.76))
+                        .background(Color(red: 0.03, green: 0.75, blue: 0.72))
                         .cornerRadius(100)
                 }
                 .padding(.top, 128)
