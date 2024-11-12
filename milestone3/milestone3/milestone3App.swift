@@ -12,6 +12,7 @@ struct milestone3App: App {
     var body: some Scene {
         WindowGroup {
             SettingsView()
+            MealSwipeRequestView()
         }
     }
 }

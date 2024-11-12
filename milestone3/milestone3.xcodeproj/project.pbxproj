@@ -14,6 +14,7 @@
 		CDE2BD652CE2CD840098C398 /* milestone3Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE2BD642CE2CD840098C398 /* milestone3Tests.swift */; };
 		CDE2BD6F2CE2CD840098C398 /* milestone3UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE2BD6E2CE2CD840098C398 /* milestone3UITests.swift */; };
 		CDE2BD712CE2CD840098C398 /* milestone3UITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE2BD702CE2CD840098C398 /* milestone3UITestsLaunchTests.swift */; };
+		CDE2BD7E2CE2E3B90098C398 /* MealSwipeRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE2BD7D2CE2E3B90098C398 /* MealSwipeRequestView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		CDE2BD6A2CE2CD840098C398 /* milestone3UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = milestone3UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDE2BD6E2CE2CD840098C398 /* milestone3UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = milestone3UITests.swift; sourceTree = "<group>"; };
 		CDE2BD702CE2CD840098C398 /* milestone3UITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = milestone3UITestsLaunchTests.swift; sourceTree = "<group>"; };
+		CDE2BD7D2CE2E3B90098C398 /* MealSwipeRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealSwipeRequestView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,7 @@
 			children = (
 				CDE2BD532CE2CD800098C398 /* milestone3App.swift */,
 				CDE2BD552CE2CD800098C398 /* ContentView.swift */,
+				CDE2BD7D2CE2E3B90098C398 /* MealSwipeRequestView.swift */,
 				CDE2BD572CE2CD830098C398 /* Assets.xcassets */,
 				CDE2BD592CE2CD830098C398 /* Preview Content */,
 			);
@@ -258,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDE2BD562CE2CD800098C398 /* ContentView.swift in Sources */,
+				CDE2BD7E2CE2E3B90098C398 /* MealSwipeRequestView.swift in Sources */,
 				CDE2BD542CE2CD800098C398 /* milestone3App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
