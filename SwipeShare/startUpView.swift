@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct homeView: View {
+struct StartUpView: View {
     @Binding var isAuthenticated: Bool
     
     var body: some View {
@@ -57,5 +57,5 @@ struct homeView: View {
 }
 
 #Preview {
-    homeView(isAuthenticated: .constant(false))
+    StartUpView(isAuthenticated: .constant(false))
 }

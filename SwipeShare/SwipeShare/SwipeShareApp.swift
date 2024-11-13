@@ -31,17 +31,18 @@ struct SwipeShareApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationView {
+            NavigationStack {
                 if isLoading {
                     loadingScreen()
                 } else {
                     if isAuthenticated {
                         mainPage()
                     } else {
-                        homeView(isAuthenticated: $isAuthenticated)
+                        StartUpView(isAuthenticated: $isAuthenticated)
                     }
                 }
             }
+            
             .onAppear {
                 if AppDelegate.isFirebaseConfigured {
                     self.isLoading = false
