@@ -1,13 +1,13 @@
 //
-//  milestone3UITests.swift
-//  milestone3UITests
+//  testUITests.swift
+//  testUITests
 //
-//  Created by Natalie Bran on 11/11/24.
+//  Created by Natalie Bran on 11/13/24.
 //
 
 import XCTest
 
-final class milestone3UITests: XCTestCase {
+final class testUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

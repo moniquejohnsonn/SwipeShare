@@ -118,7 +118,7 @@ struct MealSwipeRequestView: View {
                 Spacer()
                 
                 // Expanded Confirmation Box
-                VStack(spacing: 59) {
+                VStack(spacing: 66) {
                     Image(systemName: "paperplane.fill")
                         .foregroundColor(Constants.Turquoise)
                         .font(.largeTitle)
@@ -140,7 +140,7 @@ struct MealSwipeRequestView: View {
                             .foregroundColor(Constants.DarkPurple)
                     }
 
-                    HStack(spacing: 20) {
+                    HStack(spacing: 40) {
                         Button(action: {
                             // Cancel action
                         }) {
@@ -149,7 +149,7 @@ struct MealSwipeRequestView: View {
                                 .frame(maxWidth: .infinity)
                                 .background(Color.gray.opacity(0.2))
                                 .foregroundColor(Constants.DarkPurple)
-                                .cornerRadius(10)
+                                .cornerRadius(9)
                         }
                         
                         Button(action: {

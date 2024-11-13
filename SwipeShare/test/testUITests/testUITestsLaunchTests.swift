@@ -1,13 +1,13 @@
 //
-//  milestone3UITestsLaunchTests.swift
-//  milestone3UITests
+//  testUITestsLaunchTests.swift
+//  testUITests
 //
-//  Created by Natalie Bran on 11/11/24.
+//  Created by Natalie Bran on 11/13/24.
 //
 
 import XCTest
 
-final class milestone3UITestsLaunchTests: XCTestCase {
+final class testUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
