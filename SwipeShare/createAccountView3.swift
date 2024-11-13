@@ -1,8 +1,16 @@
 import SwiftUI
+import Foundation
 
 struct LocationPermissionView3: View {
-    @State private var selectedCampus: String = "Columbia University"
-    let campuses = ["Columbia University", "more coming soon!"]
+    @State private var isLoading = true
+    @State private var selectedSchool: School? = nil
+    // initialize to mock schools for testing in canvas
+    @State private var schools: [School] = [
+        School(properties: SchoolProperties(name: "Columbia University", city: "New York", postcode: "10027"), geometry: Geometry(coordinates: [-73.9626, 40.8075])),
+        School(properties: SchoolProperties(name: "NYU", city: "New York", postcode: "10003"), geometry: Geometry(coordinates: [-73.9980, 40.7295]))
+    ]
+    
+    private let apiService = APIService() // creates an instance of APIService
 
     var body: some View {
         ScrollView {
@@ -27,24 +35,31 @@ struct LocationPermissionView3: View {
                 
                 Spacer().frame(height: 40) // Reduced height to move the Picker closer to the text
                 
-                // Dropdown Menu
-                Picker("Select your campus", selection: $selectedCampus) {
-                    ForEach(campuses, id: \.self) { campus in
-                        Text(campus)
+                // Loading indicator or Picker
+                if isLoading {
+                    ProgressView("Loading...")
+                        .padding()
+                } else {
+                    // School Picker
+                    Picker("Select your campus", selection: $selectedSchool) {
+                        Text("Select your school")
+                            .tag(nil as School?)
+                        
+                        ForEach(schools) { school in
+                            Text(school.properties.name ?? "Unknown")
+                                .tag(school as School?)
+                        }
                     }
+                    .pickerStyle(MenuPickerStyle())
+                    .foregroundColor(.black) // Attempt to apply a global text color
+                    .frame(width: 300, height: 50)
+                    .background(Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color(red: 0.03, green: 0.75, blue: 0.72), lineWidth: 2)
+                    )
+                    .cornerRadius(8)
                 }
-                .pickerStyle(MenuPickerStyle())
-                .foregroundColor(.black) // Attempt to apply a global text color
-                .frame(width: 300, height: 50)
-                .background(Color.white)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color(red: 0.03, green: 0.75, blue: 0.72), lineWidth: 2)
-                )
-                .cornerRadius(8)
-
-
-
                 Spacer().frame(height: 150) // Increased height to move the button lower on the screen
 
                 // Confirm My Campus Button
@@ -65,10 +80,29 @@ struct LocationPermissionView3: View {
             .background(Color.white)
             .cornerRadius(32)
         }
+        .onAppear {
+            fetchSchools()
+        }
         .background(Color.white)
         .edgesIgnoringSafeArea(.all)
     }
+    
+    // Fetch Schools Function
+    func fetchSchools() {
+        print("fetching")
+        apiService.fetchUsers { result in
+            switch result {
+            case .success(let fetchedSchools):
+                schools.append(contentsOf: fetchedSchools)
+                isLoading = false
+            case .failure(let error):
+                print("Error fetching schools: \(error)")
+                isLoading = false
+            }
+        }
+    }
 }
+
 
 struct LocationPermissionView3_Previews: PreviewProvider {
     static var previews: some View {
