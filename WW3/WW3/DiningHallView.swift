@@ -1,4 +1,4 @@
-//  ContentView.swift
+//  DiningHallView.swift
 //
 //  Created by Kalei Ragland on 11/12/24.
 //
