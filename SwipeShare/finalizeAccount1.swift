@@ -1,4 +1,8 @@
 import SwiftUI
+import FirebaseAuth
+import FirebaseStorage
+import FirebaseFirestore
+import UIKit
 
 // all the checkbox logic works too!
 struct FinalizeAccount1: View {
@@ -10,6 +14,14 @@ struct FinalizeAccount1: View {
     @State private var annuallyChecked = false
     @State private var inputNumber = ""
     @State private var navigateToFinalizeAccount2 = false
+    @State private var navigateToReceiverHome = false
+    
+    @State private var profileImage: UIImage? = nil
+    @State private var isImagePickerPresented = false
+    @State private var imageURL: String? = nil
+    
+    private let db = Firestore.firestore()
+    private let storage = Storage.storage().reference()
     
     var body: some View {
         ScrollView {
@@ -34,16 +46,30 @@ struct FinalizeAccount1: View {
                 
                 // Profile Picture Row
                 HStack(alignment: .center, spacing: 12) {
-                    Image("profilePicHolder") // Profile picture placeholder
-                        .resizable()
-                        .frame(width: 100, height: 80)
-                        .clipShape(Circle())
+                    if let profileImage = profileImage {
+                        Image(uiImage: profileImage) // Show selected image
+                            .resizable()
+                            .frame(width: 100, height: 80)
+                            .clipShape(Circle())
+                    } else {
+                        Image("profilePicHolder") // Placeholder image
+                            .resizable()
+                            .frame(width: 100, height: 80)
+                            .clipShape(Circle())
+                    }
                     
                     Text("Set your Profile Picture")
                         .font(.custom("BalooBhaina2-Bold", size: 20))
                         .foregroundColor(Color.gray)
                 }
                 .padding(.top, 16)
+                .onTapGesture {
+                    isImagePickerPresented.toggle()
+                }
+                .sheet(isPresented: $isImagePickerPresented) {
+                    ImagePicker(image: $profileImage, onImageSelected: updateUserProfile)
+                }
+                
                 
                 // "Are you a:" Text
                 Text("Are you a:")
@@ -134,26 +160,46 @@ struct FinalizeAccount1: View {
                     }
                     .padding(.horizontal, 56)
                     .padding(.top, 8)
-                    
-                } else if isSwipeReceiverChecked {
-                    // Disable the fields for Swipe Receiver
                 }
                 
+                // Receiver Section - "All Set!" Button
+                if isSwipeReceiverChecked {
+                    Button(action: {
+                        updateProfileForReceiver() // Update profile status as Receiver
+                        navigateToReceiverHome = true
+                    }) {
+                        Text("All Set!")
+                            .font(.custom("BalooBhaina2-Bold", size: 18))
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color(red: 0.03, green: 0.75, blue: 0.72))
+                            .cornerRadius(100)
+                    }
+                    .padding(.top, 20)
+                    .navigationDestination(isPresented: $navigateToReceiverHome) {
+                        ReceiverHomeView()
+                    }
+                }
                 
                 // Continue Button (only enabled when the form is valid)
-                // TODO: Must make it so that registration is complete if just a receiver. Only move to next page if giver.
-                Button(action: {
-                    navigateToFinalizeAccount2 = true
-                }) {
-                    Text("Last Step")
-                        .font(.custom("BalooBhaina2-Bold", size: 18))
-                        .foregroundColor(.white)
-                        .padding()
-                        .background( (isSwipeReceiverChecked || (!inputNumber.isEmpty && isSwipeGiverChecked)) ? Color(red: 0.03, green: 0.75, blue: 0.72) : Color.gray)
-                        .cornerRadius(100)
+                if isSwipeGiverChecked {
+                    Button(action: {
+                        updateProfileForGiver() // Update profile status as Giver
+                        navigateToFinalizeAccount2 = true
+                    }) {
+                        Text("Last Step")
+                            .font(.custom("BalooBhaina2-Bold", size: 18))
+                            .foregroundColor(.white)
+                            .padding()
+                            .background((isSwipeReceiverChecked || (!inputNumber.isEmpty && isSwipeGiverChecked)) ? Color(red: 0.03, green: 0.75, blue: 0.72) : Color.gray)
+                            .cornerRadius(100)
+                    }
+                    .disabled(!isSwipeGiverChecked || inputNumber.isEmpty)
+                    .padding(.top, 20)
+                    .navigationDestination(isPresented: $navigateToFinalizeAccount2) {
+                        FinalizeAccount2(selectedFrequency: $selectedFrequency)
+                    }
                 }
-                .disabled(!isSwipeGiverChecked || inputNumber.isEmpty)
-                .padding(.top, 20)
             }
             .frame(maxWidth: 480)
             .background(Color.white)
@@ -161,32 +207,159 @@ struct FinalizeAccount1: View {
         }
         .background(Color.white)
         .edgesIgnoringSafeArea(.all)
-        .navigationDestination(isPresented: $navigateToFinalizeAccount2) {
-            FinalizeAccount2(selectedFrequency: $selectedFrequency)
+    }
+    
+    // Update profile for Receiver
+    func updateProfileForReceiver() {
+        let userID = Auth.auth().currentUser?.uid
+        db.collection("users").document(userID!)
+            .updateData([
+                "isReceiver": true,
+                "isGiver": false
+            ]) { error in
+                if let error = error {
+                    print("Error updating profile for receiver: \(error.localizedDescription)")
+                } else {
+                    print("Profile updated as Receiver")
+                }
+            }
+    }
+    
+    // Update profile for Giver
+    func updateProfileForGiver() {
+        let userID = Auth.auth().currentUser?.uid
+        db.collection("users").document(userID!)
+            .updateData([
+                "isReceiver": false,
+                "isGiver": true,
+                "mealFrequency": selectedFrequency,
+                "mealCount": inputNumber
+            ]) { error in
+                if let error = error {
+                    print("Error updating profile for giver: \(error.localizedDescription)")
+                } else {
+                    print("Profile updated as Giver")
+                }
+            }
+    }
+    
+    // TODO: Photo Storing Error!!
+    // function to save photo to firebase
+    func updateUserProfile() {
+        guard let image = profileImage else {
+            print("No image selected")
+            return
+        }
+
+        let imageData = image.jpegData(compressionQuality: 0.8)
+        guard let imageData = imageData else {
+            print("Failed to convert image to data")
+            return
+        }
+
+        let imageRef = storage.child("profile_pictures/\(UUID().uuidString).jpg")
+        print("Uploading image to Firebase Storage...")
+
+        imageRef.putData(imageData, metadata: nil) { metadata, error in
+            if let error = error {
+                print("Error uploading image: \(error.localizedDescription)")
+                return
+            }
+
+            print("Image uploaded successfully.")
+
+            imageRef.downloadURL { url, error in
+                if let error = error {
+                    print("Error getting download URL: \(error.localizedDescription)")
+                    return
+                }
+
+                if let url = url {
+                    print("Download URL obtained: \(url.absoluteString)")
+                    self.imageURL = url.absoluteString
+                    updateProfilePhoto(with: url.absoluteString)
+                } else {
+                    print("Download URL is nil")
+                }
+            }
         }
     }
-}
-
-// Progress Indicator View
-struct ProgressIndicatorView4: View {
-    var body: some View {
-        GeometryReader { geometry in
-            HStack(alignment: .center, spacing: 20) {
-                Rectangle()
-                    .fill(Color(red: 0.85, green: 0.82, blue: 0.95))
-                    .frame(width: 108, height: 1)
-                
-                Rectangle()
-                    .fill(Color(red: 0.85, green: 0.82, blue: 0.95))
-                    .frame(width: 108, height: 1)
-                
-                Circle()
-                    .strokeBorder(Color(red: 0.22, green: 0.11, blue: 0.47), lineWidth: 2)
-                    .frame(width: 18, height: 18)
+    
+    // update photo url in user profile
+    func updateProfilePhoto(with imageUrl: String) {
+        let userData: [String: Any] = [
+            "photoURL": imageUrl
+        ]
+        
+        let userID = Auth.auth().currentUser?.uid
+        
+        db.collection("users").document(userID!)
+            .updateData(userData) { error in
+                if let error = error {
+                    print("Error updating user profile photo: \(error.localizedDescription)")
+                } else {
+                    print("Profile photo successfully updated")
+                }
             }
-            .frame(width: geometry.size.width, alignment: .center)
+    }
+    
+    struct ImagePicker: UIViewControllerRepresentable {
+        @Binding var image: UIImage?
+        var onImageSelected: () -> Void
+        
+        class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+            @Binding var image: UIImage?
+            var onImageSelected: () -> Void
+            
+            init(image: Binding<UIImage?>, onImageSelected: @escaping () -> Void) {
+                _image = image
+                self.onImageSelected = onImageSelected
+            }
+            
+            func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+                if let selectedImage = info[.originalImage] as? UIImage {
+                    image = selectedImage
+                    onImageSelected() // Call the closure to update the profile
+                }
+                picker.dismiss(animated: true)
+            }
         }
-        .frame(height: 20)
+        
+        func makeCoordinator() -> Coordinator {
+            return Coordinator(image: $image, onImageSelected: onImageSelected)
+        }
+        
+        func makeUIViewController(context: Context) -> UIImagePickerController {
+            let picker = UIImagePickerController()
+            picker.delegate = context.coordinator
+            picker.sourceType = .photoLibrary
+            return picker
+        }
+        
+        func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+    }
+    
+    // Progress Indicator View
+    struct ProgressIndicatorView4: View {
+        var body: some View {
+            GeometryReader { geometry in
+                HStack(alignment: .center, spacing: 20) {
+                    Rectangle()
+                        .fill(Color(red: 0.85, green: 0.82, blue: 0.95))
+                        .frame(width: 108, height: 1)
+                    
+                    Rectangle()
+                        .fill(Color(red: 0.85, green: 0.82, blue: 0.95))
+                        .frame(width: 108, height: 1)
+                    
+                    Circle()
+                        .strokeBorder(Color(red: 0.22, green: 0.11, blue: 0.47), lineWidth: 2)
+                        .frame(width: 18, height: 18)
+                }
+                .frame(width: geometry.size.width, alignment: .center)
+            }
+            .frame(height: 20)
+        }
     }
 }
 

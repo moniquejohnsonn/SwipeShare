@@ -5,7 +5,7 @@ struct FinalizeAccount2: View {
     @State private var alwaysShowProfileChecked = false
     @State private var manuallyEnableChecked = false
     @Binding var selectedFrequency: String
-
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -148,7 +148,7 @@ struct CheckBoxView1: View {
     let label: String
     @Binding var selectedFrequency: String
     var onToggle: () -> Void = {}
-
+    
     var body: some View {
         Button(action: {
             isChecked.toggle()
@@ -163,6 +163,30 @@ struct CheckBoxView1: View {
         }
     }
 }
+
+// Progress Indicator View
+struct ProgressIndicatorView4: View {
+    var body: some View {
+        GeometryReader { geometry in
+            HStack(alignment: .center, spacing: 20) {
+                Rectangle()
+                    .fill(Color(red: 0.85, green: 0.82, blue: 0.95))
+                    .frame(width: 108, height: 1)
+                
+                Rectangle()
+                    .fill(Color(red: 0.85, green: 0.82, blue: 0.95))
+                    .frame(width: 108, height: 1)
+                
+                Circle()
+                    .strokeBorder(Color(red: 0.22, green: 0.11, blue: 0.47), lineWidth: 2)
+                    .frame(width: 18, height: 18)
+            }
+            .frame(width: geometry.size.width, alignment: .center)
+        }
+        .frame(height: 20)
+    }
+}
+
 
 struct FinalizeAccount2_Previews: PreviewProvider {
     static var previews: some View {

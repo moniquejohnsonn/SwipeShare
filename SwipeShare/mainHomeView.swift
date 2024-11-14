@@ -2,7 +2,6 @@ import SwiftUI
 
 struct MainHomeView: View {
     @State private var isSwipeGiver = false // Toggle this to switch between views
-    @State private var isSwipeGiverChecked = false
 
     var body: some View {
         NavigationView {
@@ -10,7 +9,7 @@ struct MainHomeView: View {
                 if isSwipeGiver {
                     GiverHomeView()
                 } else {
-                    ReceiverHomeView(isSwipeGiverChecked: $isSwipeGiverChecked)
+                    ReceiverHomeView()
                 }
                 
                 // Button to toggle between Giver and Receiver for testing
