@@ -18,6 +18,14 @@ struct Giver: Identifiable {
     let profilePicture: Image
 }
 
+struct Receiver: Identifiable {
+    let id: UUID
+    let name: String
+    let message: String
+    let date: String
+    let profileImage: Image
+}
+
 // function to check if a point is inside a polygon using Ray-Casting algorithm
 func isPointInsidePolygon(point: CLLocationCoordinate2D, polygon: [CLLocationCoordinate2D]) -> Bool {
     var isInside = false
@@ -60,11 +68,18 @@ struct DiningHall {
     }
 }
 
-// Generate mock givers
+// mock givers
 let givers: [Giver] = [
         Giver(id: UUID().uuidString, name: "Alice", year: "Sophomore at Barnard", coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621), profilePicture: Image("alice")),
         Giver(id: UUID().uuidString, name: "Joe", year: "Junior at Columbia", coordinate: CLLocationCoordinate2D(latitude: 40.8059, longitude: -73.9625), profilePicture: Image("joe")),
         Giver(id: UUID().uuidString, name: "Bob", year: "Senior at Columbia", coordinate: CLLocationCoordinate2D(latitude: 40.8068, longitude: -73.9638), profilePicture: Image("bob"))
+]
+
+// mock receivers
+let receivers: [Receiver] = [
+    Receiver(id: UUID(), name: "Jon", message: "requested a swipe", date: "11/14/24", profileImage: Image("joe")),
+    Receiver(id: UUID(), name: "Lily", message: "requested a swipe", date: "11/12/24", profileImage: Image("alice")),
+    Receiver(id: UUID(), name: "Sam", message: "requested a swipe", date: "11/10/24", profileImage: Image("bob")),
 ]
 
 
