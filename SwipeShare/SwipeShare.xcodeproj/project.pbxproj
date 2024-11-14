@@ -7,11 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7108D40E2CE5CDAA00F6585A /* receiverHomeView1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7108D40D2CE5CDA400F6585A /* receiverHomeView1.swift */; };
+		7108D4102CE5D2B200F6585A /* headerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7108D40F2CE5D2AC00F6585A /* headerView.swift */; };
 		71212B692CE47B6E00812C48 /* giverHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71212B682CE47B6900812C48 /* giverHomeView.swift */; };
-		71212B6B2CE47B7C00812C48 /* receiverHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71212B6A2CE47B7600812C48 /* receiverHomeView.swift */; };
 		713B76EE2CE41CE3000B0990 /* mainHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713B76ED2CE41CD6000B0990 /* mainHomeView.swift */; };
 		713B76F02CE42A36000B0990 /* menuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713B76EF2CE42A30000B0990 /* menuView.swift */; };
+		7169846D2CE594EE0095663C /* userData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7169846C2CE594E50095663C /* userData.swift */; };
 		71AE90242CE5412900D96908 /* apiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71AE90232CE5412500D96908 /* apiService.swift */; };
+		71D256372CE5A02800D563A2 /* settingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256362CE5A02800D563A2 /* settingsView.swift */; };
+		71D256382CE5A02800D563A2 /* receiverHomeView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256342CE5A02800D563A2 /* receiverHomeView2.swift */; };
+		71D256392CE5A02800D563A2 /* giverConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256352CE5A02800D563A2 /* giverConfirmation.swift */; };
+		71D256562CE5A14A00D563A2 /* mockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256552CE5A14600D563A2 /* mockData.swift */; };
 		B443C8542CE12377006F9891 /* loadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B443C8532CE12377006F9891 /* loadingScreen.swift */; };
 		B443C8582CE1278A006F9891 /* startUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B443C8572CE1278A006F9891 /* startUpView.swift */; };
 		B443C86D2CE13FDC006F9891 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B443C86C2CE13FDC006F9891 /* FirebaseAuth */; };
@@ -65,11 +71,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7108D40D2CE5CDA400F6585A /* receiverHomeView1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = receiverHomeView1.swift; sourceTree = "<group>"; };
+		7108D40F2CE5D2AC00F6585A /* headerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = headerView.swift; sourceTree = "<group>"; };
 		71212B682CE47B6900812C48 /* giverHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = giverHomeView.swift; sourceTree = "<group>"; };
-		71212B6A2CE47B7600812C48 /* receiverHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = receiverHomeView.swift; sourceTree = "<group>"; };
 		713B76ED2CE41CD6000B0990 /* mainHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainHomeView.swift; sourceTree = "<group>"; };
 		713B76EF2CE42A30000B0990 /* menuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = menuView.swift; sourceTree = "<group>"; };
+		7169846C2CE594E50095663C /* userData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = userData.swift; sourceTree = "<group>"; };
 		71AE90232CE5412500D96908 /* apiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = apiService.swift; sourceTree = "<group>"; };
+		71D256342CE5A02800D563A2 /* receiverHomeView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = receiverHomeView2.swift; sourceTree = "<group>"; };
+		71D256352CE5A02800D563A2 /* giverConfirmation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = giverConfirmation.swift; sourceTree = "<group>"; };
+		71D256362CE5A02800D563A2 /* settingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsView.swift; sourceTree = "<group>"; };
+		71D256552CE5A14600D563A2 /* mockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mockData.swift; sourceTree = "<group>"; };
 		B443C8132CE11D8D006F9891 /* SwipeShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwipeShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B443C8232CE11D8F006F9891 /* SwipeShareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwipeShareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B443C82D2CE11D8F006F9891 /* SwipeShareUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwipeShareUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -168,9 +180,15 @@
 			isa = PBXGroup;
 			children = (
 				B4C9F69E2CE578E100DBA782 /* locationManager.swift */,
+				7108D40F2CE5D2AC00F6585A /* headerView.swift */,
+				7169846C2CE594E50095663C /* userData.swift */,
+				71D256552CE5A14600D563A2 /* mockData.swift */,
+				71D256342CE5A02800D563A2 /* receiverHomeView2.swift */,
+				71D256352CE5A02800D563A2 /* giverConfirmation.swift */,
+				7108D40D2CE5CDA400F6585A /* receiverHomeView1.swift */,
+				71D256362CE5A02800D563A2 /* settingsView.swift */,
 				71AE90232CE5412500D96908 /* apiService.swift */,
 				713B76EF2CE42A30000B0990 /* menuView.swift */,
-				71212B6A2CE47B7600812C48 /* receiverHomeView.swift */,
 				71212B682CE47B6900812C48 /* giverHomeView.swift */,
 				713B76ED2CE41CD6000B0990 /* mainHomeView.swift */,
 				B443C8532CE12377006F9891 /* loadingScreen.swift */,
@@ -370,10 +388,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				B443C8542CE12377006F9891 /* loadingScreen.swift in Sources */,
-				71212B6B2CE47B7C00812C48 /* receiverHomeView.swift in Sources */,
+				7108D4102CE5D2B200F6585A /* headerView.swift in Sources */,
+				7108D40E2CE5CDAA00F6585A /* receiverHomeView1.swift in Sources */,
+				71D256372CE5A02800D563A2 /* settingsView.swift in Sources */,
+				71D256382CE5A02800D563A2 /* receiverHomeView2.swift in Sources */,
+				71D256392CE5A02800D563A2 /* giverConfirmation.swift in Sources */,
 				B4C9F69F2CE578E100DBA782 /* locationManager.swift in Sources */,
 				C88A3CE52CE27900000B4051 /* createAccountView2.swift in Sources */,
 				B4C47D762CE1B09500FB450F /* loginView.swift in Sources */,
+				71D256562CE5A14A00D563A2 /* mockData.swift in Sources */,
+				7169846D2CE594EE0095663C /* userData.swift in Sources */,
 				C8504F622CE30A680047A294 /* finalizeAccount2.swift in Sources */,
 				71AE90242CE5412900D96908 /* apiService.swift in Sources */,
 				B443C8582CE1278A006F9891 /* startUpView.swift in Sources */,

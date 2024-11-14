@@ -94,7 +94,7 @@ struct loginView: View {
             GiverHomeView()
         }
         .navigationDestination(isPresented: $navigateToReceiverHome) {
-            ReceiverHomeView()
+            ReceiverHomeView1()
         }
     }
     
