@@ -1,10 +1,3 @@
-//
-//  mainReceiverView.swift
-//  SwipeShare
-//
-//  Created by Rosa Figueroa on 11/13/24.
-//
-
 import SwiftUI
 
 struct ReceiverHomeView: View {

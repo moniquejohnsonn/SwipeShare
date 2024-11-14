@@ -1,6 +1,6 @@
 import SwiftUI
 
-// all the checkbox logic works too! 
+// all the checkbox logic works too!
 struct FinalizeAccount1: View {
     @State private var isSwipeGiverChecked = false
     @State private var isSwipeReceiverChecked = false
@@ -9,7 +9,8 @@ struct FinalizeAccount1: View {
     @State private var semesterlyChecked = false
     @State private var annuallyChecked = false
     @State private var inputNumber = ""
-
+    @State private var navigateToFinalizeAccount2 = false
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -81,58 +82,78 @@ struct FinalizeAccount1: View {
                 .padding(.leading, 16)
                 .padding(.top, 8)
                 
-                // "How many meal swipes do you have?" Text
-                VStack(alignment: .leading, spacing: -20) {
-                    Text("How many meal")
-                        .font(.custom("BalooBhaina2-Bold", size: 30))
-                        .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
-                    
-                    Text("swipes do you have?")
-                        .font(.custom("BalooBhaina2-Bold", size: 30))
-                        .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 36)
-                .padding(.top, 10)
-                .padding(.bottom, 4)
                 
-                // Frequency Checkboxes
-                HStack(spacing: 10) {
-                    CheckBoxView(isChecked: $weeklyChecked, label: "weekly", selectedFrequency: $selectedFrequency) {
-                        semesterlyChecked = false
-                        annuallyChecked = false
+                // Frequency Checkboxes (only visible if Swipe Giver is selected)
+                if isSwipeGiverChecked {
+                    VStack(alignment: .leading, spacing: -20) {
+                        Text("How many meal")
+                            .font(.custom("BalooBhaina2-Bold", size: 30))
+                            .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
+                        
+                        Text("swipes do you have?")
+                            .font(.custom("BalooBhaina2-Bold", size: 30))
+                            .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
                     }
-                    Text("weekly")
-                        .font(.custom("BalooBhaina2-Bold", size: 16))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 36)
+                    .padding(.top, 10)
+                    .padding(.bottom, 4)
+                    HStack(spacing: 10) {
+                        CheckBoxView(isChecked: $weeklyChecked, label: "weekly", selectedFrequency: $selectedFrequency) {
+                            semesterlyChecked = false
+                            annuallyChecked = false
+                        }
+                        Text("weekly")
+                            .font(.custom("BalooBhaina2-Bold", size: 16))
+                        
+                        CheckBoxView(isChecked: $semesterlyChecked, label: "semesterly", selectedFrequency: $selectedFrequency) {
+                            weeklyChecked = false
+                            annuallyChecked = false
+                        }
+                        Text("semesterly")
+                            .font(.custom("BalooBhaina2-Bold", size: 16))
+                        
+                        CheckBoxView(isChecked: $annuallyChecked, label: "annually", selectedFrequency: $selectedFrequency) {
+                            weeklyChecked = false
+                            semesterlyChecked = false
+                        }
+                        Text("annually")
+                            .font(.custom("BalooBhaina2-Bold", size: 16))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
                     
-                    CheckBoxView(isChecked: $semesterlyChecked, label: "semesterly", selectedFrequency: $selectedFrequency) {
-                        weeklyChecked = false
-                        annuallyChecked = false
+                    // Purple Input Bar (only visible if Swipe Giver is selected)
+                    HStack {
+                        TextField("Enter a \(selectedFrequency) number", text: $inputNumber)
+                            .padding(.horizontal, 16)
+                            .frame(height: 40)
+                            .background(Color(red: 0.85, green: 0.82, blue: 0.95).opacity(0.6))
+                            .cornerRadius(100)
+                            .padding(.top, 20)
                     }
-                    Text("semesterly")
-                        .font(.custom("BalooBhaina2-Bold", size: 16))
+                    .padding(.horizontal, 56)
+                    .padding(.top, 8)
                     
-                    CheckBoxView(isChecked: $annuallyChecked, label: "annually", selectedFrequency: $selectedFrequency) {
-                        weeklyChecked = false
-                        semesterlyChecked = false
-                    }
-                    Text("annually")
-                        .font(.custom("BalooBhaina2-Bold", size: 16))
+                } else if isSwipeReceiverChecked {
+                    // Disable the fields for Swipe Receiver
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
                 
-                // Purple Input Bar
-                HStack {
-                    TextField("Enter a \(selectedFrequency) number", text: $inputNumber)
-                        .padding(.horizontal, 16)
-                        .frame(height: 40)
-                        .background(Color(red: 0.85, green: 0.82, blue: 0.95).opacity(0.6))
+                
+                // Continue Button (only enabled when the form is valid)
+                // TODO: Must make it so that registration is complete if just a receiver. Only move to next page if giver.
+                Button(action: {
+                    navigateToFinalizeAccount2 = true
+                }) {
+                    Text("Last Step")
+                        .font(.custom("BalooBhaina2-Bold", size: 18))
+                        .foregroundColor(.white)
+                        .padding()
+                        .background( (isSwipeReceiverChecked || (!inputNumber.isEmpty && isSwipeGiverChecked)) ? Color(red: 0.03, green: 0.75, blue: 0.72) : Color.gray)
                         .cornerRadius(100)
-                        .padding(.top, 20)
                 }
-                .padding(.horizontal, 56)
-                .padding(.top, 8)
+                .disabled(!isSwipeGiverChecked || inputNumber.isEmpty)
+                .padding(.top, 20)
             }
             .frame(maxWidth: 480)
             .background(Color.white)
@@ -140,6 +161,9 @@ struct FinalizeAccount1: View {
         }
         .background(Color.white)
         .edgesIgnoringSafeArea(.all)
+        .navigationDestination(isPresented: $navigateToFinalizeAccount2) {
+            FinalizeAccount2(selectedFrequency: $selectedFrequency)
+        }
     }
 }
 
@@ -172,7 +196,7 @@ struct CheckBoxView: View {
     let label: String
     @Binding var selectedFrequency: String
     var onToggle: () -> Void = {}
-
+    
     var body: some View {
         Button(action: {
             isChecked.toggle()

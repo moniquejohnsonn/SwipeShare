@@ -1,10 +1,3 @@
-//
-//  loginView.swift
-//  SwipeShare
-//
-//  Created by Monique Johnson on 11/10/24.
-//
-
 import SwiftUI
 import FirebaseAuth
 
@@ -28,6 +21,7 @@ struct loginView: View {
                 .background(Color(red: 202 / 255, green: 168 / 255, blue: 245 / 255).opacity(0.3))
                 .cornerRadius(8)
                 .padding(.horizontal, 24)
+                .autocapitalization(.none)
             
             SecureField("password", text: $password)
                 .padding()

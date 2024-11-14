@@ -1,9 +1,11 @@
 import SwiftUI
 import Foundation
 
-struct LocationPermissionView3: View {
+struct CampusPermissionView: View {
     @State private var isLoading = true
     @State private var selectedSchool: School? = nil
+    @State private var navigateToFinalizeAccount = false
+    
     // initialize to mock schools for testing in canvas
     @State private var schools: [School] = [
         School(properties: SchoolProperties(name: "Columbia University", city: "New York", postcode: "10027"), geometry: Geometry(coordinates: [-73.9626, 40.8075])),
@@ -11,7 +13,7 @@ struct LocationPermissionView3: View {
     ]
     
     private let apiService = APIService() // creates an instance of APIService
-
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -61,10 +63,11 @@ struct LocationPermissionView3: View {
                     .cornerRadius(8)
                 }
                 Spacer().frame(height: 150) // Increased height to move the button lower on the screen
-
+                
                 // Confirm My Campus Button
                 Button(action: {
                     // Handle confirm campus action
+                    navigateToFinalizeAccount = true
                 }) {
                     Text("Confirm My Campus")
                         .font(.system(size: 18, weight: .bold))
@@ -85,6 +88,9 @@ struct LocationPermissionView3: View {
         }
         .background(Color.white)
         .edgesIgnoringSafeArea(.all)
+        .navigationDestination(isPresented: $navigateToFinalizeAccount) {
+            FinalizeAccount1()
+        }
     }
     
     // Fetch Schools Function
@@ -104,9 +110,9 @@ struct LocationPermissionView3: View {
 }
 
 
-struct LocationPermissionView3_Previews: PreviewProvider {
+struct CampusPermissionView_Previews: PreviewProvider {
     static var previews: some View {
-        LocationPermissionView3()
+        CampusPermissionView()
     }
 }
 
@@ -118,7 +124,7 @@ struct ProgressIndicatorView3: View {
                 Rectangle()
                     .fill(Color(red: 0.85, green: 0.82, blue: 0.95))
                     .frame(width: 108, height: 1)
-
+                
                 Circle()
                     .strokeBorder(Color(red: 0.22, green: 0.11, blue: 0.47), lineWidth: 2)
                     .frame(width: 18, height: 18)

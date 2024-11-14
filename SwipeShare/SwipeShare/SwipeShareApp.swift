@@ -28,6 +28,7 @@ struct SwipeShareApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @State private var isAuthenticated = false
     @State private var isLoading = true
+    @State private var isGiver = false
     
     var body: some Scene {
         WindowGroup {
@@ -35,9 +36,12 @@ struct SwipeShareApp: App {
                 if isLoading {
                     loadingScreen()
                 } else {
-                    if isAuthenticated {
-                        mainPage()
-                    } else {
+                    if isAuthenticated && isGiver{
+                        GiverHomeView()
+                    } else if isAuthenticated && !isGiver{
+                        //ReceiverHomeView(isSwipeGiverChecked: $isSwipeGiverChecked)
+                    }
+                    else {
                         StartUpView(isAuthenticated: $isAuthenticated)
                     }
                 }
