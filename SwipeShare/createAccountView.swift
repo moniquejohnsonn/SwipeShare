@@ -1,34 +1,42 @@
 import SwiftUI
+import FirebaseAuth
 
 struct SignUpView: View {
     @State private var name: String = ""
     @State private var email: String = ""
     @State private var password: String = ""
-
+    @Binding var isAuthenticated: Bool
+    @State private var signUpError: String?
+    @State private var showLocationPermission = false
+    
     
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-
+                
                 ProgressIndicatorView()
                     .padding(.top, 64)
-
+                
                 Text("Create Account")
                     .font(.custom("BalooBhaina2-Bold", size: 48))
                     .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
                     .padding(.top, 112)
-
-
+                
+                
                 VStack(spacing: 14) {
                     InputFieldView(iconName: "nameIcon", placeholder: "name", text: $name)
                     InputFieldView(iconName: "emailIcon", placeholder: "email", text: $email)
                     InputFieldView(iconName: "passwordIcon", placeholder: "password", text: $password, isSecure: true)
                 }
                 .padding(.top, 56)
-
-                Button(action: {
-                    // Handle continue action
-                }) {
+                
+                if let error = signUpError {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .padding(.horizontal)
+                }
+                
+                Button(action: handleSignUp) {
                     Text("Continue")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(Color(.white))
@@ -37,7 +45,8 @@ struct SignUpView: View {
                         .cornerRadius(100)
                 }
                 .padding(.top, 128)
-
+                
+                
                 HStack(spacing: 0) {
                     Text("Already have an account? ")
                         .foregroundColor(Color(red: 0.22, green: 0.11, blue: 0.47))
@@ -55,12 +64,26 @@ struct SignUpView: View {
         }
         .background(Color.white)
         .edgesIgnoringSafeArea(.all)
+        .navigationDestination(isPresented: $showLocationPermission) {
+                        LocationPermissionView()
+                    }
+    }
+    
+    private func handleSignUp() {
+        Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+            if let error = error {
+                signUpError = error.localizedDescription
+            } else {
+                isAuthenticated = true
+                self.showLocationPermission = true
+            }
+        }
     }
 }
 
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
-        SignUpView()
+        SignUpView(isAuthenticated: .constant(false))
     }
 }
 
@@ -97,7 +120,7 @@ struct InputFieldView: View {
     let placeholder: String
     @Binding var text: String
     var isSecure: Bool = false
-
+    
     var body: some View {
         HStack(spacing: 12) {
             // Icon positioned outside the purple bubble
@@ -105,7 +128,7 @@ struct InputFieldView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 30, height: 30)
-
+            
             // Purple bubble containing only the text field
             HStack {
                 Group {
@@ -113,6 +136,7 @@ struct InputFieldView: View {
                         SecureField(placeholder, text: $text)
                     } else {
                         TextField(placeholder, text: $text)
+                            .autocapitalization(.none)
                     }
                 }
                 .font(.system(size: 14, weight: .medium))

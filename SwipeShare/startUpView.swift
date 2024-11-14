@@ -18,11 +18,7 @@ struct StartUpView: View {
                 
                 Spacer()
                 
-                // Sign Up Button
-                Button(action: {
-                    // TODO: - Sign Up Button Action
-                    isAuthenticated = false
-                }) {
+                NavigationLink(destination: SignUpView(isAuthenticated: $isAuthenticated)) {
                     Text("Sign Up")
                         .font(.custom("BalooBhaina2-Bold", size: 20))
                         .foregroundColor(.white)
@@ -32,19 +28,19 @@ struct StartUpView: View {
                         .cornerRadius(100)
                         .padding(.horizontal, 10)
                 }
-                HStack{
-                    Text("Already have an account? ")
+            }
+            HStack{
+                Text("Already have an account? ")
+                    .font(.custom("BalooBhaina2-Medium", size: 16))
+                    .foregroundColor(.white)
+                NavigationLink(destination: loginView(isAuthenticated: $isAuthenticated)) {
+                    Text("Log In")
                         .font(.custom("BalooBhaina2-Medium", size: 16))
                         .foregroundColor(.white)
-                    NavigationLink(destination: loginView(isAuthenticated: $isAuthenticated)) {
-                        Text("Log In")
-                            .font(.custom("BalooBhaina2-Medium", size: 16))
-                            .foregroundColor(.white)
-                            .underline()
-                    }
+                        .underline()
                 }
-                Spacer().frame(height: 40)
             }
+            Spacer().frame(height: 40)
         }
     }
 }

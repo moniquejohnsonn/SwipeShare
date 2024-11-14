@@ -7,139 +7,138 @@ struct FinalizeAccount2: View {
     @Binding var selectedFrequency: String
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                
-                // Progress Indicator View
-                ProgressIndicatorView4()
-                    .padding(.top, 70)
-                
-                // Title Text
-                VStack(spacing: -50) {
-                    Text("Finalize Your")
-                        .font(.custom("BalooBhaina2-Bold", size: 48))
-                        .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 0) {
                     
-                    Text("Profile")
-                        .font(.custom("BalooBhaina2-Bold", size: 48))
-                        .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
-                }
-                .multilineTextAlignment(.center)
-                .padding(.top, 10)
-                
-                // Question Text
-                VStack(alignment: .leading, spacing: -8) {
-                    Text("About how many")
-                        .font(.custom("BalooBhaina2-Bold", size: 30))
-                        .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
+                    // Progress Indicator View
+                    ProgressIndicatorView4()
+                        .padding(.top, 70)
                     
-                    Text("meal swipes can you give per \(selectedFrequency)?")
-                        .font(.custom("BalooBhaina2-Bold", size: 30))
-                        .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 36)
-                .padding(.top, 10)
-                .padding(.bottom, 4)
-                
-                // Light Purple Input Bubble
-                HStack {
-                    TextField("Enter a number", text: $inputNumber)
-                        .padding(.horizontal, 16)
-                        .frame(height: 40)
-                        .background(Color(red: 0.85, green: 0.82, blue: 0.95).opacity(0.6))
-                        .cornerRadius(100)
-                        .padding(.top, 20)
-                }
-                .padding(.horizontal, 56)
-                .padding(.top, 8)
-                
-                // Second Question Text
-                VStack(alignment: .leading, spacing: -8) {
-                    Text("Always show profile")
-                        .font(.custom("BalooBhaina2-Bold", size: 30))
-                        .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
+                    // Title Text
+                    VStack(spacing: -50) {
+                        Text("Finalize Your")
+                            .font(.custom("BalooBhaina2-Bold", size: 48))
+                            .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
+                        
+                        Text("Profile")
+                            .font(.custom("BalooBhaina2-Bold", size: 48))
+                            .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
+                    }
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 10)
                     
-                    Text("to receivers?")
-                        .font(.custom("BalooBhaina2-Bold", size: 30))
-                        .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 36)
-                .padding(.top, 20)
-                
-                // Description Text
-                Text("If no, you will have to manually enable\nyour giving status when in a dining hall\nto have receivers request meal swipes.\nYou can change this setting at any time.")
-                    .font(.system(size: 14))
-                    .foregroundColor(Color.gray)
+                    // Question Text
+                    VStack(alignment: .leading, spacing: -8) {
+                        Text("About how many")
+                            .font(.custom("BalooBhaina2-Bold", size: 30))
+                            .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
+                        
+                        Text("meal swipes can you give per \(selectedFrequency)?")
+                            .font(.custom("BalooBhaina2-Bold", size: 30))
+                            .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 36)
+                    .padding(.top, 10)
+                    .padding(.bottom, 4)
+                    
+                    // Light Purple Input Bubble
+                    HStack {
+                        TextField("Enter a number", text: $inputNumber)
+                            .padding(.horizontal, 16)
+                            .frame(height: 40)
+                            .background(Color(red: 0.85, green: 0.82, blue: 0.95).opacity(0.6))
+                            .cornerRadius(100)
+                            .padding(.top, 20)
+                    }
+                    .padding(.horizontal, 56)
                     .padding(.top, 8)
-                
-                // "Yes" and "No" Options
-                HStack {
-                    HStack {
-                        Text("Yes")
-                            .font(.custom("BalooBhaina2-Regular", size: 18))
-                        CheckBoxView1(
-                            isChecked: $alwaysShowProfileChecked,
-                            label: "Yes",
-                            selectedFrequency: $selectedFrequency,
-                            onToggle: { manuallyEnableChecked = false }
-                        )
-                    }
                     
-                    Spacer().frame(width: 20) // Space between "Yes" and "No"
-                    
-                    HStack {
-                        Text("No")
-                            .font(.custom("BalooBhaina2-Regular", size: 18))
-                        CheckBoxView1(
-                            isChecked: $manuallyEnableChecked,
-                            label: "No",
-                            selectedFrequency: $selectedFrequency,
-                            onToggle: { alwaysShowProfileChecked = false }
-                        )
+                    // Second Question Text
+                    VStack(alignment: .leading, spacing: -8) {
+                        Text("Always show profile")
+                            .font(.custom("BalooBhaina2-Bold", size: 30))
+                            .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
+                        
+                        Text("to receivers?")
+                            .font(.custom("BalooBhaina2-Bold", size: 30))
+                            .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
                     }
-                }
-                .padding(.horizontal, 36)
-                .padding(.top, 8)
-                
-                // Start Swiping Button
-                Button(action: {
-                    // Handle start swiping action
-                }) {
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 36)
+                    .padding(.top, 20)
+                    
+                    // Description Text
+                    Text("If no, you will have to manually enable\nyour giving status when in a dining hall\nto have receivers request meal swipes.\nYou can change this setting at any time.")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color.gray)
+                        .padding(.leading, 36)
+                        .padding(.top, 8)
+                    
+                    // "Yes" and "No" Options
                     HStack {
-                        // Circle with caret
-                        ZStack {
-                            Circle()
-                                .fill(Color(red: 0.6, green: 0.9, blue: 0.8)) // Light green circle
-                                .frame(width: 24, height: 24) // Circle size
-
-                            Image(systemName: "chevron.right") // Caret pointing right
-                                .foregroundColor(.white)
-                                .font(.system(size: 14))
+                        HStack {
+                            Text("Yes")
+                                .font(.custom("BalooBhaina2-Regular", size: 18))
+                            CheckBoxView1(
+                                isChecked: $alwaysShowProfileChecked,
+                                label: "Yes",
+                                selectedFrequency: $selectedFrequency,
+                                onToggle: { manuallyEnableChecked = false }
+                            )
                         }
-                        .padding(.trailing, 8) // Space between the circle and text
-
-                        Text("Start Swiping!")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.white)
+                        
+                        Spacer().frame(width: 20) // Space between "Yes" and "No"
+                        
+                        HStack {
+                            Text("No")
+                                .font(.custom("BalooBhaina2-Regular", size: 18))
+                            CheckBoxView1(
+                                isChecked: $manuallyEnableChecked,
+                                label: "No",
+                                selectedFrequency: $selectedFrequency,
+                                onToggle: { alwaysShowProfileChecked = false }
+                            )
+                        }
                     }
-                    .frame(width: 220, height: 50)
-                    .background(LinearGradient(gradient: Gradient(colors: [
-                        Color(red: 0.03, green: 0.75, blue: 0.72),
-                        Color(red: 0.6, green: 0.9, blue: 0.8) // Lighter shade of green
-                    ]), startPoint: .leading, endPoint: .trailing))
-                    .cornerRadius(100)
+                    .padding(.horizontal, 36)
+                    .padding(.top, 8)
+                    
+                    NavigationLink(destination: GiverHomeView()) {
+                        HStack {
+                            // Circle with caret
+                            ZStack {
+                                Circle()
+                                    .fill(Color(red: 0.6, green: 0.9, blue: 0.8)) // Light green circle
+                                    .frame(width: 24, height: 24) // Circle size
+                                
+                                Image(systemName: "chevron.right") // Caret pointing right
+                                    .foregroundColor(.white)
+                                    .font(.system(size: 14))
+                            }
+                            .padding(.trailing, 8) // Space between the circle and text
+                            
+                            Text("Start Swiping!")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+                        .frame(width: 220, height: 50)
+                        .background(LinearGradient(gradient: Gradient(colors: [
+                            Color(red: 0.03, green: 0.75, blue: 0.72),
+                            Color(red: 0.6, green: 0.9, blue: 0.8) // Lighter shade of green
+                        ]), startPoint: .leading, endPoint: .trailing))
+                        .cornerRadius(100)
+                    }
+                    .padding(.top, 30)
                 }
-                .padding(.top, 30)
+                .frame(maxWidth: 480)
+                .background(Color.white)
+                .cornerRadius(32)
             }
-            .frame(maxWidth: 480)
             .background(Color.white)
-            .cornerRadius(32)
+            .edgesIgnoringSafeArea(.all)
         }
-        .background(Color.white)
-        .edgesIgnoringSafeArea(.all)
     }
 }
 
