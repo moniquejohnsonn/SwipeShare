@@ -82,7 +82,7 @@ struct ReceiverHomeView2: View {
                 }
             }
             .navigationDestination(isPresented: $navigateToReceiverHome) {
-                ReceiverHomeView2()
+                ReceiverHomeView1()
             }
         }
     }
@@ -99,6 +99,7 @@ struct ReceiverHomeView2: View {
 
 struct GiverCardView: View {
     let giver: Giver
+    @State private var navigateToGiverConfirm = false
     
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -140,7 +141,7 @@ struct GiverCardView: View {
             
             // Notification Bell Icon
             Button(action: {
-                // Handle notification action
+                navigateToGiverConfirm = true
             }) {
                 ZStack {
                     // Background square with rounded corners
@@ -161,6 +162,10 @@ struct GiverCardView: View {
         .background(Color("lightestPurple"))
         .cornerRadius(16)
         .shadow(radius: 4)
+        
+        .navigationDestination(isPresented: $navigateToGiverConfirm) {
+            MealSwipeRequestView()
+        }
     }
 }
 

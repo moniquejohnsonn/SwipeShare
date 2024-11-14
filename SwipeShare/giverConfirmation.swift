@@ -9,13 +9,15 @@ import Foundation
 import SwiftUI
 
 struct MealSwipeRequestView: View {
+    @State private var navigateToMapView = false
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 // Simplified Navigation Header
                 HStack {
                     Button(action: {
-                        // Action for going back
+                        navigateToMapView = true;
                     }) {
                         HStack {
                             Image(systemName: "chevron.left")
@@ -174,6 +176,9 @@ struct MealSwipeRequestView: View {
                 .ignoresSafeArea(edges: .bottom)
             }
             .padding(.bottom, 20)
+            .navigationDestination(isPresented: $navigateToMapView) {
+                ReceiverHomeView2()
+            }
         }
         .background(Constants.LightPurple)
         .ignoresSafeArea(edges: .top)
