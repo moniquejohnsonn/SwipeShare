@@ -9,6 +9,7 @@ import MapKit
 
 struct ReceiverHomeView2: View {
     @State private var selectedDiningHall: DiningHall? = nil
+    @State private var navigateToReceiverHome = false
     
     // initial columbia/barnard view
     @State private var region = MKCoordinateRegion(
@@ -17,66 +18,71 @@ struct ReceiverHomeView2: View {
     )
      
     var body: some View {
-        VStack (){
-            // Custom Header
-            HeaderView(
-                title: selectedDiningHall?.name ?? "Select a Dining Hall",
-                showBackButton: true,
-                onHeaderButtonTapped: {
-                    print("add navigation")
-                }
-            )
-            .frame(height: 150)
-            
-            ZStack() {
-                // map view
-                GeometryReader { geometry in
-                    MapView(diningHalls: diningHalls, region: $region, selectedDiningHall: $selectedDiningHall)
-                        .frame(width: geometry.size.width, height: 400) // sets fixed size to height of map
-                }
-                // Reset Button
-                VStack() {
-                    HStack() {
-                        Spacer()
-                        Button(action: resetRegion) {
-                            Text("See Entire Map")
-                                .font(.custom("BalooBhaina2-Regular", size: 13))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 3)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color("primaryPurple"))
-                                )
-                        }
+        ZStack {
+            VStack (){
+                // Custom Header
+                HeaderView(
+                    title: selectedDiningHall?.name ?? "Select a Dining Hall",
+                    showBackButton: true,
+                    onHeaderButtonTapped: {
+                        navigateToReceiverHome = true
                     }
-                    .padding(.trailing, 15)
-                    .padding(.top, 15)
-                    Spacer()
+                )
+                .frame(height: 150)
+                
+                ZStack() {
+                    // map view
+                    GeometryReader { geometry in
+                        MapView(diningHalls: diningHalls, region: $region, selectedDiningHall: $selectedDiningHall)
+                            .frame(width: geometry.size.width, height: 400) // sets fixed size to height of map
+                    }
+                    // Reset Button
+                    VStack() {
+                        HStack() {
+                            Spacer()
+                            Button(action: resetRegion) {
+                                Text("See Entire Map")
+                                    .font(.custom("BalooBhaina2-Regular", size: 13))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 3)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color("primaryPurple"))
+                                    )
+                            }
+                        }
+                        .padding(.trailing, 15)
+                        .padding(.top, 15)
+                        Spacer()
+                    }
+                }
+                
+                
+                // givers table
+                if let diningHall = selectedDiningHall {
+                    VStack(alignment: .leading) {
+                        // get the relevant givers for the selected dining hall
+                        let relevantGivers = getGiversForDiningHall(givers: givers, diningHall: diningHall)
+                        
+                        GiversListView(givers: relevantGivers)
+                    }
+                    .frame(maxHeight: .infinity)
+                    
+                } else {
+                    // default text in givers table half
+                    VStack {
+                        Spacer()
+                        Text("Select Dining Hall to View Givers")
+                            .font(.custom("BalooBhaina2-Regular", size: 20))
+                            .padding(.top)
+                            .frame(maxHeight: .infinity)
+                        Spacer()
+                    }
                 }
             }
-           
-            
-            // givers table
-            if let diningHall = selectedDiningHall {
-                VStack(alignment: .leading) {
-                    // get the relevant givers for the selected dining hall
-                    let relevantGivers = getGiversForDiningHall(givers: givers, diningHall: diningHall)
-                    
-                    GiversListView(givers: relevantGivers)
-                }
-                .frame(maxHeight: .infinity)
-                
-            } else {
-                // default text in givers table half
-                VStack {
-                            Spacer()
-                            Text("Select Dining Hall to View Givers")
-                                .font(.custom("BalooBhaina2-Regular", size: 20))
-                                .padding(.top)
-                                .frame(maxHeight: .infinity)
-                            Spacer()
-                        }
+            .navigationDestination(isPresented: $navigateToReceiverHome) {
+                ReceiverHomeView2()
             }
         }
     }

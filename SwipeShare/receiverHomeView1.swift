@@ -9,34 +9,48 @@ import SwiftUI
 import MapKit
 
 struct ReceiverHomeView1: View {
+    @State private var showSidebar = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            HeaderView(
-                title: "Home",
-                showBackButton: false,
-                onHeaderButtonTapped: {
-                    print("add navigation here")
+        ZStack {
+            VStack(spacing: 0) {
+                HeaderView(
+                    title: "Home",
+                    showBackButton: false,
+                    onHeaderButtonTapped: {
+                        withAnimation {
+                            showSidebar.toggle() // toggle sidebar visibility
+                        }
+                    }
+                )
+                
+                Text("Swipe Givers")
+                    .font(.custom("BalooBhaina2-Bold", size: 30))
+                    .foregroundColor(Color("primaryPurple"))
+                    .padding(.vertical, 30)
+                    .padding(.horizontal, 20)
+                    .frame(alignment: .leading)
+                
+                ScrollView {
+                    ForEach(diningHalls, id: \.name) { hall in
+                        let hallGivers = getGiversForDiningHall(givers: givers, diningHall: hall)
+                        NavigationLink(destination: ReceiverHomeView2()) {
+                            DiningHallRow(diningHall: hall, giverCount: hallGivers.count)
+                        }
+                    }
                 }
-            )
-            
-            Text("Swipe Givers")
-                .font(.custom("BalooBhaina2-Bold", size: 30))
-                .foregroundColor(Color("primaryPurple"))
-                .padding(.vertical, 10)
-                .padding(.horizontal, 20)
-                .frame(alignment: .leading)
-            
-            ScrollView {
-                ForEach(diningHalls, id: \.name) { hall in
-                    let hallGivers = getGiversForDiningHall(givers: givers, diningHall: hall)
-                    DiningHallRow(diningHall: hall, giverCount: hallGivers.count)
-                }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
+            .background(Color("lightBackground"))
+            .edgesIgnoringSafeArea(.top)
+
+            // sidebar content
+            MenuView(isSidebarVisible: $showSidebar)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .transition(.move(edge: .leading))
+                .padding(.leading, 0)
+        
         }
-        .background(Color("lightBackground"))
-        .edgesIgnoringSafeArea(.top)
     }
 }
 
