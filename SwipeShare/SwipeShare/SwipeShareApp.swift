@@ -16,13 +16,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
         
-        
         AppDelegate.isFirebaseConfigured = true
         
         return true
     }
 }
 
+
+// MARK: Probably remove this and use the MainHomeView instead
 @main
 struct SwipeShareApp: App {
     // register app delegate for Firebase setup
