@@ -177,7 +177,7 @@ struct FinalizeAccount1: View {
                     }
                     .padding(.top, 20)
                     .navigationDestination(isPresented: $navigateToReceiverHome) {
-                        ReceiverHomeView()
+                        ReceiverHomeView1()
                     }
                 }
                 
@@ -185,6 +185,7 @@ struct FinalizeAccount1: View {
                 if isSwipeGiverChecked {
                     Button(action: {
                         updateProfileForGiver() // Update profile status as Giver
+                        saveUserRole() // FOR TESTING PURPOSES ONLY
                         navigateToFinalizeAccount2 = true
                     }) {
                         Text("Last Step")
@@ -284,6 +285,15 @@ struct FinalizeAccount1: View {
             }
         }
     }
+
+    // FOR TESTING PURPOSES ONLY
+    func saveUserRole() {
+        if isSwipeGiverChecked {
+            UserData.saveUserRole("giver")
+        } else if isSwipeReceiverChecked {
+            UserData.saveUserRole("receiver")
+        }
+    }
     
     // update photo url in user profile
     func updateProfilePhoto(with imageUrl: String) {
@@ -304,41 +314,41 @@ struct FinalizeAccount1: View {
     }
     
     struct ImagePicker: UIViewControllerRepresentable {
-        @Binding var image: UIImage?
-        var onImageSelected: () -> Void
-        
-        class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
             @Binding var image: UIImage?
             var onImageSelected: () -> Void
             
-            init(image: Binding<UIImage?>, onImageSelected: @escaping () -> Void) {
-                _image = image
-                self.onImageSelected = onImageSelected
+            class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+                @Binding var image: UIImage?
+                var onImageSelected: () -> Void
+                
+                init(image: Binding<UIImage?>, onImageSelected: @escaping () -> Void) {
+                    _image = image
+                    self.onImageSelected = onImageSelected
+                }
+                
+                func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+                    if let selectedImage = info[.originalImage] as? UIImage {
+                        image = selectedImage
+                        onImageSelected() // Call the closure to update the profile
+                    }
+                    picker.dismiss(animated: true)
+                }
             }
             
-            func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-                if let selectedImage = info[.originalImage] as? UIImage {
-                    image = selectedImage
-                    onImageSelected() // Call the closure to update the profile
-                }
-                picker.dismiss(animated: true)
+            func makeCoordinator() -> Coordinator {
+                return Coordinator(image: $image, onImageSelected: onImageSelected)
             }
+            
+            func makeUIViewController(context: Context) -> UIImagePickerController {
+                let picker = UIImagePickerController()
+                picker.delegate = context.coordinator
+                picker.sourceType = .photoLibrary
+                return picker
+            }
+            
+            func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
         }
-        
-        func makeCoordinator() -> Coordinator {
-            return Coordinator(image: $image, onImageSelected: onImageSelected)
-        }
-        
-        func makeUIViewController(context: Context) -> UIImagePickerController {
-            let picker = UIImagePickerController()
-            picker.delegate = context.coordinator
-            picker.sourceType = .photoLibrary
-            return picker
-        }
-        
-        func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
-    }
-    
+
     // Progress Indicator View
     struct ProgressIndicatorView4: View {
         var body: some View {
