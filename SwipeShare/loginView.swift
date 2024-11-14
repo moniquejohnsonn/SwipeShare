@@ -1,11 +1,18 @@
 import SwiftUI
 import FirebaseAuth
+import FirebaseFirestore
 
 struct loginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var errorMessage: String? = nil
     @Binding var isAuthenticated: Bool
+    @State private var navigateToForgotEmail = false
+    @State private var navigateToSignUp = false
+    @State private var navigateToGiverHome = false
+    @State private var navigateToReceiverHome = false
+    
+    @State private var userRole: String? = nil
     
     var body: some View {
         VStack {
@@ -32,12 +39,17 @@ struct loginView: View {
             
             HStack {
                 Spacer()
-                // TODO: - Forgot Email Link Sending
-                Text("Forgot Email?")
-                    .font(.footnote)
-                    .foregroundColor(.blue)
-                    .padding(.trailing, 24)
-                    .padding(.top, 8)
+                // TODO: - Forgot Password Link Sending
+                Button(action: {
+                    // Forgot password action
+                    forgotPassword()
+                }) {
+                    Text("Forgot Password?")
+                        .font(.footnote)
+                        .foregroundColor(.blue)
+                        .padding(.trailing, 24)
+                        .padding(.top, 8)
+                }
             }
             
             Button(action: loginUser) {
@@ -66,7 +78,7 @@ struct loginView: View {
                     .foregroundColor(.gray)
                 
                 Button(action: {
-                    // TODO: - Sign Up Button Action
+                    navigateToSignUp = true
                 }) {
                     Text("Sign Up")
                         .foregroundColor(.blue)
@@ -75,19 +87,69 @@ struct loginView: View {
             .padding(.bottom, 30)
         }
         .navigationTitle("Log In")
+        .navigationDestination(isPresented: $navigateToSignUp) {
+            SignUpView(isAuthenticated: $isAuthenticated)
+        }
+        .navigationDestination(isPresented: $navigateToGiverHome) {
+            GiverHomeView()
+        }
+        .navigationDestination(isPresented: $navigateToReceiverHome) {
+            ReceiverHomeView()
+        }
     }
     
     private func loginUser() {
-            Auth.auth().signIn(withEmail: email, password: password) { result, error in
-                if let error = error {
-                    self.errorMessage = error.localizedDescription
-                } else {
-                    self.errorMessage = nil
-                    self.isAuthenticated = true
-                }
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            if let error = error {
+                self.errorMessage = error.localizedDescription
+            } else {
+                self.errorMessage = nil
+                self.isAuthenticated = true
+                fetchProfile()
             }
         }
     }
+    
+    private func fetchProfile() {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        let db = Firestore.firestore()
+        
+        // Fetch the user document from Firestore
+        db.collection("users").document(userId).getDocument { (document, error) in
+            if let document = document, document.exists {
+                // Extract the role booleans from the document
+                let isGiver = document.get("isGiver") as? Bool ?? false
+                let isReceiver = document.get("isReceiver") as? Bool ?? false
+                
+                // Navigate based on role
+                if isGiver {
+                    navigateToGiverHome = true
+                } else if isReceiver {
+                    navigateToReceiverHome = true
+                } else {
+                    errorMessage = "Error: User role not found."
+                }
+            } else {
+                // Handle the error if the document doesn't exist or fetch failed
+                errorMessage = "Error fetching profile: \(error?.localizedDescription ?? "Unknown error")"
+            }
+        }
+    }
+    
+    // Forgot email functionality
+    private func forgotPassword() {
+        Auth.auth().sendPasswordReset(withEmail: email) { error in
+            if let error = error {
+                self.errorMessage = error.localizedDescription
+            } else {
+                self.errorMessage = "Password reset email sent."
+            }
+        }
+    }
+}
 
 #Preview {
     loginView(isAuthenticated: .constant(false))

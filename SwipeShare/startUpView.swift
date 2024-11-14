@@ -11,6 +11,7 @@ struct StartUpView: View {
             VStack {
                 Spacer()
                 
+                // Logo Image
                 Image("LogoIcon")
                     .resizable()
                     .scaledToFit()
@@ -18,6 +19,7 @@ struct StartUpView: View {
                 
                 Spacer()
                 
+                // Sign Up Button
                 NavigationLink(destination: SignUpView(isAuthenticated: $isAuthenticated)) {
                     Text("Sign Up")
                         .font(.custom("BalooBhaina2-Bold", size: 20))
@@ -28,19 +30,23 @@ struct StartUpView: View {
                         .cornerRadius(100)
                         .padding(.horizontal, 10)
                 }
-            }
-            HStack{
-                Text("Already have an account? ")
-                    .font(.custom("BalooBhaina2-Medium", size: 16))
-                    .foregroundColor(.white)
-                NavigationLink(destination: loginView(isAuthenticated: $isAuthenticated)) {
-                    Text("Log In")
+                
+                // "Already have an account?" Text and Log In Link
+                HStack {
+                    Text("Already have an account? ")
                         .font(.custom("BalooBhaina2-Medium", size: 16))
                         .foregroundColor(.white)
-                        .underline()
+                    
+                    NavigationLink(destination: loginView(isAuthenticated: $isAuthenticated)) {
+                        Text("Log In")
+                            .font(.custom("BalooBhaina2-Medium", size: 16))
+                            .foregroundColor(.white)
+                            .underline()
+                    }
                 }
+                .padding(.top, 20) // Add some space between the SignUp button and this text
+                Spacer().frame(height: 40) // Space at the bottom
             }
-            Spacer().frame(height: 40)
         }
     }
 }

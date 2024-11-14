@@ -1,5 +1,7 @@
 import SwiftUI
 import Foundation
+import FirebaseFirestore
+import FirebaseAuth
 
 struct CampusPermissionView: View {
     @State private var isLoading = true
@@ -66,8 +68,13 @@ struct CampusPermissionView: View {
                 
                 // Confirm My Campus Button
                 Button(action: {
-                    // Handle confirm campus action
-                    navigateToFinalizeAccount = true
+                    if let selectedCampus = selectedSchool {
+                            navigateToFinalizeAccount = true
+                            updateCampusInFirestore(selectedCampus: selectedCampus)
+                        } else {
+                            // TODO: Handle the case where no school is selected (e.g., show an error)
+                            print("No school selected")
+                        }
                 }) {
                     Text("Confirm My Campus")
                         .font(.system(size: 18, weight: .bold))
@@ -108,6 +115,28 @@ struct CampusPermissionView: View {
         }
     }
 }
+
+// Update the campus data in Firestore
+func updateCampusInFirestore(selectedCampus: School) {
+    guard let userId = Auth.auth().currentUser?.uid else { return }
+    
+    let db = Firestore.firestore()
+    
+    // Prepare data to update
+    let updatedData: [String: Any] = [
+        "campus": selectedCampus.properties.name ?? ""
+    ]
+    
+    // Update the user's Firestore document
+    db.collection("users").document(userId).updateData(updatedData) { error in
+        if let error = error {
+            print("Error updating campus: \(error.localizedDescription)")
+        } else {
+            print("Campus updated successfully.")
+        }
+    }
+}
+
 
 
 struct CampusPermissionView_Previews: PreviewProvider {
