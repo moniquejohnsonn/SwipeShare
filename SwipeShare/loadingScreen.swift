@@ -1,10 +1,3 @@
-//
-//  loadingScreen.swift
-//  SwipeShare
-//
-//  Created by Monique Johnson on 11/10/24.
-//
-
 import SwiftUI
 
 struct loadingScreen: View {

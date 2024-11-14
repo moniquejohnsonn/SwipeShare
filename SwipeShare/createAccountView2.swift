@@ -1,9 +1,3 @@
-//
-//  createAccountView2.swift
-//  SwipeShare
-//
-//  Created by Adira Sklar on 11/11/24.
-//
 import SwiftUI
 
 

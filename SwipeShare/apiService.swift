@@ -1,10 +1,3 @@
-//
-//  apiService.swift
-//  SwipeShare
-//
-//  Created by Rosa Figueroa on 11/13/24.
-//
-
 import Foundation
 
 
