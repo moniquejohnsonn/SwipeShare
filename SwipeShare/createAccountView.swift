@@ -38,6 +38,7 @@ struct SignUpView: View {
                         .padding(.horizontal)
                 }
                 
+                
                 Button(action: handleSignUp) {
                     Text("Continue")
                         .font(.system(size: 16, weight: .bold))
@@ -98,6 +99,7 @@ struct SignUpView: View {
                         showLocationPermission = true
                     }
                 }
+                
             }
         }
     }
@@ -172,4 +174,3 @@ struct SignUpView: View {
         }
     }
 }
-
