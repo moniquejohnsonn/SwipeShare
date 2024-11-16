@@ -18,6 +18,8 @@
 		71D256382CE5A02800D563A2 /* receiverHomeView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256342CE5A02800D563A2 /* receiverHomeView2.swift */; };
 		71D256392CE5A02800D563A2 /* giverConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256352CE5A02800D563A2 /* giverConfirmation.swift */; };
 		71D256562CE5A14A00D563A2 /* mockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256552CE5A14600D563A2 /* mockData.swift */; };
+		B430F4FA2CE86890002A0EE6 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B430F4F92CE86890002A0EE6 /* ChatListView.swift */; };
+		B430F4FC2CE86F81002A0EE6 /* ChatDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B430F4FB2CE86F81002A0EE6 /* ChatDetailView.swift */; };
 		B443C8542CE12377006F9891 /* loadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B443C8532CE12377006F9891 /* loadingScreen.swift */; };
 		B443C8582CE1278A006F9891 /* startUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B443C8572CE1278A006F9891 /* startUpView.swift */; };
 		B443C86D2CE13FDC006F9891 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B443C86C2CE13FDC006F9891 /* FirebaseAuth */; };
@@ -82,6 +84,8 @@
 		71D256352CE5A02800D563A2 /* giverConfirmation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = giverConfirmation.swift; sourceTree = "<group>"; };
 		71D256362CE5A02800D563A2 /* settingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsView.swift; sourceTree = "<group>"; };
 		71D256552CE5A14600D563A2 /* mockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mockData.swift; sourceTree = "<group>"; };
+		B430F4F92CE86890002A0EE6 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
+		B430F4FB2CE86F81002A0EE6 /* ChatDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailView.swift; sourceTree = "<group>"; };
 		B443C8132CE11D8D006F9891 /* SwipeShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwipeShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B443C8232CE11D8F006F9891 /* SwipeShareTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwipeShareTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B443C82D2CE11D8F006F9891 /* SwipeShareUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwipeShareUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -190,6 +194,8 @@
 				71AE90232CE5412500D96908 /* apiService.swift */,
 				713B76EF2CE42A30000B0990 /* menuView.swift */,
 				71212B682CE47B6900812C48 /* giverHomeView.swift */,
+				B430F4F92CE86890002A0EE6 /* ChatListView.swift */,
+				B430F4FB2CE86F81002A0EE6 /* ChatDetailView.swift */,
 				713B76ED2CE41CD6000B0990 /* mainHomeView.swift */,
 				B443C8532CE12377006F9891 /* loadingScreen.swift */,
 				B443C8572CE1278A006F9891 /* startUpView.swift */,
@@ -401,10 +407,12 @@
 				C8504F622CE30A680047A294 /* finalizeAccount2.swift in Sources */,
 				71AE90242CE5412900D96908 /* apiService.swift in Sources */,
 				B443C8582CE1278A006F9891 /* startUpView.swift in Sources */,
+				B430F4FA2CE86890002A0EE6 /* ChatListView.swift in Sources */,
 				713B76F02CE42A36000B0990 /* menuView.swift in Sources */,
 				C88A3D1E2CE29A70000B4051 /* createAccountView3.swift in Sources */,
 				C88A3C3F2CE25BF8000B4051 /* createAccountView.swift in Sources */,
 				713B76EE2CE41CE3000B0990 /* mainHomeView.swift in Sources */,
+				B430F4FC2CE86F81002A0EE6 /* ChatDetailView.swift in Sources */,
 				C88A3D212CE2ADF9000B4051 /* finalizeAccount1.swift in Sources */,
 				71212B692CE47B6E00812C48 /* giverHomeView.swift in Sources */,
 			);
