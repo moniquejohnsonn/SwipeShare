@@ -2,6 +2,7 @@ import SwiftUI
 
 
 struct GiverHomeView: View {
+    @EnvironmentObject var userProfileManager: UserProfileManager
     @State private var showSidebar = false
     
     var body: some View {
@@ -43,7 +44,6 @@ struct GiverHomeView: View {
                 }
                 .padding(.horizontal)
             }
-            .background(Color("lightBackground"))
             .edgesIgnoringSafeArea(.top)
 
             // sidebar content

@@ -3,10 +3,11 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct loginView: View {
+    @EnvironmentObject var userProfileManager: UserProfileManager
+    
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var errorMessage: String? = nil
-    @Binding var isAuthenticated: Bool
     @State private var navigateToForgotEmail = false
     @State private var navigateToSignUp = false
     @State private var navigateToGiverHome = false
@@ -19,20 +20,20 @@ struct loginView: View {
             
             Text("Login")
                 .font(.custom("BalooBhaina2-Bold", size:45))
-                .foregroundColor(Color(red: 131 / 255, green: 50 / 255, blue: 172 / 255))
+                .foregroundColor(Color("primaryPurple"))
             
             Spacer().frame(height: 40)
             
             TextField("email", text: $email)
                 .padding()
-                .background(Color(red: 202 / 255, green: 168 / 255, blue: 245 / 255).opacity(0.3))
+                .background(Color("secondaryPurple").opacity(0.3))
                 .cornerRadius(8)
                 .padding(.horizontal, 24)
                 .autocapitalization(.none)
             
             SecureField("password", text: $password)
                 .padding()
-                .background(Color(red: 202 / 255, green: 168 / 255, blue: 245 / 255).opacity(0.3))
+                .background(Color("secondaryPurple").opacity(0.3))
                 .cornerRadius(8)
                 .padding(.horizontal, 24)
                 .padding(.top, 8)
@@ -40,13 +41,10 @@ struct loginView: View {
             HStack {
                 Spacer()
                 // TODO: - Forgot Password Link Sending
-                Button(action: {
-                    // Forgot password action
-                    forgotPassword()
-                }) {
+                Button(action: forgotPassword) {
                     Text("Forgot Password?")
                         .font(.footnote)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color("primaryPurple"))
                         .padding(.trailing, 24)
                         .padding(.top, 8)
                 }
@@ -58,7 +56,7 @@ struct loginView: View {
                     .foregroundColor(.white)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.blue)
+                    .background(Color("primaryGreen"))
                     .cornerRadius(8)
                     .padding(.horizontal, 24)
                     .padding(.top, 20)
@@ -75,21 +73,15 @@ struct loginView: View {
             
             HStack {
                 Text("Don't have an account?")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Color("primaryPurple"))
                 
-                Button(action: {
-                    navigateToSignUp = true
-                }) {
-                    Text("Sign Up")
-                        .foregroundColor(.blue)
-                }
+                NavigationLink("Sign Up", destination: SignUpView())
+                    .foregroundColor(Color("primaryPurple"))
+                    .underline()
             }
             .padding(.bottom, 30)
         }
         .navigationTitle("Log In")
-        .navigationDestination(isPresented: $navigateToSignUp) {
-            SignUpView(isAuthenticated: $isAuthenticated)
-        }
         .navigationDestination(isPresented: $navigateToGiverHome) {
             GiverHomeView()
         }
@@ -99,58 +91,37 @@ struct loginView: View {
     }
     
     private func loginUser() {
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+        userProfileManager.login(email: email, password: password) { error in
             if let error = error {
-                self.errorMessage = error.localizedDescription
+                errorMessage = error.localizedDescription
+            } else if let profile = userProfileManager.currentUserProfile {
+                errorMessage = nil
+                navigateBasedOnRole(profile: profile)
             } else {
-                self.errorMessage = nil
-                self.isAuthenticated = true
-                fetchProfile()
+                errorMessage = "Failed to fetch user profile."
             }
         }
     }
     
-    private func fetchProfile() {
-        guard let userId = Auth.auth().currentUser?.uid else {
-            return
-        }
-        
-        let db = Firestore.firestore()
-        
-        // Fetch the user document from Firestore
-        db.collection("users").document(userId).getDocument { (document, error) in
-            if let document = document, document.exists {
-                // Extract the role booleans from the document
-                let isGiver = document.get("isGiver") as? Bool ?? false
-                let isReceiver = document.get("isReceiver") as? Bool ?? false
-                
-                // Navigate based on role
-                if isGiver {
-                    navigateToGiverHome = true
-                } else if isReceiver {
-                    navigateToReceiverHome = true
-                } else {
-                    errorMessage = "Error: User role not found."
-                }
-            } else {
-                // Handle the error if the document doesn't exist or fetch failed
-                errorMessage = "Error fetching profile: \(error?.localizedDescription ?? "Unknown error")"
-            }
+    private func navigateBasedOnRole(profile: UserProfile) {
+        if profile.isGiver {
+            navigateToGiverHome = true
+        } else {
+            navigateToReceiverHome = true
         }
     }
     
-    // Forgot email functionality
     private func forgotPassword() {
         Auth.auth().sendPasswordReset(withEmail: email) { error in
             if let error = error {
-                self.errorMessage = error.localizedDescription
+                errorMessage = error.localizedDescription
             } else {
-                self.errorMessage = "Password reset email sent."
+                errorMessage = "Password reset email sent."
             }
         }
     }
 }
 
 #Preview {
-    loginView(isAuthenticated: .constant(false))
+    loginView()
 }

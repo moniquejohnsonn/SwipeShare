@@ -1,17 +1,14 @@
-//
-//  ContentView.swift
-//  milestone3
-//
-//  Created by Natalie Bran on 11/11/24.
-//
-
 import SwiftUI
 
 struct SettingsView: View {
     // manage the toggle states
+    @ObservedObject var userProfileManager = UserProfileManager()
+    @Environment(\.presentationMode) var presentationMode
+    
     @State private var isActivelyGivingSwipes: Bool = false
     @State private var allowProfileAutoShow: Bool = true
     @State private var showSidebar = false
+    @State private var signedOut = false
     
     var body: some View {
         ZStack {
@@ -24,9 +21,9 @@ struct SettingsView: View {
                         
                         HStack {
                             Button(action: {
-                                        withAnimation {
-                                            showSidebar.toggle()
-                                        }
+                                withAnimation {
+                                    showSidebar.toggle()
+                                }
                             }) {
                                 Image(systemName: "line.horizontal.3")
                                     .font(.title)
@@ -44,21 +41,45 @@ struct SettingsView: View {
                     }
                     
                     // Profile Picture and Name
-                    VStack {
-                        Image("rosa")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 120, height: 120)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.white, lineWidth: 4))
-                            .shadow(radius: 10)
-                        
-                        Text("Rosa Figueroa")
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(Constants.Purple)
+                    if let userProfile = userProfileManager.currentUserProfile {
+                        VStack {
+                            AsyncImage(url: URL(string: userProfile.profilePictureURL)) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 120, height: 120)
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.white, lineWidth: 4))
+                                    .shadow(radius: 10)
+                            } placeholder: {
+                                // Check if the URL is empty or invalid
+                                if userProfile.profilePictureURL.isEmpty {
+                                    // Show a default avatar when the URL is invalid or empty
+                                    Image(systemName: "person.crop.circle.fill")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 120, height: 120)
+                                        .clipShape(Circle())
+                                        .overlay(Circle().stroke(Color.white, lineWidth: 4))
+                                        .shadow(radius: 10)
+                                } else {
+                                    // Show the loading spinner while the image is loading
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                        .frame(width: 120, height: 120)
+                                        .clipShape(Circle())
+                                        .overlay(Circle().stroke(Color.white, lineWidth: 4))
+                                        .shadow(radius: 10)
+                                }
+                            }
+                            
+                            Text(userProfile.name)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(Constants.Purple)
+                        }
+                        .padding(.top, -60)
                     }
-                    .padding(.top, -60)
                     
                     Divider().padding(.vertical, 8)
                     
@@ -105,15 +126,31 @@ struct SettingsView: View {
                             .font(.headline)
                             .foregroundColor(Constants.DarkPurple)
                         
-                        Text("Receiver")
+                        Text(userProfileManager.currentUserProfile?.isGiver == true ? "Giver" : "Receiver")
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundColor(Constants.DarkPurple)
                         
                         Button(action: {
-                            // Change Role Action
+                            // Toggle the 'isGiver' value
+                            if var userProfile = userProfileManager.currentUserProfile {
+                                userProfile.isGiver.toggle()  // Toggle the role
+                                
+                                // Update the profile in UserProfileManager (this will trigger view update)
+                                userProfileManager.currentUserProfile = userProfile
+                                
+                                // Save the updated profile to Firestore
+                                userProfileManager.saveUserProfile(profile: userProfile) { error in
+                                    if let error = error {
+                                        print("Error saving user profile: \(error.localizedDescription)")
+                                    } else {
+                                        // Successfully updated the user profile
+                                        print("User profile updated successfully!")
+                                    }
+                                }
+                            }
                         }) {
-                            Text("Change Role to Giver")
+                            Text(userProfileManager.currentUserProfile?.isGiver == true ? "Change Role to Receiver" : "Change Role to Giver")
                                 .padding()
                                 .frame(maxWidth: .infinity)
                                 .background(Constants.DarkPurple)
@@ -149,11 +186,30 @@ struct SettingsView: View {
                         .padding(.horizontal)
                         .tint(Constants.DarkPurple)
                     }
+                    // Sign Out Button
+                    Button(action: {
+                        userProfileManager.signOut()
+                        signedOut = true
+                    }) {
+                        Text("Sign Out")
+                            .font(.headline)
+                            .foregroundColor(.red)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.white)
+                            .cornerRadius(10)
+                            .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 20)
                     
                 }
             }
             .background(Color(.systemGroupedBackground))
             .ignoresSafeArea(edges: .top)
+            .navigationDestination(isPresented: $signedOut) {
+                StartUpView()
+            }
             
             // sidebar content
             MenuView(isSidebarVisible: $showSidebar)

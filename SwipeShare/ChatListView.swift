@@ -1,85 +1,155 @@
 import SwiftUI
+import FirebaseFirestore
+
+struct Chat: Identifiable, Decodable {
+    @DocumentID var id: String?
+    let participants: [String]
+    let createdAt: Timestamp
+    let lastMessage: String
+    let lastMessageTimestamp: Timestamp
+    let profilePicture: String?
+
+    var name: String {
+        return "Chat with \(participants.joined(separator: ", "))"
+    }
+
+    var timestamp: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dateStr = formatter.string(from: lastMessageTimestamp.dateValue())
+
+        let calendar = Calendar.current
+        let today = calendar.isDateInToday(lastMessageTimestamp.dateValue())
+
+        if today {
+            formatter.dateFormat = "HH:mm"
+            return formatter.string(from: lastMessageTimestamp.dateValue())
+        } else {
+            formatter.dateFormat = "MMM dd"
+            return formatter.string(from: lastMessageTimestamp.dateValue())
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, participants, createdAt, lastMessage, lastMessageTimestamp, profilePicture
+    }
+}
 
 struct ChatListView: View {
     @State private var showSidebar = false
+    @State private var chats = [Chat]()
+    @State private var selectedChat: Chat? = nil
+    @State private var isLoading = true
+    @StateObject private var userProfileManager = UserProfileManager()
     
-    // TODO: Use Firebase Database to pull info
-    let chats = [
-        Chat(id: "1", name: "John Doe", profilePicture: "profile1", lastMessage: "Hey, how are you?", timestamp: "2:30 PM"),
-        Chat(id: "2", name: "Jane Smith", profilePicture: "profile2", lastMessage: "See you tomorrow!", timestamp: "1:15 PM"),
-        Chat(id: "3", name: "Alice Johnson", profilePicture: "profile3", lastMessage: "Thanks for the help!", timestamp: "11:45 AM")
-    ]
+    private var db = Firestore.firestore()
+    
+    // TODO: FIX!!!!!
+    // Make Nvigation on top and actually pull chats from the database
+    
+    // Fetch the chats where the user is a participant
+    func fetchChats() {
+        guard let userId = userProfileManager.currentUserProfile?.id else {
+            print("User ID is nil. Exiting fetchChats.")
+            return
+        }
+        
+        print("Fetching chats for user ID: \(userId)")
+        
+        db.collection("chats")
+            .whereField("participants", arrayContains: userId)
+            .order(by: "lastMessageTimestamp", descending: true)
+            .addSnapshotListener { snapshot, error in
+                if let error = error {
+                    print("Error fetching chats: \(error)")
+                    return
+                }
+                
+                self.chats = snapshot?.documents.compactMap { document in
+                    try? document.data(as: Chat.self)
+                } ?? []
+                self.isLoading = false
+            }
+    }
     
     var body: some View {
         NavigationView {
             ZStack {
-                // Sidebar
-                if showSidebar {
-                    MenuView(isSidebarVisible: $showSidebar)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .transition(.move(edge: .leading))
-                }
-                
                 // Main Content
-                VStack(spacing: 0) {
-                    // Custom Header
-                    HeaderView(
-                        title: "Chats",
-                        showBackButton: false,
-                        onHeaderButtonTapped: {
-                            withAnimation {
-                                showSidebar.toggle() // toggle sidebar visibility
+                ScrollView {
+                    VStack(spacing: 0) {
+                        // Custom Header
+                        HeaderView(
+                            title: "Chats",
+                            showBackButton: false,
+                            onHeaderButtonTapped: {
+                                withAnimation {
+                                    showSidebar.toggle() // toggle sidebar visibility
+                                }
                             }
-                        }
-                    )
-                    
-                    // Chat List
-                    List(chats) { chat in
-                        HStack(spacing: 15) {
-                            Image(chat.profilePicture)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 50, height: 50)
-                                .clipShape(Circle())
-                            
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text(chat.name)
-                                    .font(.headline)
-                                    .foregroundColor(.black)
-                                
-                                Text(chat.lastMessage)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                    .lineLimit(1)
+                        )
+                        .frame(maxWidth: .infinity, alignment: .top)
+                        
+                        if isLoading {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .padding()
+                        } else {
+                            // Chat List
+                            List(chats) { chat in
+                                NavigationLink(
+                                    destination: ChatDetailView(chat: chat),
+                                    label: {
+                                        HStack(spacing: 15) {
+                                            if let profilePicture = chat.profilePicture {
+                                                Image(profilePicture)
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: 50, height: 50)
+                                                    .clipShape(Circle())
+                                            } else {
+                                                Circle()
+                                                    .frame(width: 50, height: 50)
+                                                    .foregroundColor(.gray)
+                                            }
+                                            
+                                            VStack(alignment: .leading, spacing: 5) {
+                                                Text(chat.name)
+                                                    .font(.headline)
+                                                    .foregroundColor(.black)
+                                                
+                                                Text(chat.lastMessage)
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.gray)
+                                                    .lineLimit(1)
+                                            }
+                                            
+                                            Spacer()
+                                            
+                                            Text(chat.timestamp)
+                                                .font(.caption)
+                                                .foregroundColor(.gray)
+                                        }
+                                        .padding(.vertical, 10)
+                                    }
+                                )
                             }
-                            
-                            Spacer()
-                            
-                            Text(chat.timestamp)
-                                .font(.caption)
-                                .foregroundColor(.gray)
+                            .listStyle(PlainListStyle())
+                            .background(Color.white)
                         }
-                        .padding(.vertical, 10)
                     }
-                    .listStyle(PlainListStyle())
-                    .background(Color.white)
+                    .frame(maxHeight: .infinity, alignment: .top)
                 }
-                .background(Color("lightBackground"))
-                .edgesIgnoringSafeArea(.top)
+            }
+            .onAppear {
+                fetchChats()
             }
         }
     }
-}
-
-// TODO: Change struct with info we want
-struct Chat: Identifiable {
-    let id: String
-    let name: String
-    let profilePicture: String // Name of the image asset
-    let lastMessage: String
-    let timestamp: String
-}
-
-#Preview {
-    ChatListView()
+    
+    struct ChatListView_Previews: PreviewProvider {
+        static var previews: some View {
+            ChatListView()
+        }
+    }
 }

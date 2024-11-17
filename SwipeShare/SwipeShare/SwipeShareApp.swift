@@ -1,13 +1,5 @@
-//
-//  SwipeShareApp.swift
-//  SwipeShare
-//
-//  Created by Monique Johnson on 11/10/24.
-//
-
 import SwiftUI
 import Firebase
-
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     static var isFirebaseConfigured = false
@@ -22,38 +14,41 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
-
-// MARK: Probably remove this and use the MainHomeView instead
 @main
 struct SwipeShareApp: App {
     // register app delegate for Firebase setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @State private var isAuthenticated = false
-    @State private var isLoading = true
-    @State private var isGiver = false
+    @StateObject private var userProfileManager = UserProfileManager()
+    @State private var isLoading = false
     
     var body: some Scene {
         WindowGroup {
             NavigationStack {
                 if isLoading {
                     loadingScreen()
+                } else if !userProfileManager.isLoggedIn || userProfileManager.currentUserProfile == nil {
+                    StartUpView()
+                        .environmentObject(userProfileManager)
                 } else {
-                    if isAuthenticated && isGiver{
-                        GiverHomeView()
-                    } else if isAuthenticated && !isGiver{
-                        //ReceiverHomeView(isSwipeGiverChecked: $isSwipeGiverChecked)
+                    // Dynamically navigate based on user's role
+                    VStack {
+                        if let userProfile = userProfileManager.currentUserProfile {
+                            if userProfile.isGiver {
+                                GiverHomeView()
+                                    .environmentObject(userProfileManager)
+                            } else {
+                                ReceiverHomeView1()
+                                    .environmentObject(userProfileManager)
+                            }
+                        }
                     }
-                    else {
-                        StartUpView(isAuthenticated: $isAuthenticated)
+                    .onChange(of: userProfileManager.currentUserProfile?.isGiver) { _ in
+                        // Handle any necessary updates when the user's role changes
+                        // This ensures the view updates when the role changes
                     }
                 }
             }
-            
-            .onAppear {
-                if AppDelegate.isFirebaseConfigured {
-                    self.isLoading = false
-                }
-            }
+            .environmentObject(userProfileManager)
         }
     }
 }

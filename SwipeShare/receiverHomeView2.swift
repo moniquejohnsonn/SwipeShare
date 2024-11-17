@@ -1,15 +1,12 @@
-//  DiningHallView.swift
-//
-//  Created by Kalei Ragland on 11/12/24.
-//
-
-
 import SwiftUI
 import MapKit
 
 struct ReceiverHomeView2: View {
+    @EnvironmentObject var userProfileManager: UserProfileManager
     @State private var selectedDiningHall: DiningHall? = nil
     @State private var navigateToReceiverHome = false
+    
+    
     
     // initial columbia/barnard view
     @State private var region = MKCoordinateRegion(
