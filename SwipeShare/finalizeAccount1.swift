@@ -108,7 +108,7 @@ struct FinalizeAccount1: View {
                 .padding(.leading, 16)
                 .padding(.top, 8)
                 
-                
+                // TODO: IF GIVER UPDATE DATABASE WITH ADDITIONAL INFO
                 // Frequency Checkboxes (only visible if Swipe Giver is selected)
                 if isSwipeGiverChecked {
                     VStack(alignment: .leading, spacing: -20) {
@@ -163,6 +163,7 @@ struct FinalizeAccount1: View {
                 }
                 
                 // Receiver Section - "All Set!" Button
+                // TODO: GATHER ADDITIONAL INFO AND FINISH PROFILE
                 if isSwipeReceiverChecked {
                     Button(action: {
                         updateProfileForReceiver() // Update profile status as Receiver
@@ -185,7 +186,6 @@ struct FinalizeAccount1: View {
                 if isSwipeGiverChecked {
                     Button(action: {
                         updateProfileForGiver() // Update profile status as Giver
-                        saveUserRole() // FOR TESTING PURPOSES ONLY
                         navigateToFinalizeAccount2 = true
                     }) {
                         Text("Last Step")
@@ -215,7 +215,6 @@ struct FinalizeAccount1: View {
         let userID = Auth.auth().currentUser?.uid
         db.collection("users").document(userID!)
             .updateData([
-                "isReceiver": true,
                 "isGiver": false
             ]) { error in
                 if let error = error {
@@ -231,7 +230,6 @@ struct FinalizeAccount1: View {
         let userID = Auth.auth().currentUser?.uid
         db.collection("users").document(userID!)
             .updateData([
-                "isReceiver": false,
                 "isGiver": true,
                 "mealFrequency": selectedFrequency,
                 "mealCount": inputNumber
@@ -244,7 +242,7 @@ struct FinalizeAccount1: View {
             }
     }
     
-    // TODO: Photo Storing Error!!
+    // MARK: Upgrade to Cloud Storage and test
     // function to save photo to firebase
     func updateUserProfile() {
         guard let image = profileImage else {
@@ -283,15 +281,6 @@ struct FinalizeAccount1: View {
                     print("Download URL is nil")
                 }
             }
-        }
-    }
-
-    // FOR TESTING PURPOSES ONLY
-    func saveUserRole() {
-        if isSwipeGiverChecked {
-            UserData.saveUserRole("giver")
-        } else if isSwipeReceiverChecked {
-            UserData.saveUserRole("receiver")
         }
     }
     

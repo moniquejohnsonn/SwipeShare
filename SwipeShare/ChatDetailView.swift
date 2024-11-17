@@ -1,17 +1,60 @@
 import SwiftUI
+import FirebaseFirestore
 
 struct ChatDetailView: View {
+    @EnvironmentObject var userProfileManager: UserProfileManager
     @Environment(\.presentationMode) var presentationMode // For back navigation
     @State private var newMessage: String = "" // For typing new messages
     
-    // Example chat data
+    
+    // The chat selected from ChatListView
     let chat: Chat
-    @State private var messages: [Message] = [
-        Message(id: "1", content: "Hello!", isFromCurrentUser: true),
-        Message(id: "2", content: "Hi there!", isFromCurrentUser: false),
-        Message(id: "3", content: "How are you doing?", isFromCurrentUser: true),
-        Message(id: "4", content: "I'm good, thanks! You?", isFromCurrentUser: false)
-    ]
+    @State private var messages: [Message] = [] // Array of optional Message
+    
+    // Firestore reference to messages
+    private var db = Firestore.firestore()
+    
+    init(chat: Chat) {
+        self.chat = chat
+    }
+    
+    func loadMessages() {
+        db.collection("chats")
+            .document(chat.id ?? "") // Use optional unwrapping to ensure chat.id is not nil
+            .collection("messages")
+            .order(by: "timestamp")
+            .addSnapshotListener { querySnapshot, error in
+                if let error = error {
+                    print("Error fetching messages: \(error.localizedDescription)")
+                    return
+                }
+                
+                // Clear previous messages before loading new ones
+                var loadedMessages: [Message] = []
+                
+                // Loop through documents and manually validate before appending valid messages
+                querySnapshot?.documents.forEach { document in
+                    let data = document.data()
+                    
+                    // Safely extract values from the Firestore document
+                    guard let content = data["content"] as? String,
+                          let senderId = data["senderId"] as? String,
+                          let timestamp = data["timestamp"] as? Timestamp else {
+                        print("Document data is missing required fields: \(document.documentID)")
+                        return // Skip this document if required fields are missing
+                    }
+                    
+                    let isFromCurrentUser = senderId == self.userProfileManager.currentUserProfile?.id
+                    let message = Message(id: document.documentID, content: content, isFromCurrentUser: isFromCurrentUser, timestamp: timestamp.dateValue())
+                    
+                    // Append valid message to the list
+                    loadedMessages.append(message)
+                }
+                
+                // Assign the filtered messages array to state
+                self.messages = loadedMessages
+            }
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -32,11 +75,17 @@ struct ChatDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 VStack(spacing: 10) {
-                    Image(chat.profilePicture)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
+                    if let profilePicture = chat.profilePicture {
+                        Image(profilePicture)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                    } else {
+                        Circle()
+                            .frame(width: 100, height: 100)
+                            .foregroundColor(.gray)
+                    }
                     
                     Text(chat.name)
                         .font(.custom("BalooBhaina2-Bold", size: 24))
@@ -89,34 +138,52 @@ struct ChatDetailView: View {
                         .background(Color("primaryPurple"))
                         .clipShape(Circle())
                 }
+                .disabled(newMessage.isEmpty)
             }
             .padding()
             .background(Color.white)
         }
+        .onAppear {
+            loadMessages() // Load messages when the view appears
+        }
         .edgesIgnoringSafeArea(.top)
     }
     
-    // Send a new message
+    // Send a new message to Firestore
     private func sendMessage() {
         guard !newMessage.isEmpty else { return }
-        messages.append(Message(id: UUID().uuidString, content: newMessage, isFromCurrentUser: true))
-        newMessage = ""
+        guard let userId = userProfileManager.currentUserProfile?.id else {
+            print("User is not logged in")
+            return
+        }
+        
+        let messageData: [String: Any] = [
+            "content": newMessage,
+            "senderId": userId,
+            "timestamp": FieldValue.serverTimestamp()
+        ]
+        
+        // Add message to Firestore
+        db.collection("chats")
+            .document(chat.id ?? "")
+            .collection("messages")
+            .addDocument(data: messageData) { error in
+                if let error = error {
+                    print("Error sending message: \(error.localizedDescription)")
+                } else {
+                    // Clear the input field and reload messages
+                    newMessage = ""
+                }
+            }
     }
 }
 
+
 // Message Model
 struct Message: Identifiable {
-    let id: String
-    let content: String
-    let isFromCurrentUser: Bool
+    var id: String
+    var content: String
+    var isFromCurrentUser: Bool
+    var timestamp: Date
 }
 
-#Preview {
-    ChatDetailView(chat: Chat(
-        id: "1",
-        name: "John Doe",
-        profilePicture: "profile1",
-        lastMessage: "Hey, how are you?",
-        timestamp: "2:30 PM"
-    ))
-}

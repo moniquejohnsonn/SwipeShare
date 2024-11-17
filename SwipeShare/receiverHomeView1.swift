@@ -1,14 +1,8 @@
-//
-//  receiverHome1.swift
-//  SwipeShare
-//
-//  Created by Rosa Figueroa on 11/14/24.
-//
-
 import SwiftUI
 import MapKit
 
 struct ReceiverHomeView1: View {
+    @EnvironmentObject var userProfileManager: UserProfileManager
     @State private var showSidebar = false
 
     var body: some View {
@@ -41,7 +35,6 @@ struct ReceiverHomeView1: View {
                 }
                 .padding(.horizontal)
             }
-            .background(Color("lightBackground"))
             .edgesIgnoringSafeArea(.top)
 
             // sidebar content

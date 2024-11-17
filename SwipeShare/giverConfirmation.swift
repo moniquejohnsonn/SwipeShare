@@ -1,10 +1,3 @@
-//
-//  MealSwipeRequestView.swift
-//  milestone3
-//
-//  Created by Natalie Bran on 11/11/24.
-//
-
 import Foundation
 import SwiftUI
 
