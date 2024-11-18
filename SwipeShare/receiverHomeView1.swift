@@ -42,23 +42,20 @@ struct ReceiverHomeView1: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .transition(.move(edge: .leading))
                 .padding(.leading, 0)
-        
         }
     }
 }
-
-
 struct DiningHallRow: View {
     let diningHall: DiningHall
     let giverCount: Int
-    
+
     var body: some View {
         HStack {
-            Spacer()
             Image("pin")
                 .resizable()
                 .frame(width: 32, height: 32)
-            
+                .padding(.leading, 10) // Fixed position on the left
+
             VStack(alignment: .leading) {
                 Text(diningHall.name)
                     .font(.custom("BalooBhaina2-Bold", size: 20))
@@ -66,17 +63,25 @@ struct DiningHallRow: View {
                     .lineLimit(nil)
                     .multilineTextAlignment(.leading)
             }
-            HStack {
+            .padding(.leading, 10) // Adjust padding to provide some space after the pin
+
+            Spacer() // Push the triangle and giver count to the right
+
+            HStack(spacing: 8) { // Increased spacing to 8 for more space between the triangle and number
                 Image(systemName: "triangle.fill")
                     .resizable()
                     .frame(width: 14, height: 14)
-                    .foregroundColor(Color("secondaryGreen"))
-                
+                    .foregroundColor(giverCount == 0 ? Color(red: 245/255, green: 168/255, blue: 169/255) : Color("secondaryGreen"))
+                    .rotationEffect(Angle(degrees: giverCount == 0 ? 180 : 0)) // Rotate if count is 0
+                    .padding(.trailing, -4) // Move triangle slightly left
+
                 Text("\(giverCount)")
                     .font(.custom("BalooBhaina2-Regular", size: 16))
                     .foregroundColor(.black)
+                    .padding(.top, 4)
             }
-            Spacer()
+            .padding(.trailing, 8)
+          
         }
         .padding()
         .background(Color("secondaryPurple").opacity(0.5))
@@ -92,3 +97,4 @@ struct ReceiverHomeView_Previews: PreviewProvider {
         ReceiverHomeView1()
     }
 }
+
