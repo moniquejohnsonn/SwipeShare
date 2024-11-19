@@ -34,7 +34,7 @@ struct FinalizeAccount2: View {
                             .font(.custom("BalooBhaina2-Bold", size: 30))
                             .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
                         
-                        Text("meal swipes can you give per \(selectedFrequency)?")
+                        Text("meal swipes can you give per week?")
                             .font(.custom("BalooBhaina2-Bold", size: 30))
                             .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
                     }
