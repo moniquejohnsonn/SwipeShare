@@ -9,6 +9,7 @@ struct SettingsView: View {
     @State private var allowProfileAutoShow: Bool = true
     @State private var showSidebar = false
     @State private var signedOut = false
+    @State private var navigateToGiverOnboarding: Bool = false // New navigation state
     
     var body: some View {
         ZStack {
@@ -52,9 +53,7 @@ struct SettingsView: View {
                                     .overlay(Circle().stroke(Color.white, lineWidth: 4))
                                     .shadow(radius: 10)
                             } placeholder: {
-                                // Check if the URL is empty or invalid
                                 if userProfile.profilePictureURL.isEmpty {
-                                    // Show a default avatar when the URL is invalid or empty
                                     Image(systemName: "person.crop.circle.fill")
                                         .resizable()
                                         .scaledToFit()
@@ -63,7 +62,6 @@ struct SettingsView: View {
                                         .overlay(Circle().stroke(Color.white, lineWidth: 4))
                                         .shadow(radius: 10)
                                 } else {
-                                    // Show the loading spinner while the image is loading
                                     ProgressView()
                                         .progressViewStyle(CircularProgressViewStyle())
                                         .frame(width: 120, height: 120)
@@ -113,7 +111,7 @@ struct SettingsView: View {
                         }
                     }
                     .padding()
-                    .background(Constants.LightTurquoise) // Different color background for "My School"
+                    .background(Constants.LightTurquoise)
                     .cornerRadius(15)
                     .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
                     .padding(.horizontal)
@@ -132,11 +130,10 @@ struct SettingsView: View {
                             .foregroundColor(Constants.DarkPurple)
                         
                         Button(action: {
-                            // Toggle the 'isGiver' value
                             if var userProfile = userProfileManager.currentUserProfile {
-                                userProfile.isGiver.toggle()  // Toggle the role
+                                userProfile.isGiver.toggle() // Toggle the role
                                 
-                                // Update the profile in UserProfileManager (this will trigger view update)
+                                // Update the profile in UserProfileManager
                                 userProfileManager.currentUserProfile = userProfile
                                 
                                 // Save the updated profile to Firestore
@@ -144,8 +141,12 @@ struct SettingsView: View {
                                     if let error = error {
                                         print("Error saving user profile: \(error.localizedDescription)")
                                     } else {
-                                        // Successfully updated the user profile
                                         print("User profile updated successfully!")
+                                        
+                                        // Navigate to Giver Onboarding if role is set to Giver
+                                        if userProfile.isGiver {
+                                            navigateToGiverOnboarding = true
+                                        }
                                     }
                                 }
                             }
@@ -186,6 +187,7 @@ struct SettingsView: View {
                         .padding(.horizontal)
                         .tint(Constants.DarkPurple)
                     }
+                    
                     // Sign Out Button
                     Button(action: {
                         userProfileManager.signOut()
@@ -202,7 +204,6 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal)
                     .padding(.top, 20)
-                    
                 }
             }
             .background(Color(.systemGroupedBackground))
@@ -210,13 +211,15 @@ struct SettingsView: View {
             .navigationDestination(isPresented: $signedOut) {
                 StartUpView()
             }
+            .navigationDestination(isPresented: $navigateToGiverOnboarding) {
+                FinalizeAccount1() // Navigate to the Giver Onboarding view
+            }
             
             // sidebar content
             MenuView(isSidebarVisible: $showSidebar)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .transition(.move(edge: .leading))
                 .padding(.leading, 0)
-            
         }
     }
 }
@@ -234,3 +237,4 @@ struct SettingsView_Previews: PreviewProvider {
         SettingsView()
     }
 }
+
