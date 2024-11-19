@@ -6,16 +6,128 @@ import FirebaseAuth
 struct CampusPermissionView: View {
     @State private var isLoading = true
     @State private var selectedSchool: School? = nil
+    @State private var selectedYear = "Select your year" // Default selection
+    @State private var selectedMajor = "Select your major" // Default selection
     @State private var navigateToFinalizeAccount = false
-    
-    // initialize to mock schools for testing in canvas
+    @State private var showErrorAlert = false
+    @State private var errorMessage = ""
+
+    // Initialize mock schools for testing in Canvas
     @State private var schools: [School] = [
         School(properties: SchoolProperties(name: "Columbia University", city: "New York", postcode: "10027"), geometry: Geometry(coordinates: [-73.9626, 40.8075])),
         School(properties: SchoolProperties(name: "NYU", city: "New York", postcode: "10003"), geometry: Geometry(coordinates: [-73.9980, 40.7295]))
     ]
     
-    private let apiService = APIService() // creates an instance of APIService
+    private let apiService = APIService() // Creates an instance of APIService
+    private let years = [
+        "Select your year", // Placeholder option
+        "Freshman",
+        "Sophomore",
+        "Junior",
+        "Senior",
+        "Graduate"
+    ]
     
+    private let majors = [
+        "African American and African Diaspora Studies",
+        "American Studies",
+        "Analytics",
+        "Ancient Studies",
+        "Anthropology",
+        "Applied Mathematics",
+        "Applied Mathematics",
+        "Applied Physics",
+        "Archaeology",
+        "Architecture",
+        "Art History",
+        "Art History and Visual Arts",
+        "Astronomy",
+        "Astrophysics",
+        "Biochemistry",
+        "Biology",
+        "Biomedical Engineering",
+        "Biophysics",
+        "Chemical Engineering",
+        "Chemical Physics",
+        "Chemistry",
+        "Civil Engineering",
+        "Classical Studies",
+        "Classics",
+        "Climate System Science",
+        "Climate and Sustainability",
+        "Cognitive Science",
+        "Comparative Literature and Society",
+        "Computational Biology",
+        "Computer Engineering",
+        "Computer Science",
+        "Computer Science",
+        "Computer Science-Mathematics",
+        "Creative Writing",
+        "Dance",
+        "Data Science",
+        "Drama and Theatre Arts",
+        "Earth Science",
+        "Earth and Environmental Engineering",
+        "East Asian Studies",
+        "Economics",
+        "Economics-Mathematics",
+        "Economics-Philosophy",
+        "Economics-Political Science",
+        "Economics-Statistics",
+        "Electrical Engineering",
+        "Engineering Management Systems",
+        "Engineering Mechanics",
+        "English",
+        "Environmental Biology",
+        "Environmental Chemistry",
+        "Environmental Science",
+        "Ethnicity and Race Studies",
+        "Evolutionary Biology of the Human Species",
+        "Film and Media Studies",
+        "Financial Economics",
+        "Financial Engineering",
+        "French",
+        "French and Francophone Studies",
+        "German Literature and Cultural History",
+        "Hispanic Studies",
+        "History",
+        "History and Theory of Architecture",
+        "Human Rights",
+        "Industrial Engineering",
+        "Information Science",
+        "Italian",
+        "Latin American and Caribbean Studies",
+        "Linguistics",
+        "Materials Science and Engineering",
+        "Mathematics",
+        "Mathematics-Statistics",
+        "Mechanical Engineering",
+        "Medical Humanities",
+        "Middle Eastern, South Asian and African Studies",
+        "Music",
+        "Neuroscience and Behavior",
+        "Operations Research",
+        "Philosophy",
+        "Physics",
+        "Political Science",
+        "Political Science-Statistics",
+        "Psychology",
+        "Regional Studies",
+        "Religion",
+        "Russian Language and Culture",
+        "Russian Literature and Culture",
+        "Select your major", // Placeholder option
+        "Slavic Studies",
+        "Sociology",
+        "Statistics",
+        "Sustainable Development",
+        "Urban Studies",
+        "Visual Arts",
+        "Women's and Gender Studies",
+        "Yiddish Studies"
+    ]
+
+
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -55,7 +167,7 @@ struct CampusPermissionView: View {
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
-                    .foregroundColor(.black) // Attempt to apply a global text color
+                    .foregroundColor(.black)
                     .frame(width: 300, height: 50)
                     .background(Color.white)
                     .overlay(
@@ -64,17 +176,52 @@ struct CampusPermissionView: View {
                     )
                     .cornerRadius(8)
                 }
+                
+                Spacer().frame(height: 20)
+
+                // Year Picker
+                Picker("Select your year", selection: $selectedYear) {
+                    ForEach(years, id: \.self) { year in
+                        Text(year)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+                .frame(width: 300, height: 50)
+                .background(Color.white)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(red: 0.03, green: 0.75, blue: 0.72), lineWidth: 2)
+                )
+                .cornerRadius(8)
+
+                Spacer().frame(height: 20)
+
+                // Major Picker
+                Picker("Select your major", selection: $selectedMajor) {
+                    ForEach(majors, id: \.self) { major in
+                        Text(major)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+                .frame(width: 300, height: 50)
+                .background(Color.white)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(red: 0.03, green: 0.75, blue: 0.72), lineWidth: 2)
+                )
+                .cornerRadius(8)
+                
                 Spacer().frame(height: 150) // Increased height to move the button lower on the screen
                 
                 // Confirm My Campus Button
                 Button(action: {
-                    if let selectedCampus = selectedSchool {
-                            navigateToFinalizeAccount = true
-                            updateCampusInFirestore(selectedCampus: selectedCampus)
-                        } else {
-                            // TODO: Handle the case where no school is selected (e.g., show an error)
-                            print("No school selected")
-                        }
+                    if let selectedCampus = selectedSchool, selectedYear != "Select your year", selectedMajor != "Select your major" {
+                        navigateToFinalizeAccount = true
+                        updateCampusInFirestore(selectedCampus: selectedCampus, selectedYear: selectedYear, selectedMajor: selectedMajor)
+                    } else {
+                        showErrorAlert = true
+                        errorMessage = "Please complete all fields before proceeding."
+                    }
                 }) {
                     Text("Confirm My Campus")
                         .font(.system(size: 18, weight: .bold))
@@ -82,6 +229,9 @@ struct CampusPermissionView: View {
                         .frame(width: 220, height: 50) // Adjusted size for a bigger button
                         .background(Color(red: 0.03, green: 0.75, blue: 0.72))
                         .cornerRadius(100)
+                }
+                .alert(isPresented: $showErrorAlert) {
+                    Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
                 }
                 
                 Spacer() // Spacer to push content upwards
@@ -102,7 +252,7 @@ struct CampusPermissionView: View {
     
     // Fetch Schools Function
     func fetchSchools() {
-        print("fetching")
+        print("Fetching schools...")
         apiService.fetchUsers { result in
             switch result {
             case .success(let fetchedSchools):
@@ -117,14 +267,16 @@ struct CampusPermissionView: View {
 }
 
 // Update the campus data in Firestore
-func updateCampusInFirestore(selectedCampus: School) {
+func updateCampusInFirestore(selectedCampus: School, selectedYear: String, selectedMajor: String) {
     guard let userId = Auth.auth().currentUser?.uid else { return }
     
     let db = Firestore.firestore()
     
     // Prepare data to update
     let updatedData: [String: Any] = [
-        "campus": selectedCampus.properties.name ?? ""
+        "campus": selectedCampus.properties.name ?? "",
+        "year": selectedYear,
+        "major": selectedMajor
     ]
     
     // Update the user's Firestore document
@@ -136,8 +288,6 @@ func updateCampusInFirestore(selectedCampus: School) {
         }
     }
 }
-
-
 
 struct CampusPermissionView_Previews: PreviewProvider {
     static var previews: some View {
