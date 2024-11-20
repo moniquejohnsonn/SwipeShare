@@ -12,9 +12,13 @@ struct SchoolProperties: Codable {
 struct School: Codable, Identifiable, Hashable {
     // compute an id to be identified in views
     // uses school name by default
-    var id: UUID = UUID()
+    var id = UUID()
     let properties: SchoolProperties
     let geometry: Geometry
+    
+    private enum CodingKeys: String, CodingKey {
+       case properties, geometry // Exclude `id` from decoding
+    }
     
     // Conform to Hashable by implementing hash(into:) if needed
     func hash(into hasher: inout Hasher) {
@@ -41,10 +45,10 @@ class APIService {
     let apiKey = "3de648c72fb04f728fdf134ebaa76cca"
     let latitude = 40.807590713673385
     let longitude = -73.96257924141334
-    let radius = 5000 // aka 5 km
+    let radius = 10000 // aka 5 km
     
     func fetchUsers(completion: @escaping (Result<[School], Error>) -> Void) {
-        guard let url = URL(string: "https://api.geoapify.com/v2/places?categories=education.university,education.college&filter=circle:\(longitude),\(latitude),\(radius)&limit=20&apiKey=\(apiKey)") else {
+        guard let url = URL(string: "https://api.geoapify.com/v2/places?categories=education.university,education.college&filter=circle:\(longitude),\(latitude),\(radius)&bias=proximity:\(longitude),\(latitude)&limit=20&apiKey=\(apiKey)") else {
             print("Invalid URL")
             return
         }
