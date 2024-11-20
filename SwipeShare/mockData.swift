@@ -24,6 +24,7 @@ struct Receiver: Identifiable {
     let message: String
     let date: String
     let profileImage: Image
+    let coordinate: CLLocationCoordinate2D
 }
 
 // function to check if a point is inside a polygon using Ray-Casting algorithm
@@ -47,6 +48,13 @@ func isPointInsidePolygon(point: CLLocationCoordinate2D, polygon: [CLLocationCoo
 // get all givers in a dining hall based on their locations
 func getGiversForDiningHall(givers: [Giver], diningHall: DiningHall) -> [Giver] {
     return givers.filter { giver in
+        isPointInsidePolygon(point: giver.coordinate, polygon: diningHall.coordinates)
+    }
+}
+
+// get all givers in a dining hall based on their locations
+func getReceiversForDiningHall(receivers: [Receiver], diningHall: DiningHall) -> [Receiver] {
+    return receivers.filter { giver in
         isPointInsidePolygon(point: giver.coordinate, polygon: diningHall.coordinates)
     }
 }
@@ -77,9 +85,9 @@ let givers: [Giver] = [
 
 // mock receivers
 let receivers: [Receiver] = [
-    Receiver(id: UUID(), name: "Jon", message: "requested a swipe", date: "11/14/24", profileImage: Image("joe")),
-    Receiver(id: UUID(), name: "Lily", message: "requested a swipe", date: "11/12/24", profileImage: Image("alice")),
-    Receiver(id: UUID(), name: "Sam", message: "requested a swipe", date: "11/10/24", profileImage: Image("bob")),
+    Receiver(id: UUID(), name: "Jon", message: "requested a swipe", date: "11/14/24", profileImage: Image("joe"), coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621)),
+    Receiver(id: UUID(), name: "Lily", message: "requested a swipe", date: "11/12/24", profileImage: Image("alice"), coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621)),
+    Receiver(id: UUID(), name: "Sam", message: "requested a swipe", date: "11/10/24", profileImage: Image("bob"), coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621)),
 ]
 
 

@@ -1,10 +1,26 @@
 import SwiftUI
+import CoreLocation
 
+// MARK: used to conform to the Equatable protocol to compare two CLLocationCoordinate2D instances
+extension CLLocationCoordinate2D: @retroactive Equatable {
+    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+}
 
 struct GiverHomeView: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
     @State private var showSidebar = false
-    
+    @State private var currentDiningHall: DiningHall? = nil
+    @State private var userLocation: CLLocationCoordinate2D? = nil
+    @State private var receiversInArea: [Receiver] = []
+    @StateObject private var locationManager = LocationManager()
+
+    // mocked data
+    // TODO: replace mocked data with actual calls to firebase to get total requests filled by giver and total receivers helped by giver
+    let totalRequestsFulfilled = 25
+    let totalReceiversHelped = 15
+
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
@@ -18,15 +34,74 @@ struct GiverHomeView: View {
                     }
                 )
                 
-                Text("Swipe Requests")
+                // Giver stats section
+                VStack(alignment: .leading, spacing: 12) {
+                    // Giver requests fulfilled count cards
+                    HStack {
+                        StatCardView(title: "Requests Fulfilled", value: "\(totalRequestsFulfilled)")
+                        StatCardView(title: "Receivers Helped", value: "\(totalReceiversHelped)")
+                    }
+                    .padding(.top, 10)
+
+                    // giver location card
+                    // shows either dining hall theyre in or "not in dining hall"
+                    // if in dining hall, show # of receivers in dining hall
+                    HStack {
+                        Image(systemName: "mappin.circle.fill")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(Color("primaryGreen"))
+
+                        Text("Your Location:")
+                            .font(.headline)
+
+                        if let diningHall = currentDiningHall {
+                            HStack{
+                                Image(systemName: "fork.knife")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 20, height: 20)
+                                    .foregroundColor(Color("primaryGreen"))
+                                Text(diningHall.name)
+                                    .font(.headline)
+                                    .foregroundColor(.green)
+                            }
+                            Text("(\(receiversInArea.count) receivers in \(diningHall.name)")
+                                .font(.subheadline)
+                                .foregroundColor(.green)
+                        } else {
+                            HStack {
+                                Image(systemName: "xmark")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 20, height: 20)
+                                    .foregroundColor(Color("secondaryPurple"))
+                                    .padding(.leading, 10)
+                                            
+                                Text("Not currently in a dining hall")
+                                    .font(.headline)
+                                    .foregroundColor(Color("primaryPurple"))
+                                    .padding(.leading, 10)
+                            }
+                        }
+                        Spacer()
+                    }
+                    .padding()
+                    .background(Color.white)
+                    .cornerRadius(12)
+                    .shadow(radius: 4)
+                }
+                .padding()
+
+                // recent requests section
+                Text("Recent Swipe Requests")
                     .font(.custom("BalooBhaina2-Bold", size: 30))
                     .foregroundColor(Color("primaryPurple"))
-                    .padding(.vertical, 30)
                     .padding(.horizontal, 20)
                     .frame(alignment: .leading)
                 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 10) {
                         ForEach(receivers) { receiver in
                             ReceiverRow(receiver: receiver)
                                 .padding(.horizontal)
@@ -40,23 +115,104 @@ struct GiverHomeView: View {
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 10)
                 }
                 .padding(.horizontal)
             }
             .edgesIgnoringSafeArea(.top)
+            // ensures the app begins tracking the user’s location when the view becomes visible
+            .onAppear {
+                locationManager.startUpdatingLocation()
+            }
+            // monitors changes to giverLocation
+            .onChange(of: locationManager.giverLocation, initial: false) { newLocation, _ in
+                // get giver coordinates
+                guard let userCoordinates = newLocation else { return }
+                userLocation = userCoordinates
 
-            // sidebar content
+                // check if the user is inside any dining hall
+                currentDiningHall = findDiningHall(for: userCoordinates)
+
+                // find receivers in the area if inside a dining hall
+                if let diningHall = currentDiningHall {
+                    receiversInArea = getReceiversForDiningHall(receivers: receivers, diningHall: diningHall)
+                }
+            }
+
+            // Sidebar Content
             MenuView(isSidebarVisible: $showSidebar)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .transition(.move(edge: .leading))
                 .padding(.leading, 0)
-        
         }
+    }
+
+    // MARK: - LocationManager Class - manages giver location using CoreLocation
+    class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+        // marked as @Published, so SwiftUI can automatically update UI when the location changes
+        @Published var giverLocation: CLLocationCoordinate2D?
+        private let locationManager = CLLocationManager()
+
+        override init() {
+            super.init()
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        }
+
+        
+        // starts the process of continuously updating the user’s location
+        func startUpdatingLocation() {
+            locationManager.startUpdatingLocation()
+        }
+
+        // updates the giverLocation property with the most recent coordinates
+        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+            if let newLocation = locations.last {
+                DispatchQueue.main.async {
+                    self.giverLocation = newLocation.coordinate
+                }
+            }
+        }
+
+        func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+            print("Failed to find user's location: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - determine dining hall a giver is inside of
+    func findDiningHall(for location: CLLocationCoordinate2D) -> DiningHall? {
+        for hall in diningHalls {
+            if isPointInsidePolygon(point: location, polygon: hall.coordinates) {
+                return hall
+            }
+        }
+        return nil
     }
 }
 
+// MARK: - Stat Card View
+struct StatCardView: View {
+    let title: String
+    let value: String
 
+    var body: some View {
+        VStack {
+            Text(value)
+                .font(.custom("BalooBhaina2-Bold", size: 30))
+                .foregroundColor(Color("primaryPurple"))
+            Text(title)
+                .font(.custom("BalooBhaina2-Regular", size: 16))
+                .foregroundColor(.gray)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(radius: 4)
+    }
+}
+
+// MARK: - ReceiverRow
 struct ReceiverRow: View {
     let receiver: Receiver
     
@@ -83,10 +239,10 @@ struct ReceiverRow: View {
             VStack {
                 Text(receiver.date)
                     .font(.custom("BalooBhaina2-Regular", size: 14))
-                    .foregroundColor(Color("secondaryGreen"))
+                    .foregroundColor(Color("primaryGreen"))
                 
                 Image(systemName: "chevron.right")
-                    .foregroundColor(Color("secondaryGreen"))
+                    .foregroundColor(Color("primaryGreen"))
             }
         }
         .padding()
@@ -96,8 +252,7 @@ struct ReceiverRow: View {
     }
 }
 
-struct ReceiversView_Previews: PreviewProvider {
-    static var previews: some View {
-        GiverHomeView()
-    }
+#Preview {
+    GiverHomeView()
 }
+
