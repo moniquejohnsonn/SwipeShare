@@ -13,10 +13,7 @@ struct CampusPermissionView: View {
     @State private var errorMessage = ""
 
     // Initialize mock schools for testing in Canvas
-    @State private var schools: [School] = [
-        School(properties: SchoolProperties(name: "Columbia University", city: "New York", postcode: "10027"), geometry: Geometry(coordinates: [-73.9626, 40.8075])),
-        School(properties: SchoolProperties(name: "NYU", city: "New York", postcode: "10003"), geometry: Geometry(coordinates: [-73.9980, 40.7295]))
-    ]
+    @State private var schools: [School] = []
     
     private let apiService = APIService() // Creates an instance of APIService
     private let years = [
