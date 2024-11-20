@@ -7,6 +7,7 @@ struct UserProfile: Identifiable {
     var id: String
     var name: String
     var profilePictureURL: String
+    var profilePicture: UIImage?
     var email: String
     var campus: String
     var year: String
@@ -68,11 +69,34 @@ class UserProfileManager: ObservableObject {
                     mealCount: data["mealCount"] as? Int ?? 0,
                     isGiver: data["isGiver"] as? Bool ?? false
                 )
-                print("user: \(self.currentUserProfile?.name ?? "Unknown") ")
+                print("user: \(self.currentUserProfile?.name ?? "Unknown") id: \(self.currentUserProfile?.id ?? "Unknown")")
             } else {
                 print("Error fetching user profile: \(error?.localizedDescription ?? "Unknown error")")
             }
             completion()
+        }
+    }
+    
+    func fetchUserDetails(userID: String, completion: @escaping (UserProfile?) -> Void) {
+        db.collection("users").document(userID).getDocument { snapshot, error in
+            if let data = snapshot?.data() {
+                let userProfile = UserProfile(
+                    id: userID,
+                    name: data["name"] as? String ?? "Unknown",
+                    profilePictureURL: data["profilePictureUrl"] as? String ?? "",
+                    email: data["email"] as? String ?? "Unknown",
+                    campus: data["campus"] as? String ?? "Unknown",
+                    year: data["year"] as? String ?? "Unknown",
+                    numSwipes: data["numSwipes"] as? Int ?? 0,
+                    mealFrequency: data["mealFrequency"] as? String ?? "Unknown",
+                    mealCount: data["mealCount"] as? Int ?? 0,
+                    isGiver: data["isGiver"] as? Bool ?? false
+                )
+                completion(userProfile)
+            } else {
+                print("Error fetching user details: \(error?.localizedDescription ?? "Unknown error")")
+                completion(nil)
+            }
         }
     }
     
