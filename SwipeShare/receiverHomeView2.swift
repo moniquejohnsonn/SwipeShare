@@ -6,6 +6,15 @@ struct ReceiverHomeView2: View {
     @State private var selectedDiningHall: DiningHall? = nil
     @State private var navigateToReceiverHome = false
     
+    //default parameter
+    init(selectedDiningHall: DiningHall? = nil) {
+        self.selectedDiningHall = selectedDiningHall
+        _region = State(initialValue: MKCoordinateRegion(
+            center: selectedDiningHall?.centerCoordinate ?? CLLocationCoordinate2D(latitude: 40.80795368887853, longitude: -73.96237958464191),
+            span: MKCoordinateSpan(latitudeDelta: selectedDiningHall == nil ? 0.007 : 0.0015, longitudeDelta: selectedDiningHall == nil ? 0.007 : 0.0015)
+        ))
+    }
+    
     
     
     // initial columbia/barnard view

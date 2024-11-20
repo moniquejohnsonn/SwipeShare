@@ -4,6 +4,7 @@ import MapKit
 struct ReceiverHomeView1: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
     @State private var showSidebar = false
+    @State private var selectedDiningHall: DiningHall? = nil // new state for selected dining hall
 
     var body: some View {
         ZStack {
@@ -25,10 +26,11 @@ struct ReceiverHomeView1: View {
                     .padding(.horizontal, 20)
                     .frame(alignment: .leading)
                 
-                ScrollView {
+                ScrollView { 
                     ForEach(diningHalls, id: \.name) { hall in
                         let hallGivers = getGiversForDiningHall(givers: givers, diningHall: hall)
-                        NavigationLink(destination: ReceiverHomeView2()) {
+                        NavigationLink(destination: ReceiverHomeView2(selectedDiningHall: hall) //goes to ReceiverHomeView2, passing the selected dining hall
+                        ) {
                             DiningHallRow(diningHall: hall, giverCount: hallGivers.count)
                         }
                     }
