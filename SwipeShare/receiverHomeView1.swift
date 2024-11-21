@@ -4,7 +4,7 @@ import MapKit
 struct ReceiverHomeView1: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
     @State private var showSidebar = false
-    @State private var selectedDiningHall: DiningHall? = nil // new state for selected dining hall
+    @State private var selectedDiningHall: DiningHall? = nil // state for selected dining hall
 
     var body: some View {
         ZStack {
@@ -26,10 +26,13 @@ struct ReceiverHomeView1: View {
                     .padding(.horizontal, 20)
                     .frame(alignment: .leading)
                 
-                ScrollView { 
+                ScrollView {
                     ForEach(diningHalls, id: \.name) { hall in
                         let hallGivers = getGiversForDiningHall(givers: givers, diningHall: hall)
-                        NavigationLink(destination: ReceiverHomeView2(selectedDiningHall: hall) //goes to ReceiverHomeView2, passing the selected dining hall
+                        
+                        // set `selectedDiningHall` when this row is tapped
+                        NavigationLink(
+                            destination: ReceiverHomeView2(selectedDiningHall: .constant(hall))
                         ) {
                             DiningHallRow(diningHall: hall, giverCount: hallGivers.count)
                         }
@@ -39,7 +42,7 @@ struct ReceiverHomeView1: View {
             }
             .edgesIgnoringSafeArea(.top)
 
-            // sidebar content
+            // Sidebar content
             MenuView(isSidebarVisible: $showSidebar)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .transition(.move(edge: .leading))
@@ -47,6 +50,7 @@ struct ReceiverHomeView1: View {
         }
     }
 }
+
 struct DiningHallRow: View {
     let diningHall: DiningHall
     let giverCount: Int

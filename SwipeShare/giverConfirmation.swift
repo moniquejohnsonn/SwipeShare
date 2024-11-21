@@ -5,6 +5,7 @@ struct MealSwipeRequestView: View {
     @State private var navigateToMapView = false
     @State private var showPopup = false // State to control popup visibility
     @State private var confirmationTimer: Timer? = nil // Timer for the delay
+    @State private var selectedDiningHall: DiningHall? = nil 
 
     var body: some View {
         ZStack {
@@ -177,7 +178,7 @@ struct MealSwipeRequestView: View {
                 }
                 .padding(.bottom, 20)
                 .navigationDestination(isPresented: $navigateToMapView) {
-                    ReceiverHomeView2()
+                    ReceiverHomeView2(selectedDiningHall: $selectedDiningHall) 
                 }
             }
             .background(Constants.LightPurple)
