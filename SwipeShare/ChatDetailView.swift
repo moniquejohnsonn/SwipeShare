@@ -178,8 +178,9 @@ struct ChatDetailView: View {
             "timestamp": FieldValue.serverTimestamp()
         ]
         
-        db.collection("chats")
-            .document(chat.id ?? "")
+        let chatDB = db.collection("chats").document(chat.id ?? "")
+        
+        chatDB
             .collection("messages")
             .addDocument(data: messageData) { error in
                 if let error = error {
@@ -189,6 +190,19 @@ struct ChatDetailView: View {
                     print("Message sent successfully")
                 }
             }
+        
+        let chatUpdateData: [String: Any] = [
+            "lastMessage": self.newMessage,
+            "lastMessageTimestamp": FieldValue.serverTimestamp()
+        ]
+        
+        chatDB.updateData(chatUpdateData) { error in
+            if let error = error {
+                print("Error updating chat last message: \(error.localizedDescription)")
+            } else {
+                print("Chat last message updated successfully")
+            }
+        }
         
         // Clear the input field
         newMessage = ""
