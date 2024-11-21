@@ -9,12 +9,15 @@ struct MealSwipeRequestView: View {
 
     var body: some View {
         ZStack {
+            
             ScrollView {
                 VStack(spacing: 20) {
                     // Simplified Navigation Header
+                    
                     HStack {
                         Button(action: {
                             navigateToMapView = true
+                            
                         }) {
                             HStack {
                                 Image(systemName: "chevron.left")

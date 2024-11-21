@@ -48,7 +48,10 @@ struct ReceiverHomeView1: View {
                 .transition(.move(edge: .leading))
                 .padding(.leading, 0)
         }
+        .navigationBarBackButtonHidden(true)
+        
     }
+       
 }
 
 struct DiningHallRow: View {

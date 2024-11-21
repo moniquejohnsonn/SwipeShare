@@ -1,6 +1,9 @@
 import SwiftUI
 import CoreLocation
 
+
+
+
 // MARK: used to conform to the Equatable protocol to compare two CLLocationCoordinate2D instances
 extension CLLocationCoordinate2D: @retroactive Equatable {
     public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
@@ -145,6 +148,7 @@ struct GiverHomeView: View {
                 .transition(.move(edge: .leading))
                 .padding(.leading, 0)
         }
+        .navigationBarBackButtonHidden(true)
     }
 
     // MARK: - LocationManager Class - manages giver location using CoreLocation
@@ -250,9 +254,13 @@ struct ReceiverRow: View {
         .cornerRadius(12)
         .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
     }
+     
 }
 
 #Preview {
-    GiverHomeView()
+    NoBackButtonNavigationStack {
+        GiverHomeView()
+    }
 }
+
 

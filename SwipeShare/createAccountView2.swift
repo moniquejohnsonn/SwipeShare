@@ -69,7 +69,9 @@ struct LocationPermissionView: View {
             if newValue {
                 showCampusList = true
             }
+                
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
