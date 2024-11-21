@@ -10,11 +10,11 @@ extension CLLocationCoordinate2D: @retroactive Equatable {
 
 struct GiverHomeView: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
+    @EnvironmentObject var locationManager: LocationManager
     @State private var showSidebar = false
     @State private var currentDiningHall: DiningHall? = nil
     @State private var userLocation: CLLocationCoordinate2D? = nil
     @State private var receiversInArea: [Receiver] = []
-    @StateObject private var locationManager = LocationManager()
 
     // mocked data
     // TODO: replace mocked data with actual calls to firebase to get total requests filled by giver and total receivers helped by giver
@@ -125,7 +125,7 @@ struct GiverHomeView: View {
                 locationManager.startUpdatingLocation()
             }
             // monitors changes to giverLocation
-            .onChange(of: locationManager.giverLocation, initial: false) { newLocation, _ in
+            .onChange(of: locationManager.userLocation, initial: false) { newLocation, _ in
                 // get giver coordinates
                 guard let userCoordinates = newLocation else { return }
                 userLocation = userCoordinates
@@ -144,38 +144,6 @@ struct GiverHomeView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .transition(.move(edge: .leading))
                 .padding(.leading, 0)
-        }
-    }
-
-    // MARK: - LocationManager Class - manages giver location using CoreLocation
-    class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
-        // marked as @Published, so SwiftUI can automatically update UI when the location changes
-        @Published var giverLocation: CLLocationCoordinate2D?
-        private let locationManager = CLLocationManager()
-
-        override init() {
-            super.init()
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        }
-
-        
-        // starts the process of continuously updating the user’s location
-        func startUpdatingLocation() {
-            locationManager.startUpdatingLocation()
-        }
-
-        // updates the giverLocation property with the most recent coordinates
-        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-            if let newLocation = locations.last {
-                DispatchQueue.main.async {
-                    self.giverLocation = newLocation.coordinate
-                }
-            }
-        }
-
-        func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-            print("Failed to find user's location: \(error.localizedDescription)")
         }
     }
 
