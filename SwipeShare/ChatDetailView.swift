@@ -162,34 +162,39 @@ struct ChatDetailView: View {
             .navigationBarHidden(true)
         }
     }
-        
-        // Send a new message to Firestore
-        private func sendMessage() {
-            guard !newMessage.isEmpty else { return }
-            guard let userId = userProfileManager.currentUserProfile?.id else {
-                print("User is not logged in")
-                return
-            }
-            
-            let messageData: [String: Any] = [
-                "content": newMessage,
-                "senderId": userId,
-                "timestamp": FieldValue.serverTimestamp()
-            ]
-            
-            // Add message to Firestore
-            db.collection("chats")
-                .document(chat.id ?? "")
-                .collection("messages")
-                .addDocument(data: messageData) { error in
-                    if let error = error {
-                        print("Error sending message: \(error.localizedDescription)")
-                    } else {
-                        // Clear the input field and reload messages
-                        newMessage = ""
-                    }
-                }
+    
+    // Send a new message to Firestore
+    private func sendMessage() {
+        guard !newMessage.isEmpty else { return }
+        guard let userId = userProfileManager.currentUserProfile?.id else {
+            print("User is not logged in")
+            return
         }
+        
+        // Save message data to Firestore
+        let messageData: [String: Any] = [
+            "content": newMessage,
+            "senderID": userId,
+            "timestamp": FieldValue.serverTimestamp()
+        ]
+        
+        db.collection("chats")
+            .document(chat.id ?? "")
+            .collection("messages")
+            .addDocument(data: messageData) { error in
+                if let error = error {
+                    print("Error sending message: \(error.localizedDescription)")
+                    // Optionally handle failed Firestore write (e.g., show an error to the user)
+                } else {
+                    print("Message sent successfully")
+                }
+            }
+        
+        // Clear the input field
+        newMessage = ""
+        
+        // Update the UI with new messages
+        loadMessages()
     }
     
     
@@ -200,4 +205,4 @@ struct ChatDetailView: View {
         var isFromCurrentUser: Bool
         var timestamp: Date
     }
-    
+}
