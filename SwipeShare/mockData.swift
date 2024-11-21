@@ -62,7 +62,7 @@ func getReceiversForDiningHall(receivers: [Receiver], diningHall: DiningHall) ->
 }
 
 // Define a DiningHall struct
-struct DiningHall {
+struct DiningHall: Equatable {
     let name: String
     let coordinates: [CLLocationCoordinate2D]
     
@@ -75,6 +75,13 @@ struct DiningHall {
         let avgLongitude = longitudes.reduce(0, +) / Double(longitudes.count)
         
         return CLLocationCoordinate2D(latitude: avgLatitude, longitude: avgLongitude)
+    }
+    
+    // Implement Equatable conformance
+    static func == (lhs: DiningHall, rhs: DiningHall) -> Bool {
+        return lhs.name == rhs.name &&
+               lhs.centerCoordinate.latitude == rhs.centerCoordinate.latitude &&
+               lhs.centerCoordinate.longitude == rhs.centerCoordinate.longitude
     }
 }
 
@@ -131,35 +138,33 @@ let diningHalls: [DiningHall] = [
         ]
     ),
     DiningHall( //
-                       name: "Chef Don's Pizza Pi",
-                       coordinates: [
-                           CLLocationCoordinate2D(latitude: 40.80961165997972, longitude:  -73.96033650655406), // top left
-                           CLLocationCoordinate2D(latitude: 40.809266791615634, longitude: -73.95953318495957), //top right
-                           CLLocationCoordinate2D(latitude: 40.80910438058197, longitude:-73.95965388436437), //bottom right
-                           CLLocationCoordinate2D(latitude: 40.809447473423454, longitude: -73.96045854706293) //bottom left
-                       ]
-                   ),
-               
-                   DiningHall(
-                       name: "Diana Center Cafe",
-                       coordinates: [
-                   
-                           CLLocationCoordinate2D(latitude: 40.810165309313795, longitude: -73.96299318714298), // top left
-                           CLLocationCoordinate2D(latitude: 40.81005365328159, longitude: -73.9627222840346), //top right
-                           CLLocationCoordinate2D(latitude: 40.809559319318936, longitude: -73.96309108777157), // bottom right
-                           CLLocationCoordinate2D(latitude: 40.80961819296247, longitude: -73.96326140804298) //bottom left
-                       ]
-                   ),
-                   DiningHall(
-                       name: "Hewitt Dining",
-                       coordinates: [
-                           CLLocationCoordinate2D(latitude: 40.80847, longitude: -73.9648422), // bottom left
-                           CLLocationCoordinate2D(latitude: 40.80836, longitude: -73.96457), //bottom right
-                           CLLocationCoordinate2D(latitude: 40.80896, longitude: -73.964135), //top right
-                           CLLocationCoordinate2D(latitude: 40.8090612, longitude: -73.9643846) // top left
-                       
-                       ]
-                   )
+       name: "Chef Don's Pizza Pi",
+       coordinates: [
+           CLLocationCoordinate2D(latitude: 40.80961165997972, longitude:  -73.96033650655406), // top left
+           CLLocationCoordinate2D(latitude: 40.809266791615634, longitude: -73.95953318495957), //top right
+           CLLocationCoordinate2D(latitude: 40.80910438058197, longitude:-73.95965388436437), //bottom right
+           CLLocationCoordinate2D(latitude: 40.809447473423454, longitude: -73.96045854706293) //bottom left
+       ]
+   ),
 
-    
+   DiningHall(
+       name: "Diana Center Cafe",
+       coordinates: [
+   
+           CLLocationCoordinate2D(latitude: 40.810165309313795, longitude: -73.96299318714298), // top left
+           CLLocationCoordinate2D(latitude: 40.81005365328159, longitude: -73.9627222840346), //top right
+           CLLocationCoordinate2D(latitude: 40.809559319318936, longitude: -73.96309108777157), // bottom right
+           CLLocationCoordinate2D(latitude: 40.80961819296247, longitude: -73.96326140804298) //bottom left
+       ]
+   ),
+   DiningHall(
+       name: "Hewitt Dining",
+       coordinates: [
+           CLLocationCoordinate2D(latitude: 40.80847, longitude: -73.9648422), // bottom left
+           CLLocationCoordinate2D(latitude: 40.80836, longitude: -73.96457), //bottom right
+           CLLocationCoordinate2D(latitude: 40.80896, longitude: -73.964135), //top right
+           CLLocationCoordinate2D(latitude: 40.8090612, longitude: -73.9643846) // top left
+       
+       ]
+   )
 ]

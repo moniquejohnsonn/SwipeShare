@@ -128,17 +128,12 @@ struct GiverHomeView: View {
                 locationManager.startUpdatingLocation()
             }
             // monitors changes to giverLocation
-            .onChange(of: locationManager.userLocation, initial: false) { newLocation, _ in
-                // get giver coordinates
-                guard let userCoordinates = newLocation else { return }
-                userLocation = userCoordinates
-
-                // check if the user is inside any dining hall
-                currentDiningHall = findDiningHall(for: userCoordinates)
-
-                // find receivers in the area if inside a dining hall
-                if let diningHall = currentDiningHall {
-                    receiversInArea = getReceiversForDiningHall(receivers: receivers, diningHall: diningHall)
+            .onChange(of: locationManager.currentDiningHall, initial: false) { newDiningHall, _ in
+                if let hall = newDiningHall {
+                    // Update UI with dining hall info
+                    print("Currently in \(hall.name)")
+                } else {
+                    print("Not in a dining hall")
                 }
             }
 
