@@ -17,6 +17,7 @@ struct SwipeShareApp: App {
     // Register app delegate for Firebase setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var userProfileManager = UserProfileManager()
+    @StateObject private var locationManager = LocationManager()
     @State private var isLoading = false
 
     var body: some Scene {
@@ -27,6 +28,7 @@ struct SwipeShareApp: App {
                 } else if !userProfileManager.isLoggedIn || userProfileManager.currentUserProfile == nil {
                     StartUpView()
                         .environmentObject(userProfileManager)
+                        .environmentObject(locationManager)
                 } else {
                     VStack {
                         if let userProfile = userProfileManager.currentUserProfile {
