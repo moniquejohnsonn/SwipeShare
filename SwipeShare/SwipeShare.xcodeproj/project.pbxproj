@@ -51,6 +51,7 @@
 		B4C9F6C72CE5994C00DBA782 /* FirebaseStorageCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = B4C9F6C62CE5994C00DBA782 /* FirebaseStorageCombine-Community */; };
 		B4C9F6C92CE5994C00DBA782 /* FirebaseVertexAI in Frameworks */ = {isa = PBXBuildFile; productRef = B4C9F6C82CE5994C00DBA782 /* FirebaseVertexAI */; };
 		C8504F622CE30A680047A294 /* finalizeAccount2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8504F612CE30A5F0047A294 /* finalizeAccount2.swift */; };
+		C87EB12A2CEFB8B000E50BEE /* CustomNavigationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87EB1292CEFB8AE00E50BEE /* CustomNavigationStack.swift */; };
 		C88A3C3F2CE25BF8000B4051 /* createAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88A3C3E2CE25BF0000B4051 /* createAccountView.swift */; };
 		C88A3CE52CE27900000B4051 /* createAccountView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88A3CE42CE278EE000B4051 /* createAccountView2.swift */; };
 		C88A3D1E2CE29A70000B4051 /* createAccountView3.swift in Sources */ = {isa = PBXBuildFile; fileRef = C88A3D1D2CE29A66000B4051 /* createAccountView3.swift */; };
@@ -96,6 +97,7 @@
 		B4C47D752CE1B09500FB450F /* loginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = loginView.swift; sourceTree = "<group>"; };
 		B4C9F69E2CE578E100DBA782 /* locationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = locationManager.swift; sourceTree = "<group>"; };
 		C8504F612CE30A5F0047A294 /* finalizeAccount2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finalizeAccount2.swift; sourceTree = "<group>"; };
+		C87EB1292CEFB8AE00E50BEE /* CustomNavigationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationStack.swift; sourceTree = "<group>"; };
 		C88A3C3E2CE25BF0000B4051 /* createAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createAccountView.swift; sourceTree = "<group>"; };
 		C88A3CE42CE278EE000B4051 /* createAccountView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createAccountView2.swift; sourceTree = "<group>"; };
 		C88A3D1D2CE29A66000B4051 /* createAccountView3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = createAccountView3.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 		B443C80A2CE11D8D006F9891 = {
 			isa = PBXGroup;
 			children = (
+				C87EB1292CEFB8AE00E50BEE /* CustomNavigationStack.swift */,
 				B4C9F69E2CE578E100DBA782 /* locationManager.swift */,
 				7108D40F2CE5D2AC00F6585A /* headerView.swift */,
 				7169846C2CE594E50095663C /* userData.swift */,
@@ -413,6 +416,7 @@
 				C8504F622CE30A680047A294 /* finalizeAccount2.swift in Sources */,
 				71AE90242CE5412900D96908 /* apiService.swift in Sources */,
 				B443C8582CE1278A006F9891 /* startUpView.swift in Sources */,
+				C87EB12A2CEFB8B000E50BEE /* CustomNavigationStack.swift in Sources */,
 				B430F4FA2CE86890002A0EE6 /* ChatListView.swift in Sources */,
 				713B76F02CE42A36000B0990 /* menuView.swift in Sources */,
 				C88A3D1E2CE29A70000B4051 /* createAccountView3.swift in Sources */,

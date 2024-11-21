@@ -50,6 +50,7 @@ struct StartUpView: View {
                     .padding(.top, 20) // Add some space between the SignUp button and this text
                     Spacer().frame(height: 40) // Space at the bottom
                 }
+                .navigationBarBackButtonHidden(true)
             }
         }
     }

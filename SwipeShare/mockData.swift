@@ -14,6 +14,8 @@ struct Giver: Identifiable {
     let id: String
     let name: String
     let year: String
+    let mealsGiven: Int
+    let giveRate: Int
     let coordinate: CLLocationCoordinate2D
     let profilePicture: Image
 }
@@ -60,7 +62,7 @@ func getReceiversForDiningHall(receivers: [Receiver], diningHall: DiningHall) ->
 }
 
 // Define a DiningHall struct
-struct DiningHall {
+struct DiningHall: Equatable {
     let name: String
     let coordinates: [CLLocationCoordinate2D]
     
@@ -74,13 +76,20 @@ struct DiningHall {
         
         return CLLocationCoordinate2D(latitude: avgLatitude, longitude: avgLongitude)
     }
+    
+    // Implement Equatable conformance
+    static func == (lhs: DiningHall, rhs: DiningHall) -> Bool {
+        return lhs.name == rhs.name &&
+               lhs.centerCoordinate.latitude == rhs.centerCoordinate.latitude &&
+               lhs.centerCoordinate.longitude == rhs.centerCoordinate.longitude
+    }
 }
 
 // mock givers
 let givers: [Giver] = [
-        Giver(id: UUID().uuidString, name: "Alice", year: "Sophomore at Barnard", coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621), profilePicture: Image("alice")),
-        Giver(id: UUID().uuidString, name: "Joe", year: "Junior at Columbia", coordinate: CLLocationCoordinate2D(latitude: 40.8059, longitude: -73.9625), profilePicture: Image("joe")),
-        Giver(id: UUID().uuidString, name: "Bob", year: "Senior at Columbia", coordinate: CLLocationCoordinate2D(latitude: 40.8068, longitude: -73.9638), profilePicture: Image("bob"))
+    Giver(id: UUID().uuidString, name: "Alice", year: "Sophomore at Barnard", mealsGiven: 10, giveRate:  4, coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621), profilePicture: Image("alice")),
+        Giver(id: UUID().uuidString, name: "Joe", year: "Junior at Columbia", mealsGiven: 8, giveRate:  3,  coordinate: CLLocationCoordinate2D(latitude: 40.8059, longitude: -73.9625), profilePicture: Image("joe")),
+        Giver(id: UUID().uuidString, name: "Bob", year: "Senior at Columbia", mealsGiven: 30, giveRate:  5, coordinate: CLLocationCoordinate2D(latitude: 40.8068, longitude: -73.9638), profilePicture: Image("bob"))
 ]
 
 // mock receivers
@@ -129,35 +138,33 @@ let diningHalls: [DiningHall] = [
         ]
     ),
     DiningHall( //
-                       name: "Chef Don's Pizza Pi",
-                       coordinates: [
-                           CLLocationCoordinate2D(latitude: 40.80961165997972, longitude:  -73.96033650655406), // top left
-                           CLLocationCoordinate2D(latitude: 40.809266791615634, longitude: -73.95953318495957), //top right
-                           CLLocationCoordinate2D(latitude: 40.80910438058197, longitude:-73.95965388436437), //bottom right
-                           CLLocationCoordinate2D(latitude: 40.809447473423454, longitude: -73.96045854706293) //bottom left
-                       ]
-                   ),
-               
-                   DiningHall(
-                       name: "Diana Center Cafe",
-                       coordinates: [
-                   
-                           CLLocationCoordinate2D(latitude: 40.810165309313795, longitude: -73.96299318714298), // top left
-                           CLLocationCoordinate2D(latitude: 40.81005365328159, longitude: -73.9627222840346), //top right
-                           CLLocationCoordinate2D(latitude: 40.809559319318936, longitude: -73.96309108777157), // bottom right
-                           CLLocationCoordinate2D(latitude: 40.80961819296247, longitude: -73.96326140804298) //bottom left
-                       ]
-                   ),
-                   DiningHall(
-                       name: "Hewitt Dining",
-                       coordinates: [
-                           CLLocationCoordinate2D(latitude: 40.80847, longitude: -73.9648422), // bottom left
-                           CLLocationCoordinate2D(latitude: 40.80836, longitude: -73.96457), //bottom right
-                           CLLocationCoordinate2D(latitude: 40.80896, longitude: -73.964135), //top right
-                           CLLocationCoordinate2D(latitude: 40.8090612, longitude: -73.9643846) // top left
-                       
-                       ]
-                   )
+       name: "Chef Don's Pizza Pi",
+       coordinates: [
+           CLLocationCoordinate2D(latitude: 40.80961165997972, longitude:  -73.96033650655406), // top left
+           CLLocationCoordinate2D(latitude: 40.809266791615634, longitude: -73.95953318495957), //top right
+           CLLocationCoordinate2D(latitude: 40.80910438058197, longitude:-73.95965388436437), //bottom right
+           CLLocationCoordinate2D(latitude: 40.809447473423454, longitude: -73.96045854706293) //bottom left
+       ]
+   ),
 
-    
+   DiningHall(
+       name: "Diana Center Cafe",
+       coordinates: [
+   
+           CLLocationCoordinate2D(latitude: 40.810165309313795, longitude: -73.96299318714298), // top left
+           CLLocationCoordinate2D(latitude: 40.81005365328159, longitude: -73.9627222840346), //top right
+           CLLocationCoordinate2D(latitude: 40.809559319318936, longitude: -73.96309108777157), // bottom right
+           CLLocationCoordinate2D(latitude: 40.80961819296247, longitude: -73.96326140804298) //bottom left
+       ]
+   ),
+   DiningHall(
+       name: "Hewitt Dining",
+       coordinates: [
+           CLLocationCoordinate2D(latitude: 40.80847, longitude: -73.9648422), // bottom left
+           CLLocationCoordinate2D(latitude: 40.80836, longitude: -73.96457), //bottom right
+           CLLocationCoordinate2D(latitude: 40.80896, longitude: -73.964135), //top right
+           CLLocationCoordinate2D(latitude: 40.8090612, longitude: -73.9643846) // top left
+       
+       ]
+   )
 ]

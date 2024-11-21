@@ -7,30 +7,29 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         FirebaseApp.configure()
-        
         AppDelegate.isFirebaseConfigured = true
-        
         return true
     }
 }
 
 @main
 struct SwipeShareApp: App {
-    // register app delegate for Firebase setup
+    // Register app delegate for Firebase setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var userProfileManager = UserProfileManager()
+    @StateObject private var locationManager = LocationManager()
     @State private var isLoading = false
-    
+
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
+            NoBackButtonNavigationStack { // Use the custom wrapper
                 if isLoading {
                     loadingScreen()
                 } else if !userProfileManager.isLoggedIn || userProfileManager.currentUserProfile == nil {
                     StartUpView()
                         .environmentObject(userProfileManager)
+                        .environmentObject(locationManager)
                 } else {
-                    // Dynamically navigate based on user's role
                     VStack {
                         if let userProfile = userProfileManager.currentUserProfile {
                             if userProfile.isGiver {
@@ -44,7 +43,6 @@ struct SwipeShareApp: App {
                     }
                     .onChange(of: userProfileManager.currentUserProfile?.isGiver) { _ in
                         // Handle any necessary updates when the user's role changes
-                        // This ensures the view updates when the role changes
                     }
                 }
             }
@@ -52,3 +50,4 @@ struct SwipeShareApp: App {
         }
     }
 }
+
