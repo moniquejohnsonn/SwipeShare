@@ -139,6 +139,7 @@ struct FinalizeAccount2: View {
             .background(Color.white)
             .edgesIgnoringSafeArea(.all)
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -161,6 +162,7 @@ struct CheckBoxView1: View {
                 .foregroundColor(isChecked ? Color(red: 0.03, green: 0.75, blue: 0.72) : .gray)
                 .font(.system(size: 24))
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 

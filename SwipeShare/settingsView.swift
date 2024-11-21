@@ -149,7 +149,9 @@ struct SettingsView: View {
                                         }
                                     }
                                 }
+                              
                             }
+                            
                         }) {
                             Text(userProfileManager.currentUserProfile?.isGiver == true ? "Change Role to Receiver" : "Change Role to Giver")
                                 .padding()
@@ -221,7 +223,9 @@ struct SettingsView: View {
                 .transition(.move(edge: .leading))
                 .padding(.leading, 0)
         }
+        .navigationBarBackButtonHidden(true)
     }
+      
 }
 
 struct Constants {
@@ -238,3 +242,8 @@ struct SettingsView_Previews: PreviewProvider {
     }
 }
 
+#Preview {
+    NoBackButtonNavigationStack {
+        SettingsView()
+    }
+}
