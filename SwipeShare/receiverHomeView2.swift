@@ -79,7 +79,7 @@ struct ReceiverHomeView2: View {
                     VStack(alignment: .leading) {
                         let relevantGivers = getGiversForDiningHall(givers: givers, diningHall: diningHall)
                         
-                        GiversListView(givers: relevantGivers)
+                        GiversListView(givers: relevantGivers, diningHall: diningHall)
                     }
                     .frame(maxHeight: .infinity)
                 } else {
@@ -112,6 +112,8 @@ struct ReceiverHomeView2: View {
 
 struct GiverCardView: View {
     let giver: Giver
+    let diningHall: DiningHall
+
     @State private var navigateToGiverConfirm = false
     
     var body: some View {
@@ -175,15 +177,19 @@ struct GiverCardView: View {
         .background(Color("lightestPurple"))
         .cornerRadius(16)
         .shadow(radius: 4)
-        
         .navigationDestination(isPresented: $navigateToGiverConfirm) {
-            MealSwipeRequestView()
+       
+            MealSwipeRequestView(giver:giver, diningHall: diningHall)
+              }
+
         }
     }
-}
+
 
 struct GiversListView: View {
     let givers: [Giver]
+    let diningHall: DiningHall
+    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -196,7 +202,7 @@ struct GiversListView: View {
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(givers) { giver in
-                        GiverCardView(giver: giver)
+                        GiverCardView(giver: giver, diningHall: diningHall)
                     }
                 }
             }
