@@ -1,11 +1,16 @@
 import Foundation
 import SwiftUI
+import CoreLocation
 
 struct MealSwipeRequestView: View {
     @State private var navigateToMapView = false
     @State private var showPopup = false // State to control popup visibility
     @State private var confirmationTimer: Timer? = nil // Timer for the delay
-    @State private var selectedDiningHall: DiningHall? = nil 
+    @State private var selectedDiningHall: DiningHall? = nil
+   // @Binding var selectedDiningHall: DiningHall?
+    
+    var giver: Giver
+    var diningHall: DiningHall
 
     var body: some View {
         ZStack {
@@ -38,21 +43,22 @@ struct MealSwipeRequestView: View {
                     // Profile Section with Consistent Alignment
                     HStack {
                         Spacer().frame(width: 7) // Adjust spacing to align with other elements
-                        Image("drake2")
+                        giver.profilePicture // Use giver's profile picture
                             .resizable()
-                            .scaledToFit()
+                            .scaledToFill()
                             .frame(width: 100, height: 100)
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Constants.Turquoise, lineWidth: 4))
                             .shadow(radius: 10)
+
                         
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Tom")
+                            Text(giver.name) // Display giver's name
                                 .font(.title)
                                 .fontWeight(.bold)
                                 .foregroundColor(Constants.DarkPurple)
                             
-                            Text("Senior in the School of General Studies")
+                            Text(giver.year) // Display giver's year
                                 .foregroundColor(Constants.DarkPurple)
                                 .font(.subheadline)
                         }
@@ -69,7 +75,7 @@ struct MealSwipeRequestView: View {
                                 .font(.headline)
                                 .foregroundColor(Constants.DarkPurple)
                             ForEach(0..<5) { index in
-                                if index < 4 {
+                                if index < giver.giveRate { // Use giver's give rate
                                     Image(systemName: "star.fill")
                                         .foregroundColor(Constants.DarkPurple)
                                 } else {
@@ -87,7 +93,7 @@ struct MealSwipeRequestView: View {
                             Text("Meals Given:")
                                 .font(.headline)
                                 .foregroundColor(Constants.DarkPurple)
-                            Text("18")
+                            Text("\(giver.mealsGiven)") // Use giver's meals given count
                                 .font(.headline)
                                 .fontWeight(.bold)
                                 .foregroundColor(Constants.DarkPurple)
@@ -105,7 +111,7 @@ struct MealSwipeRequestView: View {
                         Text("Currently available to give swipes in ")
                             .font(.body)
                             .foregroundColor(Constants.DarkPurple) +
-                        Text("Hewitt")
+                        Text(diningHall.name)
                             .font(.body)
                             .fontWeight(.bold)
                             .foregroundColor(Constants.DarkPurple)
@@ -125,7 +131,7 @@ struct MealSwipeRequestView: View {
                             .foregroundColor(Constants.Turquoise)
                             .font(.largeTitle)
                         
-                        Text("Confirm sending meal swipe request to Tom?")
+                        Text("Confirm sending meal swipe request to \(giver.name)?") // Use giver's name
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundColor(Constants.Turquoise)
@@ -136,7 +142,8 @@ struct MealSwipeRequestView: View {
                             Text("Your request is for ")
                                 .font(.body)
                                 .foregroundColor(Constants.DarkPurple) +
-                            Text("Hewitt Dining Hall")
+                            Text(diningHall.name)
+                           // Text("Hewitt Dining Hall")
                                 .font(.body)
                                 .fontWeight(.bold)
                                 .foregroundColor(Constants.DarkPurple)
@@ -181,7 +188,7 @@ struct MealSwipeRequestView: View {
                 }
                 .padding(.bottom, 20)
                 .navigationDestination(isPresented: $navigateToMapView) {
-                    ReceiverHomeView2(selectedDiningHall: $selectedDiningHall) 
+                    ReceiverHomeView2(selectedDiningHall: $selectedDiningHall)
                 }
             }
             .background(Constants.LightPurple)
@@ -190,7 +197,7 @@ struct MealSwipeRequestView: View {
             // Popup Overlay
             if showPopup {
                 VStack {
-                    Text("Did you receive your meal swipe from Tom?")
+                    Text("Did you receive your meal swipe from \(giver.name)?") // Use giver's name
                         .font(.title3)
                         .fontWeight(.bold)
                         .foregroundColor(Constants.Turquoise)
@@ -238,7 +245,29 @@ struct MealSwipeRequestView: View {
 
 struct MealSwipeRequestView_Previews: PreviewProvider {
     static var previews: some View {
-        MealSwipeRequestView()
+        // Create a mock Giver object for the preview
+        let mockGiver = Giver(
+            id: UUID().uuidString,
+            name: "Tom",
+            year: "Senior in the School of General Studies",
+            mealsGiven: 18,
+            giveRate:  4, // Updated giveRate value for mock
+            coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621),
+            profilePicture: Image("drake2")
+        )
+        let mockDiningHall = DiningHall(
+            name: "Hewitt Dining",
+            coordinates: [
+                CLLocationCoordinate2D(latitude: 40.80847, longitude: -73.9648422), // bottom left
+                CLLocationCoordinate2D(latitude: 40.80836, longitude: -73.96457), //bottom right
+                CLLocationCoordinate2D(latitude: 40.80896, longitude: -73.964135), //top right
+                CLLocationCoordinate2D(latitude: 40.8090612, longitude: -73.9643846) // top left
+            
+            ]
+        )
+        
+        // Pass the mock Giver to the MealSwipeRequestView
+        MealSwipeRequestView(giver: mockGiver, diningHall: mockDiningHall
+        )
     }
 }
-

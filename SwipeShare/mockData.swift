@@ -14,6 +14,8 @@ struct Giver: Identifiable {
     let id: String
     let name: String
     let year: String
+    let mealsGiven: Int
+    let giveRate: Int
     let coordinate: CLLocationCoordinate2D
     let profilePicture: Image
 }
@@ -78,9 +80,9 @@ struct DiningHall {
 
 // mock givers
 let givers: [Giver] = [
-        Giver(id: UUID().uuidString, name: "Alice", year: "Sophomore at Barnard", coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621), profilePicture: Image("alice")),
-        Giver(id: UUID().uuidString, name: "Joe", year: "Junior at Columbia", coordinate: CLLocationCoordinate2D(latitude: 40.8059, longitude: -73.9625), profilePicture: Image("joe")),
-        Giver(id: UUID().uuidString, name: "Bob", year: "Senior at Columbia", coordinate: CLLocationCoordinate2D(latitude: 40.8068, longitude: -73.9638), profilePicture: Image("bob"))
+    Giver(id: UUID().uuidString, name: "Alice", year: "Sophomore at Barnard", mealsGiven: 10, giveRate:  4, coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621), profilePicture: Image("alice")),
+        Giver(id: UUID().uuidString, name: "Joe", year: "Junior at Columbia", mealsGiven: 8, giveRate:  3,  coordinate: CLLocationCoordinate2D(latitude: 40.8059, longitude: -73.9625), profilePicture: Image("joe")),
+        Giver(id: UUID().uuidString, name: "Bob", year: "Senior at Columbia", mealsGiven: 30, giveRate:  5, coordinate: CLLocationCoordinate2D(latitude: 40.8068, longitude: -73.9638), profilePicture: Image("bob"))
 ]
 
 // mock receivers
