@@ -57,7 +57,6 @@ struct CampusPermissionView: View {
         "Computational Biology",
         "Computer Engineering",
         "Computer Science",
-        "Computer Science",
         "Computer Science-Mathematics",
         "Creative Writing",
         "Dance",
