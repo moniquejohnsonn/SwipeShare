@@ -89,6 +89,7 @@ struct SignUpView: View {
                 email: email,
                 campus: "",
                 year: "",
+                major: "",
                 numSwipes: 0,
                 mealFrequency: "",
                 mealCount: 0,

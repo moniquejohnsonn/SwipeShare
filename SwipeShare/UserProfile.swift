@@ -11,6 +11,7 @@ struct UserProfile: Identifiable {
     var email: String
     var campus: String
     var year: String
+    var major: String
     var numSwipes: Int
     var mealFrequency: String
     var mealCount: Int
@@ -45,8 +46,40 @@ class UserProfileManager: ObservableObject {
             }
         }
     }
+    
+    func fetchProfilePicture(for userProfile: UserProfile, completion: @escaping (UIImage?) -> Void) {
+        guard let url = URL(string: userProfile.profilePictureURL) else {
+            print("Invalid profile picture URL: \(userProfile.profilePictureURL)")
+            DispatchQueue.main.async {
+                completion(UIImage(named: "profilePicHolder"))
+            }
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error fetching profile picture: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(UIImage(named: "profilePicHolder"))
+                }
+                return
+            }
+            
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    completion(image)
+                }
+            } else {
+                print("Failed to decode image data")
+                DispatchQueue.main.async {
+                    completion(UIImage(named: "profilePicHolder"))
+                }
+            }
+        }
+        task.resume()
+    }
 
-    // Update `fetchUserProfile` to include a completion callback:
+    
     func fetchUserProfile(completion: @escaping () -> Void = {}) {
         guard let uid = Auth.auth().currentUser?.uid else {
             self.isLoading = false
@@ -57,23 +90,31 @@ class UserProfileManager: ObservableObject {
         db.collection("users").document(uid).getDocument { snapshot, error in
             self.isLoading = false
             if let data = snapshot?.data() {
-                self.currentUserProfile = UserProfile(
+                var userProfile = UserProfile(
                     id: uid,
                     name: data["name"] as? String ?? "Unknown",
-                    profilePictureURL: data["profilePictureUrl"] as? String ?? "",
+                    profilePictureURL: data["profilePictureURL"] as? String ?? "",
                     email: data["email"] as? String ?? "Unknown",
                     campus: data["campus"] as? String ?? "Unknown",
                     year: data["year"] as? String ?? "Unknown",
+                    major: data["major"] as? String ?? "Unknown",
                     numSwipes: data["numSwipes"] as? Int ?? 0,
                     mealFrequency: data["mealFrequency"] as? String ?? "Unknown",
                     mealCount: data["mealCount"] as? Int ?? 0,
                     isGiver: data["isGiver"] as? Bool ?? false
                 )
-                print("user: \(self.currentUserProfile?.name ?? "Unknown") id: \(self.currentUserProfile?.id ?? "Unknown")")
+                
+                self.fetchProfilePicture(for: userProfile) { image in
+                    userProfile.profilePicture = image
+                    DispatchQueue.main.async {
+                        self.currentUserProfile = userProfile
+                        completion()
+                    }
+                }
             } else {
                 print("Error fetching user profile: \(error?.localizedDescription ?? "Unknown error")")
+                completion()
             }
-            completion()
         }
     }
     
@@ -87,6 +128,7 @@ class UserProfileManager: ObservableObject {
                     email: data["email"] as? String ?? "Unknown",
                     campus: data["campus"] as? String ?? "Unknown",
                     year: data["year"] as? String ?? "Unknown",
+                    major: data["major"] as? String ?? "Unknown",
                     numSwipes: data["numSwipes"] as? Int ?? 0,
                     mealFrequency: data["mealFrequency"] as? String ?? "Unknown",
                     mealCount: data["mealCount"] as? Int ?? 0,
@@ -107,6 +149,7 @@ class UserProfileManager: ObservableObject {
             "email": profile.email,
             "campus": profile.campus,
             "year": profile.year,
+            "major": profile.major,
             "numSwipes": profile.numSwipes,
             "mealFrequency": profile.mealFrequency,
             "mealCount": profile.mealCount,

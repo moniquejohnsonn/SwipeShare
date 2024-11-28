@@ -86,7 +86,7 @@ struct ChatListView: View {
                                 print("Error fetching user details: \(userError.localizedDescription)")
                             } else if let userData = userSnapshot?.data() {
                                 let userName = userData["name"] as? String ?? "Unknown"
-                                let userProfilePictureURL = userData["profilePictureUrl"] as? String ?? ""
+                                let userProfilePictureURL = userData["profilePictureURL"] as? String ?? ""
                                 
                                 // Create Chat object with the other user's name and profile picture URL
                                 let chat = Chat(
@@ -154,14 +154,18 @@ struct ChatListView: View {
                                                     .frame(width: 50, height: 50)
                                                     .clipShape(Circle())
                                             } placeholder: {
-                                                Circle()
+                                                Image("profilePicHolder")
+                                                    .resizable()
+                                                    .scaledToFill()
                                                     .frame(width: 50, height: 50)
-                                                    .foregroundColor(.gray)
+                                                    .clipShape(Circle())
                                             }
                                         } else {
-                                            Circle()
+                                            Image("profilePicHolder")
+                                                .resizable()
+                                                .scaledToFill()
                                                 .frame(width: 50, height: 50)
-                                                .foregroundColor(.gray)
+                                                .clipShape(Circle())
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 5) {
