@@ -16,6 +16,10 @@ struct Giver: Identifiable {
     let year: String
     let coordinate: CLLocationCoordinate2D
     let profilePicture: Image
+    
+    static func == (lhs: Giver, rhs: Giver) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
 
 struct Receiver: Identifiable {
@@ -27,35 +31,23 @@ struct Receiver: Identifiable {
     let coordinate: CLLocationCoordinate2D
 }
 
-// function to check if a point is inside a polygon using Ray-Casting algorithm
-func isPointInsidePolygon(point: CLLocationCoordinate2D, polygon: [CLLocationCoordinate2D]) -> Bool {
-    var isInside = false
-    let count = polygon.count
-
-    for i in 0..<count {
-        let j = (i + 1) % count
-        let vertex1 = polygon[i]
-        let vertex2 = polygon[j]
-
-        if ((vertex1.latitude > point.latitude) != (vertex2.latitude > point.latitude)) &&
-            (point.longitude < (vertex2.longitude - vertex1.longitude) * (point.latitude - vertex1.latitude) / (vertex2.latitude - vertex1.latitude) + vertex1.longitude) {
-            isInside.toggle()
-        }
-    }
-    return isInside
+func isPointInsideGeofence(point: CLLocationCoordinate2D, diningHall: DiningHall) -> Bool {
+    let location = CLLocation(latitude: point.latitude, longitude: point.longitude)
+    let center = CLLocation(latitude: diningHall.centerCoordinate.latitude, longitude: diningHall.centerCoordinate.longitude)
+    return location.distance(from: center) <= 50
 }
 
 // get all givers in a dining hall based on their locations
 func getGiversForDiningHall(givers: [Giver], diningHall: DiningHall) -> [Giver] {
     return givers.filter { giver in
-        isPointInsidePolygon(point: giver.coordinate, polygon: diningHall.coordinates)
+        isPointInsideGeofence(point: giver.coordinate, diningHall: diningHall)
     }
 }
 
 // get all givers in a dining hall based on their locations
 func getReceiversForDiningHall(receivers: [Receiver], diningHall: DiningHall) -> [Receiver] {
-    return receivers.filter { giver in
-        isPointInsidePolygon(point: giver.coordinate, polygon: diningHall.coordinates)
+    return receivers.filter { receiver in
+        isPointInsideGeofence(point: receiver.coordinate, diningHall: diningHall)
     }
 }
 

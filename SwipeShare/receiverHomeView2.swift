@@ -5,9 +5,8 @@ struct ReceiverHomeView2: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
     @State private var selectedDiningHall: DiningHall? = nil
     @State private var navigateToReceiverHome = false
-    
-    
-    
+    @State private var selectedGiver: Giver? = nil
+        
     // initial columbia/barnard view
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 40.80795368887853, longitude: -73.96237958464191),
@@ -17,7 +16,7 @@ struct ReceiverHomeView2: View {
     var body: some View {
         ZStack {
             VStack (){
-                // Custom Header
+                // custom Header
                 HeaderView(
                     title: selectedDiningHall?.name ?? "Select a Dining Hall",
                     showBackButton: true,
@@ -30,7 +29,7 @@ struct ReceiverHomeView2: View {
                 ZStack() {
                     // map view
                     GeometryReader { geometry in
-                        MapView(diningHalls: diningHalls, region: $region, selectedDiningHall: $selectedDiningHall)
+                        MapView(diningHalls: diningHalls, region: $region, selectedDiningHall: $selectedDiningHall, selectedGiver: $selectedGiver)
                             .frame(width: geometry.size.width, height: 400) // sets fixed size to height of map
                     }
                     // Reset Button
@@ -62,7 +61,8 @@ struct ReceiverHomeView2: View {
                         // get the relevant givers for the selected dining hall
                         let relevantGivers = getGiversForDiningHall(givers: givers, diningHall: diningHall)
                         
-                        GiversListView(givers: relevantGivers)
+                        GiversListView(givers: relevantGivers, selectedGiver: $selectedGiver)
+
                     }
                     .frame(maxHeight: .infinity)
                     
@@ -97,6 +97,7 @@ struct ReceiverHomeView2: View {
 struct GiverCardView: View {
     let giver: Giver
     @State private var navigateToGiverConfirm = false
+    @Binding var selectedGiver: Giver?
     
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -112,7 +113,7 @@ struct GiverCardView: View {
                 // Giver Name
                 Text(giver.name)
                     .font(.custom("BalooBhaina2-Bold", size: 20))
-                    .foregroundColor(Color("darkestPurple"))
+                    .foregroundColor((selectedGiver?.id == giver.id) ? Color.white : Color("darkestPurple"))
                     .padding(.top, 20)
                     .fixedSize(horizontal: false, vertical: true)
 
@@ -120,7 +121,7 @@ struct GiverCardView: View {
                 // Giver Year
                 Text(giver.year)
                     .font(.custom("BalooBhaina2-Regular", size: 14))
-                    .foregroundColor(Color("darkestPurple"))
+                    .foregroundColor((selectedGiver?.id == giver.id) ? Color.white : Color("darkestPurple"))
                 
                 // Rating Section
                 HStack(spacing: 4) {
@@ -156,9 +157,16 @@ struct GiverCardView: View {
             .padding(.trailing, 20)
         }
         .padding(.horizontal)
-        .background(Color("lightestPurple"))
+        .background((selectedGiver?.id == giver.id) ? Color("primaryPurple") : Color("lightestPurple"))
         .cornerRadius(16)
         .shadow(radius: 4)
+        .onTapGesture {
+            if selectedGiver?.id == giver.id {
+                    selectedGiver = nil // Deselect if the same card is tapped
+                } else {
+                    selectedGiver = giver // Select this giver
+                }
+        }
         
         .navigationDestination(isPresented: $navigateToGiverConfirm) {
             MealSwipeRequestView()
@@ -168,6 +176,7 @@ struct GiverCardView: View {
 
 struct GiversListView: View {
     let givers: [Giver]
+    @Binding var selectedGiver: Giver?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -180,7 +189,7 @@ struct GiversListView: View {
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(givers) { giver in
-                        GiverCardView(giver: giver)
+                        GiverCardView(giver: giver, selectedGiver: $selectedGiver)
                     }
                 }
             }
@@ -196,6 +205,7 @@ struct MapView: UIViewRepresentable {
     var diningHalls: [DiningHall]
     @Binding var region: MKCoordinateRegion
     @Binding var selectedDiningHall: DiningHall?
+    @Binding var selectedGiver: Giver?
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
@@ -215,10 +225,12 @@ struct MapView: UIViewRepresentable {
             let relevantGivers = getGiversForDiningHall(givers: givers, diningHall: hall)
             // creates pins for givers
             for giver in relevantGivers {
-                let annotation = MKPointAnnotation()
-                annotation.coordinate = giver.coordinate
-                annotation.title = giver.name
-                annotation.subtitle = giver.year
+                let annotation = GiverAnnotation(
+                    coordinate: giver.coordinate,
+                    title: giver.name,
+                    subtitle: giver.year,
+                    profileImage: giver.profilePicture.asUIImage()
+                )
                 mapView.addAnnotation(annotation)
             }
         }
@@ -229,27 +241,77 @@ struct MapView: UIViewRepresentable {
     // updates view region
     func updateUIView(_ uiView: MKMapView, context: Context) {
         uiView.setRegion(region, animated: true)
+        
+        // Refresh annotations (remove and re-add them)
+        uiView.removeAnnotations(uiView.annotations)
+        for hall in diningHalls {
+            let relevantGivers = getGiversForDiningHall(givers: givers, diningHall: hall)
+            for giver in relevantGivers {
+                let annotation = GiverAnnotation(
+                    coordinate: giver.coordinate,
+                    title: giver.name,
+                    subtitle: giver.year,
+                    profileImage: giver.profilePicture.asUIImage()
+                )
+                uiView.addAnnotation(annotation)
+            }
+        }
+
+        // show annotation of the selected giver's pin (if any)
+        if let selectedGiver = selectedGiver {
+            if let annotation = uiView.annotations.first(where: {
+                ($0 as? GiverAnnotation)?.title == selectedGiver.name
+            }) {
+                uiView.selectAnnotation(annotation, animated: true)
+            }
+        } else {
+            // deselect all annotations if no giver is selected
+            uiView.deselectAnnotation(nil, animated: true)
+        }
     }
     
     // creates coordinator to handle map events/interactions
     func makeCoordinator() -> MapCoordinator {
-        return MapCoordinator(diningHalls: diningHalls, region: $region, selectedDiningHall: $selectedDiningHall)
+        return MapCoordinator(diningHalls: diningHalls, givers: givers, region: $region, selectedDiningHall: $selectedDiningHall, selectedGiver: $selectedGiver)
+    }
+}
+
+class GiverAnnotation: NSObject, MKAnnotation {
+    let coordinate: CLLocationCoordinate2D
+    let title: String?
+    let subtitle: String?
+    let profileImage: UIImage
+    
+    init(coordinate: CLLocationCoordinate2D, title: String?, subtitle: String?, profileImage: UIImage) {
+        self.coordinate = coordinate
+        self.title = title
+        self.subtitle = subtitle
+        self.profileImage = profileImage
     }
 }
 
 class MapCoordinator: NSObject, MKMapViewDelegate {
     var diningHalls: [DiningHall]
+    var givers: [Giver]
     @Binding var region: MKCoordinateRegion // update the map's region
     @Binding var selectedDiningHall: DiningHall?  // tracks the selected dining hall
+    @Binding var selectedGiver: Giver?
     
-    // sets up the dining halls, region, and selected dining hall bindings
-    init(diningHalls: [DiningHall], region: Binding<MKCoordinateRegion>, selectedDiningHall: Binding<DiningHall?>) {
+    // sets up the dining halls, region, and selected dining hall and selected giver bindings
+    init(diningHalls: [DiningHall],
+         givers: [Giver],
+         region: Binding<MKCoordinateRegion>,
+         selectedDiningHall: Binding<DiningHall?>,
+         selectedGiver: Binding<Giver?>
+    ) {
         self.diningHalls = diningHalls
+        self.givers = givers
         _region = region
         _selectedDiningHall = selectedDiningHall
+        _selectedGiver = selectedGiver
     }
     
-    // renderer to display dining hall boundaries
+    // MARK: - Renderer for Dining Hall Overlays
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let polygon = overlay as? MKPolygon {
             let renderer = MKPolygonRenderer(polygon: polygon)
@@ -262,20 +324,81 @@ class MapCoordinator: NSObject, MKMapViewDelegate {
         return MKOverlayRenderer()
     }
     
-    // returns giver pins
+    // MARK: - returns giver pins
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard let giverAnnotation = annotation as? GiverAnnotation else { return nil }
+        
         let identifier = "GiverPin"
         var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
         
         if annotationView == nil {
-            // creates a new pin annotation view if it doesn't exist
-            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            annotationView?.canShowCallout = true  // info popup when tapped
+            annotationView = MKAnnotationView(annotation: giverAnnotation, reuseIdentifier: identifier)
+            annotationView?.canShowCallout = true
         } else {
             annotationView?.annotation = annotation
         }
         
+        // set the pin image
+        annotationView?.image = createPinImage(
+            for: giverAnnotation.profileImage,
+            isSelected: giverAnnotation.title == selectedGiver?.name
+        )
+        annotationView?.centerOffset = CGPoint(x: 0, y: -(annotationView?.image?.size.height ?? 0) / 2)
+                
+        
         return annotationView
+    }
+    
+    // MARK: - handle Pin Selection
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        guard let giverAnnotation = view.annotation as? GiverAnnotation else { return }
+        
+        // find and set the selected giver
+        if let giver = givers.first(where: { $0.name == giverAnnotation.title }) {
+            selectedGiver = giver
+        }
+    }
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        selectedGiver = nil // clear the selection when a pin is deselected
+    }
+
+    
+    
+    private func createPinImage(for profileImage: UIImage, isSelected: Bool) -> UIImage? {
+        let pinSize = CGSize(width: 50, height: 50)
+        let profileSize = CGSize(width: 40, height: 40)
+        
+        UIGraphicsBeginImageContextWithOptions(pinSize, false, 0)
+        defer { UIGraphicsEndImageContext() }
+        
+        // draw pin tip
+        let context = UIGraphicsGetCurrentContext()
+        context?.move(to: CGPoint(x: pinSize.width / 2, y: pinSize.height - 2))
+        context?.addLine(to: CGPoint(x: (pinSize.width / 2) - 10, y: profileSize.height - 2))
+        context?.addLine(to: CGPoint(x: (pinSize.width / 2) + 10, y: profileSize.height - 2))
+        context?.closePath()
+        UIColor(named: "secondaryGreen")?.setFill() ?? UIColor.systemTeal.setFill()
+        context?.fillPath()
+        
+        
+        // draw the circle background for the profile picture
+        let circleRect = CGRect(
+            x: (pinSize.width - profileSize.width) / 2,
+            y: 0,
+            width: profileSize.width,
+            height: profileSize.height
+        )
+        (isSelected ? UIColor(named: "primaryGreen") : UIColor(named: "secondaryGreen"))?.setFill()
+        UIBezierPath(ovalIn: circleRect).fill()
+        
+        // draw the profile image
+        let profileRect = circleRect.insetBy(dx: 5, dy: 5)
+        let imageClipPath = UIBezierPath(ovalIn: profileRect)
+        imageClipPath.addClip()
+        profileImage.draw(in: profileRect)
+
+        return UIGraphicsGetImageFromCurrentImageContext()
     }
     
     // handles tap gestures on the map & selects corresponding dining hall
@@ -304,6 +427,31 @@ class MapCoordinator: NSObject, MKMapViewDelegate {
     }
 
 }
+
+extension Image {
+    func asUIImage() -> UIImage {
+        // SwiftUI view for the image
+        let view = self
+            .resizable()
+            .scaledToFill() // image fills the frame
+            .clipShape(Circle()) // clips the image to a circle
+            .frame(width: 100, height: 100) // Final size for the image
+
+        // hosting controller for rendering
+        let controller = UIHostingController(rootView: view)
+        controller.view.bounds = CGRect(origin: .zero, size: CGSize(width: 100, height: 100))
+        controller.view.backgroundColor = .clear
+
+        // render the SwiftUI view into a UIImage
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100))
+        return renderer.image { _ in
+            controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+        }
+    }
+}
+
+
+
 #Preview {
     ReceiverHomeView2()
 }

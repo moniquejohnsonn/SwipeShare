@@ -145,7 +145,7 @@ struct GiverHomeView: View {
     // MARK: - determine dining hall a giver is inside of
     func findDiningHall(for location: CLLocationCoordinate2D) -> DiningHall? {
         for hall in diningHalls {
-            if isPointInsidePolygon(point: location, polygon: hall.coordinates) {
+            if isPointInsideGeofence(point: location, diningHall: hall) {
                 return hall
             }
         }

@@ -30,7 +30,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         for hall in diningHalls {
             let region = CLCircularRegion(
                 center: hall.centerCoordinate,
-                radius: 50, // Geofence radius
+                radius: 50, // geofence radius
                 identifier: hall.name
             )
             region.notifyOnEntry = true
