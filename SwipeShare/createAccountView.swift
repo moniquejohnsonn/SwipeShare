@@ -70,6 +70,7 @@ struct SignUpView: View {
         .navigationDestination(isPresented: $showLocationPermission) {
             LocationPermissionView()
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     private func signUp() {
@@ -88,6 +89,7 @@ struct SignUpView: View {
                 email: email,
                 campus: "",
                 year: "",
+                major: "",
                 numSwipes: 0,
                 mealFrequency: "",
                 mealCount: 0,
@@ -175,5 +177,6 @@ struct InputFieldView: View {
         }
         .padding(.horizontal, 16) // Add padding to both sides of the HStack
     }
+     
 }
 

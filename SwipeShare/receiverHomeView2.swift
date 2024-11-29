@@ -3,20 +3,36 @@ import MapKit
 
 struct ReceiverHomeView2: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
-    @State private var selectedDiningHall: DiningHall? = nil
+    @Binding var selectedDiningHall: DiningHall?
     @State private var navigateToReceiverHome = false
     @State private var selectedGiver: Giver? = nil
+    @State private var region: MKCoordinateRegion
+    
+    // custom initializer
+    init(selectedDiningHall: Binding<DiningHall?>) {
+        _selectedDiningHall = selectedDiningHall
         
-    // initial columbia/barnard view
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 40.80795368887853, longitude: -73.96237958464191),
-        span: MKCoordinateSpan(latitudeDelta: 0.007, longitudeDelta: 0.007)
-    )
-     
+        //default columbia region
+        let defaultRegion = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 40.80795368887853, longitude: -73.96237958464191),
+            span: MKCoordinateSpan(latitudeDelta: 0.007, longitudeDelta: 0.007)
+        )
+        //selected hall region
+        let selectedRegion = MKCoordinateRegion(
+            center: selectedDiningHall.wrappedValue?.centerCoordinate ?? defaultRegion.center,
+            span: MKCoordinateSpan(
+                latitudeDelta: selectedDiningHall.wrappedValue == nil ? defaultRegion.span.latitudeDelta : 0.0015,
+                longitudeDelta: selectedDiningHall.wrappedValue == nil ? defaultRegion.span.longitudeDelta : 0.0015
+            )
+        )
+        
+        _region = State(initialValue: selectedRegion)
+    }
+    
     var body: some View {
         ZStack {
-            VStack (){
-                // custom Header
+            VStack {
+                // Custom Header
                 HeaderView(
                     title: selectedDiningHall?.name ?? "Select a Dining Hall",
                     showBackButton: true,
@@ -26,15 +42,16 @@ struct ReceiverHomeView2: View {
                 )
                 .frame(height: 150)
                 
-                ZStack() {
-                    // map view
+                ZStack {
+                    // Map view
                     GeometryReader { geometry in
                         MapView(diningHalls: diningHalls, region: $region, selectedDiningHall: $selectedDiningHall, selectedGiver: $selectedGiver)
                             .frame(width: geometry.size.width, height: 400) // sets fixed size to height of map
                     }
+                    
                     // Reset Button
-                    VStack() {
-                        HStack() {
+                    VStack {
+                        HStack {
                             Spacer()
                             Button(action: resetRegion) {
                                 Text("See Entire Map")
@@ -54,20 +71,16 @@ struct ReceiverHomeView2: View {
                     }
                 }
                 
-                
-                // givers table
+                // Givers table
                 if let diningHall = selectedDiningHall {
                     VStack(alignment: .leading) {
-                        // get the relevant givers for the selected dining hall
                         let relevantGivers = getGiversForDiningHall(givers: givers, diningHall: diningHall)
                         
                         GiversListView(givers: relevantGivers, selectedGiver: $selectedGiver)
 
                     }
                     .frame(maxHeight: .infinity)
-                    
                 } else {
-                    // default text in givers table half
                     VStack {
                         Spacer()
                         Text("Select Dining Hall to View Givers")
@@ -84,7 +97,7 @@ struct ReceiverHomeView2: View {
         }
     }
     
-    // resets viewing region to original of all Columbia/Barnard
+    // resets viewing region to default Columbia/Barnard view
     private func resetRegion() {
         selectedDiningHall = nil
         region = MKCoordinateRegion(
@@ -94,8 +107,11 @@ struct ReceiverHomeView2: View {
     }
 }
 
+
 struct GiverCardView: View {
     let giver: Giver
+    let diningHall: DiningHall
+
     @State private var navigateToGiverConfirm = false
     @Binding var selectedGiver: Giver?
     
@@ -169,10 +185,13 @@ struct GiverCardView: View {
         }
         
         .navigationDestination(isPresented: $navigateToGiverConfirm) {
-            MealSwipeRequestView()
+       
+            MealSwipeRequestView(giver:giver, diningHall: diningHall)
+              }
+
         }
     }
-}
+
 
 struct GiversListView: View {
     let givers: [Giver]
@@ -453,5 +472,8 @@ extension Image {
 
 
 #Preview {
-    ReceiverHomeView2()
+    @Previewable @State var mockSelectedDiningHall: DiningHall? = nil
+    let mockUserProfileManager = UserProfileManager()
+    return ReceiverHomeView2(selectedDiningHall: $mockSelectedDiningHall)
+        .environmentObject(mockUserProfileManager)
 }

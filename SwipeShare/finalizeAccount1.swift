@@ -359,6 +359,7 @@ struct FinalizeAccount1: View {
             }
             .frame(height: 20)
         }
+           
     }
 }
 
@@ -381,7 +382,9 @@ struct CheckBoxView: View {
                 .foregroundColor(isChecked ? Color(red: 0.03, green: 0.75, blue: 0.72) : .gray)
                 .font(.system(size: 24))
         }
+        .navigationBarBackButtonHidden(true)
     }
+        
 }
 
 struct FinalizeAccount1_Previews: PreviewProvider {
