@@ -44,7 +44,7 @@ struct SettingsView: View {
                     // Profile Picture and Name
                     if let userProfile = userProfileManager.currentUserProfile {
                         VStack {
-                            AsyncImage(url: URL(string: userProfile.profilePictureURL)) { image in
+                            AsyncImage(url: URL(string: userProfile.profilePictureURL ?? "")) { image in
                                 image
                                     .resizable()
                                     .scaledToFit()
@@ -53,7 +53,7 @@ struct SettingsView: View {
                                     .overlay(Circle().stroke(Color.white, lineWidth: 4))
                                     .shadow(radius: 10)
                             } placeholder: {
-                                if userProfile.profilePictureURL.isEmpty {
+                                if ((userProfile.profilePictureURL?.isEmpty) != nil) {
                                     Image(systemName: "person.crop.circle.fill")
                                         .resizable()
                                         .scaledToFit()

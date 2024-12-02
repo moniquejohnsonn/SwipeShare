@@ -1,32 +1,30 @@
 import CoreLocation
 import Combine
+import FirebaseAuth
+import FirebaseFirestore
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var locationManager = CLLocationManager()
+    
     @Published var userLocation: CLLocationCoordinate2D?
     @Published var locationAuthorized = false
     @Published var currentDiningHall: DiningHall?
-    @Published var receiversInArea: [Receiver] = []
+    
+    weak var userProfileManager: UserProfileManager?
 
     override init() {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.requestAlwaysAuthorization() // Required for geofencing
+        locationManager.requestAlwaysAuthorization()
     }
 
     func requestLocationAuthorization() {
         locationManager.requestWhenInUseAuthorization()
     }
     
-    // starts the process of continuously updating the user’s location
-    func startUpdatingLocation() {
-        locationManager.startUpdatingLocation()
-        setupGeofences(for: diningHalls)
-    }
-    
     // Setup geofences for all dining halls
-    private func setupGeofences(for diningHalls: [DiningHall]) {
+    func setupGeofences(for diningHalls: [DiningHall]) {
         for hall in diningHalls {
             let region = CLCircularRegion(
                 center: hall.centerCoordinate,
@@ -39,6 +37,13 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
     
+    // Stop monitoring geofences
+    func stopMonitoringGeofences() {
+        for region in locationManager.monitoredRegions {
+            locationManager.stopMonitoring(for: region)
+        }
+    }
+    
     // Geofence triggered (enter region)
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         guard let circularRegion = region as? CLCircularRegion else { return }
@@ -46,13 +51,13 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         // Match the region to a dining hall
         if let diningHall = diningHalls.first(where: { $0.name == circularRegion.identifier }) {
             DispatchQueue.main.async {
+                print("Entered \(diningHall.name)")
                 self.currentDiningHall = diningHall
-                self.receiversInArea = getReceiversForDiningHall(receivers: receivers, diningHall: diningHall)
             }
         }
         
-        startUpdatingLocation()
-        // TODO: send updated location to firebase
+        // update the user's location after entering dining hall region
+        updateUserLocationInFirebase()
     }
 
     // Geofence triggered (exit region)
@@ -69,25 +74,48 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             }
         }
         
-        // Stop location updates
-        locationManager.stopUpdatingLocation()
-        // TODO: send updated location to firebase
+        // update the user's location after exiting dining hall region
+        updateUserLocationInFirebase()
+        
     }
-
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedWhenInUse || status == .authorizedAlways {
             locationAuthorized = true
+            setupGeofences(for: diningHalls) // Setup geofences once authorized
         } else {
             locationAuthorized = false
         }
     }
     
-    // updates the giverLocation property with the most recent coordinates
+    // updates the user location property with the most recent coordinates
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let newLocation = locations.last {
             DispatchQueue.main.async {
                 self.userLocation = newLocation.coordinate
+            }
+        }
+    }
+    
+    private func updateUserLocationInFirebase() {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("User not logged in")
+            return
+        }
+        
+        guard let userLocation = self.userLocation else {
+            print("User location not available")
+            return
+        }
+        
+        let geoPoint = GeoPoint(latitude: userLocation.latitude, longitude: userLocation.longitude)
+        let diningHallName = currentDiningHall?.name ?? "None"
+        
+        userProfileManager?.updateUserLocation(uid: uid, location: geoPoint, diningHall: diningHallName) { error in
+            if let error = error {
+                print("Error updating user location: \(error.localizedDescription)")
+            } else {
+                print("User location updated successfully in Firebase.")
             }
         }
     }

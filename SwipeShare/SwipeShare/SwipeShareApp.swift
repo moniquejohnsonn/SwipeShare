@@ -19,6 +19,12 @@ struct SwipeShareApp: App {
     @StateObject private var userProfileManager = UserProfileManager()
     @StateObject private var locationManager = LocationManager()
     @State private var isLoading = false
+    
+    init() {
+        // Link dependencies after objects are initialized
+        locationManager.userProfileManager = userProfileManager
+        userProfileManager.locationManager = locationManager
+    }
 
     var body: some Scene {
         WindowGroup {

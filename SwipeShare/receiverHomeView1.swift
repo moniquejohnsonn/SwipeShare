@@ -5,6 +5,7 @@ struct ReceiverHomeView1: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
     @State private var showSidebar = false
     @State private var selectedDiningHall: DiningHall? = nil // state for selected dining hall
+    @State private var giverCounts: [String: Int] = [:] // Dictionary to store giver counts by dining hall name
 
     var body: some View {
         ZStack {
@@ -28,17 +29,20 @@ struct ReceiverHomeView1: View {
                 
                 ScrollView {
                     ForEach(diningHalls, id: \.name) { hall in
-                        let hallGivers = getGiversForDiningHall(givers: givers, diningHall: hall)
-                        
-                        // set `selectedDiningHall` when this row is tapped
                         NavigationLink(
                             destination: ReceiverHomeView2(selectedDiningHall: .constant(hall))
                         ) {
-                            DiningHallRow(diningHall: hall, giverCount: hallGivers.count)
+                            DiningHallRow(
+                                diningHall: hall,
+                                giverCount: giverCounts[hall.name, default: 0]
+                            )
                         }
                     }
                 }
                 .padding(.horizontal)
+                .onAppear {
+                    fetchGiverCounts()
+                } // fetch giver counts when the view appears
             }
             .edgesIgnoringSafeArea(.top)
 
@@ -49,9 +53,18 @@ struct ReceiverHomeView1: View {
                 .padding(.leading, 0)
         }
         .navigationBarBackButtonHidden(true)
-        
     }
-       
+    
+    // fetch giver counts for all dining halls
+    private func fetchGiverCounts() {
+        for hall in diningHalls {
+            userProfileManager.getUsersForDiningHall(role: "giver", diningHall: hall, includeMock: true) { givers in
+                DispatchQueue.main.async {
+                    giverCounts[hall.name] = givers.count
+                }
+            }
+        }
+    }
 }
 
 struct DiningHallRow: View {
