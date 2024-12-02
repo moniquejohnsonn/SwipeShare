@@ -6,8 +6,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        FirebaseApp.configure()
-        AppDelegate.isFirebaseConfigured = true
+        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == nil {
+                    FirebaseApp.configure()
+                    AppDelegate.isFirebaseConfigured = true
+        }
         return true
     }
 }
@@ -46,7 +48,12 @@ struct SwipeShareApp: App {
                     }
                 }
             }
+            .onAppear {
+                locationManager.userProfileManager = userProfileManager
+                userProfileManager.locationManager = locationManager
+            }
             .environmentObject(userProfileManager)
+            .environmentObject(locationManager)
         }
     }
 }

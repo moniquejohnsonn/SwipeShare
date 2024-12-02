@@ -113,32 +113,24 @@ struct ChatListView: View {
     }
     
     var body: some View {
-        // TODO: Back button?
         NavigationView {
-            ZStack {
+            ZStack(alignment: .top) {
                 VStack {
-                    HeaderView(
-                        title: "Chats",
-                        showBackButton: false,
-                        onHeaderButtonTapped: {
-                            withAnimation {
-                                showSidebar.toggle() // toggle sidebar visibility
-                            }
-                        }
-                    )
-                    .frame(maxWidth: .infinity, alignment: .top)
-                    .background(Color.white)
-                    
                     if isLoading {
                         // Loading Indicator
                         ProgressView()
                             .progressViewStyle(CircularProgressViewStyle())
-                            .padding()
+                            .padding(.top, 60) // Adjust for header height
                     } else if chats.isEmpty {
-                        Text("No chats available.")
-                            .font(.headline)
-                            .foregroundColor(.gray)
-                            .padding()
+                        // No Chats Message
+                        VStack {
+                            Text("No chats available.")
+                                .font(.headline)
+                                .foregroundColor(.gray)
+                                .padding()
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(.top, 60) // Adjust for header height
                     } else {
                         // Chat List
                         List(chats) { chat in
@@ -190,17 +182,29 @@ struct ChatListView: View {
                             )
                         }
                         .listStyle(PlainListStyle())
+                        .padding(.top, 150)
                     }
                 }
-                .edgesIgnoringSafeArea(.top)
                 
-                if showSidebar {
-                    MenuView(isSidebarVisible: $showSidebar)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .transition(.move(edge: .leading))
-                        .padding(.leading, 0)
-                }
+                // Header View
+                HeaderView(
+                    title: "Chats",
+                    showBackButton: false,
+                    onHeaderButtonTapped: {
+                        withAnimation {
+                            showSidebar.toggle() // Toggle sidebar visibility
+                        }
+                    }
+                )
+                .frame(maxWidth: .infinity)
+                .background(Color.white)
+                
+                // Sidebar Menu
+                MenuView(isSidebarVisible: $showSidebar)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .transition(.move(edge: .leading))
             }
+            .edgesIgnoringSafeArea([.top, .bottom])
             .onAppear {
                 userProfileManager.fetchUserProfile {
                     if let _ = userProfileManager.currentUserProfile {
@@ -209,7 +213,7 @@ struct ChatListView: View {
                 }
             }
         }
-        .navigationBarHidden(true)
+        .navigationBarHidden(true) // Hide default navigation bar
     }
 }
 

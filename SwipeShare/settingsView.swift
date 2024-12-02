@@ -44,7 +44,7 @@ struct SettingsView: View {
                     // Profile Picture and Name
                     if let userProfile = userProfileManager.currentUserProfile {
                         VStack {
-                            AsyncImage(url: URL(string: userProfile.profilePictureURL)) { image in
+                            AsyncImage(url: URL(string: userProfile.profilePictureURL ?? "")) { image in
                                 image
                                     .resizable()
                                     .scaledToFit()
@@ -53,7 +53,7 @@ struct SettingsView: View {
                                     .overlay(Circle().stroke(Color.white, lineWidth: 4))
                                     .shadow(radius: 10)
                             } placeholder: {
-                                if userProfile.profilePictureURL.isEmpty {
+                                if ((userProfile.profilePictureURL?.isEmpty) != nil) {
                                     Image(systemName: "person.crop.circle.fill")
                                         .resizable()
                                         .scaledToFit()
@@ -100,7 +100,7 @@ struct SettingsView: View {
                         }
                         
                         Button(action: {
-                            // Change School Action
+                            // TODO: Change School Action
                         }) {
                             Text("Change Schools")
                                 .padding()
@@ -169,25 +169,28 @@ struct SettingsView: View {
                     
                     Divider().padding(.vertical, 8)
                     
-                    // Toggle Buttons
-                    VStack(alignment: .leading, spacing: 16) {
-                        Toggle(isOn: $isActivelyGivingSwipes) {
-                            Text("Actively giving swipes")
-                                .padding(.trailing, 10)
-                                .font(.body)
-                                .foregroundColor(Constants.DarkPurple)
+                    
+                    if userProfileManager.currentUserProfile?.isGiver == true {
+                        // Toggle Buttons
+                        VStack(alignment: .leading, spacing: 16) {
+                            Toggle(isOn: $isActivelyGivingSwipes) {
+                                Text("Actively giving swipes")
+                                    .padding(.trailing, 10)
+                                    .font(.body)
+                                    .foregroundColor(Constants.DarkPurple)
+                            }
+                            .padding(.horizontal)
+                            .tint(Constants.DarkPurple)
+                            
+                            Toggle(isOn: $allowProfileAutoShow) {
+                                Text("Allow profile to automatically be shown to receivers when in a dining hall")
+                                    .padding(.trailing, 10)
+                                    .font(.body)
+                                    .foregroundColor(Constants.DarkPurple)
+                            }
+                            .padding(.horizontal)
+                            .tint(Constants.DarkPurple)
                         }
-                        .padding(.horizontal)
-                        .tint(Constants.DarkPurple)
-                        
-                        Toggle(isOn: $allowProfileAutoShow) {
-                            Text("Allow profile to automatically be shown to receivers when in a dining hall")
-                                .padding(.trailing, 10)
-                                .font(.body)
-                                .foregroundColor(Constants.DarkPurple)
-                        }
-                        .padding(.horizontal)
-                        .tint(Constants.DarkPurple)
                     }
                     
                     // Sign Out Button

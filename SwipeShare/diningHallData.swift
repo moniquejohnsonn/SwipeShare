@@ -1,5 +1,5 @@
 //
-//  mockData.swift
+//  diningHallData.swift
 //  SwipeShare
 //
 //  Created by Rosa Figueroa on 11/13/24.
@@ -8,50 +8,9 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import FirebaseFirestore
 
-// giver struct
-struct Giver: Identifiable {
-    let id: String
-    let name: String
-    let year: String
-    let mealsGiven: Int
-    let giveRate: Int
-    let coordinate: CLLocationCoordinate2D
-    let profilePicture: Image
-    
-    static func == (lhs: Giver, rhs: Giver) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
 
-struct Receiver: Identifiable {
-    let id: UUID
-    let name: String
-    let message: String
-    let date: String
-    let profileImage: Image
-    let coordinate: CLLocationCoordinate2D
-}
-
-func isPointInsideGeofence(point: CLLocationCoordinate2D, diningHall: DiningHall) -> Bool {
-    let location = CLLocation(latitude: point.latitude, longitude: point.longitude)
-    let center = CLLocation(latitude: diningHall.centerCoordinate.latitude, longitude: diningHall.centerCoordinate.longitude)
-    return location.distance(from: center) <= 50
-}
-
-// get all givers in a dining hall based on their locations
-func getGiversForDiningHall(givers: [Giver], diningHall: DiningHall) -> [Giver] {
-    return givers.filter { giver in
-        isPointInsideGeofence(point: giver.coordinate, diningHall: diningHall)
-    }
-}
-
-// get all givers in a dining hall based on their locations
-func getReceiversForDiningHall(receivers: [Receiver], diningHall: DiningHall) -> [Receiver] {
-    return receivers.filter { receiver in
-        isPointInsideGeofence(point: receiver.coordinate, diningHall: diningHall)
-    }
-}
 
 // Define a DiningHall struct
 struct DiningHall: Equatable {
@@ -78,17 +37,17 @@ struct DiningHall: Equatable {
 }
 
 // mock givers
-let givers: [Giver] = [
-    Giver(id: UUID().uuidString, name: "Alice", year: "Sophomore at Barnard", mealsGiven: 10, giveRate:  4, coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621), profilePicture: Image("alice")),
-        Giver(id: UUID().uuidString, name: "Joe", year: "Junior at Columbia", mealsGiven: 8, giveRate:  3,  coordinate: CLLocationCoordinate2D(latitude: 40.8059, longitude: -73.9625), profilePicture: Image("joe")),
-        Giver(id: UUID().uuidString, name: "Bob", year: "Senior at Columbia", mealsGiven: 30, giveRate:  5, coordinate: CLLocationCoordinate2D(latitude: 40.8068, longitude: -73.9638), profilePicture: Image("bob"))
+let mockGivers: [UserProfile] = [
+    UserProfile(id: UUID().uuidString, name: "Alice", profilePictureURL: "", profilePicture: UIImage(named: "alice"), email: "alice@gmail.com", campus: "Columbia University in the City of New York", year: "Sophomore at Barnard College", major: "Psychology", numSwipes: 132, mealFrequency: "semesterly", mealCount: 10, isGiver: true, location: GeoPoint(latitude: 40.8057, longitude: -73.9621), diningHall: "John Jay Dining Hall"),
+    UserProfile(id: UUID().uuidString, name: "Joe", profilePictureURL: "", profilePicture: UIImage(named: "joe"), email: "joe@gmail.com", campus: "Columbia University in the City of New York", year: "Freshman at Columbia College", major: "Neuroscience", numSwipes: 19, mealFrequency: "weekly", mealCount: 4, isGiver: true, location: GeoPoint(latitude: 40.8059, longitude: -73.9625), diningHall: "John Jay Dining Hall"),
+    UserProfile(id: UUID().uuidString, name: "Bob", profilePictureURL: "", profilePicture: UIImage(named: "bob"), email: "bob@gmail.com", campus: "Columbia University in the City of New York", year: "Senior at Columbia College", major: "Mathematics", numSwipes: 87, mealFrequency: "semesterly", mealCount: 21, isGiver: true, location: GeoPoint(latitude: 40.8068, longitude: -73.9638), diningHall: "Ferris Booth Commons")
 ]
 
 // mock receivers
-let receivers: [Receiver] = [
-    Receiver(id: UUID(), name: "Jon", message: "requested a swipe", date: "11/14/24", profileImage: Image("joe"), coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621)),
-    Receiver(id: UUID(), name: "Lily", message: "requested a swipe", date: "11/12/24", profileImage: Image("alice"), coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621)),
-    Receiver(id: UUID(), name: "Sam", message: "requested a swipe", date: "11/10/24", profileImage: Image("bob"), coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621)),
+let mockReceivers: [UserProfile] = [
+    UserProfile(id: UUID().uuidString, name: "Jon", profilePictureURL: "", profilePicture: UIImage(named: "joe"), email: "jon@gmail.com", campus: "Columbia University in the City of New York", year: "Senior at Columbia Engineering", major: "Computer Science", numSwipes: 0, mealFrequency: "", mealCount: 0, isGiver: false, location: GeoPoint(latitude: 40.8057, longitude: -73.9621)),
+    UserProfile(id: UUID().uuidString, name: "Lily", profilePictureURL: "", profilePicture: UIImage(named: "alice"), email: "lily@gmail.com", campus: "Columbia University in the City of New York", year: "Junior at the School of General Studies", major: "Human Rights", numSwipes: 0, mealFrequency: "", mealCount: 0, isGiver: false, location: GeoPoint(latitude: 40.8057, longitude: -73.9621)),
+    UserProfile(id: UUID().uuidString, name: "Sam", profilePictureURL: "", profilePicture: UIImage(named: "bob"), email: "sam@gmail.com", campus: "Columbia University in the City of New York", year: "Sophomore at Columbia College", major: "Biology", numSwipes: 0, mealFrequency: "", mealCount: 0, isGiver: false, location: GeoPoint(latitude: 40.8057, longitude: -73.9621)),
 ]
 
 

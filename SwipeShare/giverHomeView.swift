@@ -17,7 +17,8 @@ struct GiverHomeView: View {
     @State private var showSidebar = false
     @State private var currentDiningHall: DiningHall? = nil
     @State private var userLocation: CLLocationCoordinate2D? = nil
-    @State private var receiversInArea: [Receiver] = []
+    @State private var receiversInArea: [UserProfile] = []
+    @State private var recentFulfilledRequests: [UserProfile] = []
 
     // mocked data
     // TODO: replace mocked data with actual calls to firebase to get total requests filled by giver and total receivers helped by giver
@@ -105,13 +106,13 @@ struct GiverHomeView: View {
                 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 10) {
-                        ForEach(receivers) { receiver in
+                        ForEach(recentFulfilledRequests) { receiver in
                             ReceiverRow(receiver: receiver)
                                 .padding(.horizontal)
                         }
 
-                        if receivers.isEmpty {
-                            Text("No other receivers")
+                        if recentFulfilledRequests.isEmpty {
+                            Text("No fulfilled requests yet.")
                                 .foregroundColor(Color("secondaryPurple"))
                                 .font(.custom("BalooBhaina2-Regular", size: 18))
                                 .padding()
@@ -122,21 +123,21 @@ struct GiverHomeView: View {
                 }
                 .padding(.horizontal)
             }
+            .onAppear(perform: fetchRecentFulfilledRequests)
             .edgesIgnoringSafeArea(.top)
-            // ensures the app begins tracking the user’s location when the view becomes visible
-         //   .onAppear {
-          //      locationManager.startUpdatingLocation()
-          //  }
-            // monitors changes to giverLocation
-            //.onChange(of: locationManager.currentDiningHall, //initial: false) { newDiningHall, _ in
-             //   if let hall = newDiningHall {
-                    // Update UI with dining hall info
-                //    print("Currently in \(hall.name)")
-              //  } else {
-                 //   print("Not in a dining hall")
-               // }
-        //    }
 
+            // monitors changes to giverLocation
+            .onChange(of: locationManager.currentDiningHall, initial: false) { newDiningHall, _ in
+                if let hall = newDiningHall {
+                        // Fetch receivers for the current dining hall
+                        fetchReceiversForDiningHall(hall: hall)
+                        self.currentDiningHall = hall
+                    } else {
+                        // Clear receivers when not in a dining hall
+                        self.currentDiningHall = nil
+                        self.receiversInArea = []
+                    }
+            }
             // Sidebar Content
             MenuView(isSidebarVisible: $showSidebar)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -145,15 +146,20 @@ struct GiverHomeView: View {
         }
         .navigationBarBackButtonHidden(true)
     }
-
-    // MARK: - determine dining hall a giver is inside of
-    func findDiningHall(for location: CLLocationCoordinate2D) -> DiningHall? {
-        for hall in diningHalls {
-            if isPointInsideGeofence(point: location, diningHall: hall) {
-                return hall
+    
+    private func fetchReceiversForDiningHall(hall: DiningHall) {
+        userProfileManager.getUsersForDiningHall(role: "receiver", diningHall: hall, includeMock: true) { fetchedReceivers in
+            DispatchQueue.main.async {
+                self.receiversInArea = fetchedReceivers
             }
         }
-        return nil
+    }
+    
+    private func fetchRecentFulfilledRequests() {
+        guard let currentUser = userProfileManager.currentUserProfile else { return }
+        userProfileManager.getRecentFulfilledSwipes(for: currentUser.id) { recentReceivers in
+            self.recentFulfilledRequests = recentReceivers
+        }
     }
 }
 
@@ -181,11 +187,11 @@ struct StatCardView: View {
 
 // MARK: - ReceiverRow
 struct ReceiverRow: View {
-    let receiver: Receiver
-    
+    let receiver: UserProfile
+
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            receiver.profileImage
+            Image(uiImage: receiver.profilePicture ?? UIImage(named: "profilePlaceholder")!)
                 .resizable()
                 .scaledToFill()
                 .frame(width: 50, height: 50)
@@ -196,7 +202,7 @@ struct ReceiverRow: View {
                     .font(.custom("BalooBhaina2-Bold", size: 22))
                     .foregroundColor(Color("primaryPurple"))
                 
-                Text(receiver.message)
+                Text("Recently fulfilled swipe")
                     .font(.custom("BalooBhaina2-Regular", size: 16))
                     .foregroundColor(Color("primaryPurple"))
             }
@@ -204,10 +210,6 @@ struct ReceiverRow: View {
             Spacer()
 
             VStack {
-                Text(receiver.date)
-                    .font(.custom("BalooBhaina2-Regular", size: 14))
-                    .foregroundColor(Color("primaryGreen"))
-                
                 Image(systemName: "chevron.right")
                     .foregroundColor(Color("primaryGreen"))
             }
@@ -217,8 +219,8 @@ struct ReceiverRow: View {
         .cornerRadius(12)
         .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
     }
-     
 }
+
 
 #Preview {
     NoBackButtonNavigationStack {
