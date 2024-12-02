@@ -5,7 +5,7 @@ struct FinalizeAccount2: View {
     @State private var alwaysShowProfileChecked = false
     @State private var manuallyEnableChecked = false
     @Binding var selectedFrequency: String
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -51,6 +51,7 @@ struct FinalizeAccount2: View {
                             .background(Color(red: 0.85, green: 0.82, blue: 0.95).opacity(0.6))
                             .cornerRadius(100)
                             .padding(.top, 20)
+                            .keyboardType(.numberPad) // Ensure numeric input
                     }
                     .padding(.horizontal, 56)
                     .padding(.top, 8)
@@ -105,13 +106,13 @@ struct FinalizeAccount2: View {
                     .padding(.horizontal, 36)
                     .padding(.top, 8)
                     
+                    // NavigationLink with validation
                     NavigationLink(destination: GiverHomeView()) {
                         HStack {
-                            // Circle with caret
                             ZStack {
                                 Circle()
                                     .fill(Color(red: 0.6, green: 0.9, blue: 0.8)) // Light green circle
-                                    .frame(width: 24, height: 24) // Circle size
+                                    .frame(width: 24, height: 24)
                                 
                                 Image(systemName: "chevron.right") // Caret pointing right
                                     .foregroundColor(.white)
@@ -131,6 +132,8 @@ struct FinalizeAccount2: View {
                         .cornerRadius(100)
                     }
                     .padding(.top, 30)
+                    .disabled(inputNumber.isEmpty || (!alwaysShowProfileChecked && !manuallyEnableChecked)) // Disable until conditions are met
+                    .opacity(inputNumber.isEmpty || (!alwaysShowProfileChecked && !manuallyEnableChecked) ? 0.5 : 1.0) // Visual feedback
                 }
                 .frame(maxWidth: 480)
                 .background(Color.white)
@@ -162,7 +165,6 @@ struct CheckBoxView1: View {
                 .foregroundColor(isChecked ? Color(red: 0.03, green: 0.75, blue: 0.72) : .gray)
                 .font(.system(size: 24))
         }
-        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -188,7 +190,6 @@ struct ProgressIndicatorView4: View {
         .frame(height: 20)
     }
 }
-
 
 struct FinalizeAccount2_Previews: PreviewProvider {
     static var previews: some View {

@@ -11,7 +11,6 @@ struct SignUpView: View {
     @State private var signUpError: String?
     @State private var showLocationPermission = false
     
-    
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -23,7 +22,6 @@ struct SignUpView: View {
                     .font(.custom("BalooBhaina2-Bold", size: 48))
                     .foregroundColor(Color(red: 0.35, green: 0.22, blue: 0.82))
                     .padding(.top, 112)
-                
                 
                 VStack(spacing: 14) {
                     InputFieldView(iconName: "nameIcon", placeholder: "name", text: $name)
@@ -38,7 +36,6 @@ struct SignUpView: View {
                         .padding(.horizontal)
                 }
                 
-                
                 Button(action: signUp) {
                     Text("Continue")
                         .font(.system(size: 16, weight: .bold))
@@ -48,7 +45,8 @@ struct SignUpView: View {
                         .cornerRadius(100)
                 }
                 .padding(.top, 128)
-                
+                .disabled(name.isEmpty) // Disable the button if the name is empty
+                .opacity(name.isEmpty ? 0.5 : 1.0) // Reduce opacity if disabled
                 
                 HStack(spacing: 0) {
                     Text("Already have an account? ")
@@ -74,6 +72,11 @@ struct SignUpView: View {
     }
     
     private func signUp() {
+        if name.isEmpty {
+            signUpError = "Name cannot be empty."
+            return
+        }
+        
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
                 signUpError = error.localizedDescription
@@ -108,7 +111,6 @@ struct SignUpView: View {
     }
 }
 
-
 struct SignUpView_Previews: PreviewProvider {
     static var previews: some View {
         SignUpView()
@@ -116,7 +118,6 @@ struct SignUpView_Previews: PreviewProvider {
 }
 
 // Status Bar View
-
 
 // Progress Indicator View
 struct ProgressIndicatorView: View {
@@ -141,8 +142,6 @@ struct ProgressIndicatorView: View {
 }
 
 // Input Field View
-
-
 struct InputFieldView: View {
     let iconName: String
     let placeholder: String
@@ -151,13 +150,11 @@ struct InputFieldView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Icon positioned outside the purple bubble
             Image(iconName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 30, height: 30)
             
-            // Purple bubble containing only the text field
             HStack {
                 Group {
                     if isSecure {
@@ -175,8 +172,7 @@ struct InputFieldView: View {
             .background(Color(red: 0.85, green: 0.82, blue: 0.95).opacity(0.3))
             .cornerRadius(100)
         }
-        .padding(.horizontal, 16) // Add padding to both sides of the HStack
+        .padding(.horizontal, 16)
     }
-     
 }
 
