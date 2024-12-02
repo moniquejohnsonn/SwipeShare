@@ -17,6 +17,7 @@ struct UserProfile: Identifiable {
     var mealCount: Int
     var isGiver: Bool
     var location: GeoPoint?
+    var diningHall: String?
 }
 
 // UserProfileManager class
@@ -26,7 +27,14 @@ class UserProfileManager: ObservableObject {
     @Published var isLoading: Bool = true
     @Published var loginError: String? = nil
     
-    private let db = Firestore.firestore()
+    // Lazy initialization for Firestore
+    private lazy var db: Firestore = {
+        guard AppDelegate.isFirebaseConfigured else {
+            fatalError("Firebase is not configured. Call FirebaseApp.configure() before accessing Firestore.")
+        }
+        return Firestore.firestore()
+    }()
+    
     weak var locationManager: LocationManager?
     
     init() {
@@ -105,7 +113,8 @@ class UserProfileManager: ObservableObject {
                     mealFrequency: data["mealFrequency"] as? String ?? "Unknown",
                     mealCount: data["mealCount"] as? Int ?? 0,
                     isGiver: data["isGiver"] as? Bool ?? false,
-                    location: data["location"] as? GeoPoint ?? GeoPoint(latitude: 0.0, longitude: 0.0)
+                    location: data["location"] as? GeoPoint ?? GeoPoint(latitude: 0.0, longitude: 0.0),
+                    diningHall: data["diningHall"] as? String ?? "None"
                 )
                 
                 self.fetchProfilePicture(for: userProfile) { image in
@@ -136,7 +145,9 @@ class UserProfileManager: ObservableObject {
                     numSwipes: data["numSwipes"] as? Int ?? 0,
                     mealFrequency: data["mealFrequency"] as? String ?? "Unknown",
                     mealCount: data["mealCount"] as? Int ?? 0,
-                    isGiver: data["isGiver"] as? Bool ?? false
+                    isGiver: data["isGiver"] as? Bool ?? false,
+                    location: data["location"] as? GeoPoint ?? GeoPoint(latitude: 0.0, longitude: 0.0),
+                    diningHall: data["diningHall"] as? String ?? "None"
                 )
                 completion(userProfile)
             } else {
@@ -197,105 +208,64 @@ class UserProfileManager: ObservableObject {
     
     // fetch either receivers or givers in a dining hall
     private func fetchUsersInDiningHall(role: String, diningHallName: String, completion: @escaping ([UserProfile]) -> Void) {
-        if role == "giver" {
-            db.collection("users")
-                .whereField("diningHall", isEqualTo: diningHallName)
-                .whereField("isGiver", isEqualTo: true)
-                .getDocuments { snapshot, error in
-                    if let error = error {
-                        print("Error fetching users: \(error.localizedDescription)")
-                        completion([]) // Return empty arrays on error
-                        return
-                    }
-                    
-                    let givers = snapshot?.documents.compactMap { doc -> UserProfile? in
-                        let data = doc.data()
-                        guard let id = doc.documentID as String?,
-                              let name = data["name"] as? String,
-                              let isGiver = data["isGiver"] as? Bool,
-                              let location = data["location"] as? GeoPoint else { return nil }
-                        
-                        return UserProfile(
-                            id: id,
-                            name: name,
-                            profilePictureURL: data["profilePictureURL"] as? String ?? "",
-                            email: data["email"] as? String ?? "",
-                            campus: data["campus"] as? String ?? "",
-                            year: data["year"] as? String ?? "",
-                            major: data["major"] as? String ?? "",
-                            numSwipes: data["numSwipes"] as? Int ?? 0,
-                            mealFrequency: data["mealFrequency"] as? String ?? "",
-                            mealCount: data["mealCount"] as? Int ?? 0,
-                            isGiver: isGiver,
-                            location: location
-                        )
-                    } ?? []
-                    
-                    completion(givers)
+        db.collection("users")
+            .whereField("diningHall", isEqualTo: diningHallName)
+            .whereField("isGiver", isEqualTo: role == "giver")
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching \(role)s in \(diningHallName): \(error.localizedDescription)")
+                    completion([])
+                    return
                 }
-        } else if role == "receiver" {
-            db.collection("users")
-                .whereField("diningHall", isEqualTo: diningHallName)
-                .whereField("isGiver", isEqualTo: false)
-                .getDocuments { snapshot, error in
-                    if let error = error {
-                        print("Error fetching users: \(error.localizedDescription)")
-                        completion([]) // Return empty arrays on error
-                        return
-                    }
+                
+                let users = snapshot?.documents.compactMap { doc -> UserProfile? in
+                    let data = doc.data()
+                    guard let id = doc.documentID as String?,
+                          let name = data["name"] as? String,
+                          let isGiver = data["isGiver"] as? Bool,
+                          let location = data["location"] as? GeoPoint else { return nil }
                     
-                    let receivers = snapshot?.documents.compactMap { doc -> UserProfile? in
-                        let data = doc.data()
-                        guard let id = doc.documentID as String?,
-                              let name = data["name"] as? String,
-                              let isGiver = data["isGiver"] as? Bool,
-                              let location = data["location"] as? GeoPoint else { return nil }
-                        
-                        return UserProfile(
-                            id: id,
-                            name: name,
-                            profilePictureURL: data["profilePictureURL"] as? String ?? "",
-                            email: data["email"] as? String ?? "",
-                            campus: data["campus"] as? String ?? "",
-                            year: data["year"] as? String ?? "",
-                            major: data["major"] as? String ?? "",
-                            numSwipes: data["numSwipes"] as? Int ?? 0,
-                            mealFrequency: data["mealFrequency"] as? String ?? "",
-                            mealCount: data["mealCount"] as? Int ?? 0,
-                            isGiver: isGiver,
-                            location: location
-                        )
-                    } ?? []
-                    
-                    completion(receivers)
-                }
-        }
+                    return UserProfile(
+                        id: id,
+                        name: name,
+                        profilePictureURL: data["profilePictureURL"] as? String ?? "",
+                        email: data["email"] as? String ?? "",
+                        campus: data["campus"] as? String ?? "",
+                        year: data["year"] as? String ?? "",
+                        major: data["major"] as? String ?? "",
+                        numSwipes: data["numSwipes"] as? Int ?? 0,
+                        mealFrequency: data["mealFrequency"] as? String ?? "",
+                        mealCount: data["mealCount"] as? Int ?? 0,
+                        isGiver: isGiver,
+                        location: location,
+                        diningHall: data["diningHall"] as? String
+                    )
+                } ?? []
+                
+                completion(users)
+            }
     }
     
-    // Get users for a dining hall and specify if you want to include mock users or not
+    // get users for a dining hall and specify if you want to include mock users or not
     func getUsersForDiningHall(role: String, diningHall: DiningHall, includeMock: Bool = true, completion: @escaping ([UserProfile]) -> Void) {
         fetchUsersInDiningHall(role: role, diningHallName: diningHall.name) { firebaseUsers in
             var users: [UserProfile] = []
-            
-            if firebaseUsers.isEmpty { // If the query fails or returns no users
-                if includeMock {
-                    if role == "giver" {
-                        users = mockGivers
-                    } else if role == "receiver" {
-                        users = mockReceivers 
-                    }
-                }
-            } else {
-                users = firebaseUsers // Use Firebase users
-                if includeMock {
-                    if role == "giver" {
-                        users.append(contentsOf: mockGivers) // Combine with mock givers
-                    } else if role == "receiver" {
-                        users.append(contentsOf: mockReceivers) // Combine with mock receivers
-                    }
+
+            // Use Firebase users if the query succeeds
+            users = firebaseUsers
+
+            if includeMock {
+                // Filter mock users based on dining hall
+                if role == "giver" {
+                    let filteredMockGivers = mockGivers.filter { $0.diningHall == diningHall.name }
+                    users.append(contentsOf: filteredMockGivers)
+                } else if role == "receiver" {
+                    let filteredMockReceivers = mockReceivers.filter { $0.diningHall == diningHall.name }
+                    users.append(contentsOf: filteredMockReceivers)
                 }
             }
-            
+
+            print("Success, users: \(users)")
             completion(users)
         }
     }
