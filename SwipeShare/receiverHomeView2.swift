@@ -31,6 +31,7 @@ struct ReceiverHomeView2: View {
     }
     
     var body: some View {
+        NoBackButtonNavigationStack {
             VStack {
                 HeaderView(
                     title: selectedDiningHall?.name ?? "Select a Dining Hall",
@@ -40,7 +41,7 @@ struct ReceiverHomeView2: View {
                     }
                 )
                 .frame(height: 150)
-
+                
                 MapView(
                     diningHalls: diningHalls,
                     region: $region,
@@ -48,14 +49,9 @@ struct ReceiverHomeView2: View {
                     selectedGiver: $selectedGiver
                 )
                 .frame(height: 400)
-
+                
                 if selectedDiningHall != nil {
                     VStack(alignment: .leading) {
-                        Text("Givers")
-                            .font(.headline)
-                            .padding(.leading, 16)
-                            .padding(.top, 8)
-
                         GiversListView(
                             givers: relevantGivers,
                             selectedGiver: $selectedGiver,
@@ -72,7 +68,11 @@ struct ReceiverHomeView2: View {
                         .frame(maxHeight: .infinity)
                 }
             }
+            .navigationDestination(isPresented: $navigateToReceiverHome) {
+                ReceiverHomeView1()
+            }
         }
+    }
 
     private func fetchGiversForSelectedDiningHall() {
         guard let diningHall = selectedDiningHall else { return }
@@ -193,10 +193,10 @@ struct GiverCardView: View {
         
         var body: some View {
             VStack(alignment: .leading, spacing: 16) {
-                Text("  Givers")
+                Text("Givers")
                     .font(.custom("BalooBhaina2-Bold", size: 30))
                     .foregroundColor(Color("primaryPurple"))
-                    .padding(.top, 15)
+                    .padding(.top, 10)
                     .padding(.leading, 12)
                 
                 ScrollView {
@@ -273,14 +273,13 @@ struct MapView: UIViewRepresentable {
 
     // Fetch all givers across dining halls
     private func fetchAllGivers(mapView: MKMapView) {
-        allGivers.removeAll() // Reset the list
+        var fetchedGivers: [UserProfile] = []
 
         for diningHall in diningHalls {
             userProfileManager.getUsersForDiningHall(role: "giver", diningHall: diningHall, includeMock: true) { relevantGivers in
                 DispatchQueue.main.async {
-                    allGivers.append(contentsOf: relevantGivers)
+                    fetchedGivers.append(contentsOf: relevantGivers)
 
-                    // Add annotations for the new givers
                     for giver in relevantGivers {
                         if let location = giver.location {
                             let annotation = GiverAnnotation(
@@ -290,6 +289,12 @@ struct MapView: UIViewRepresentable {
                                 profileImage: giver.profilePicture ?? UIImage()
                             )
                             mapView.addAnnotation(annotation)
+                        }
+                    }
+
+                    if diningHall == diningHalls.last {
+                        DispatchQueue.main.async {
+                            self.allGivers = fetchedGivers
                         }
                     }
                 }
