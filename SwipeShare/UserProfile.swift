@@ -6,7 +6,7 @@ import Combine
 struct UserProfile: Identifiable {
     var id: String
     var name: String
-    var profilePictureURL: String
+    var profilePictureURL: String?
     var profilePicture: UIImage?
     var email: String
     var campus: String
@@ -16,6 +16,7 @@ struct UserProfile: Identifiable {
     var mealFrequency: String
     var mealCount: Int
     var isGiver: Bool
+    var location: GeoPoint?
 }
 
 // UserProfileManager class
@@ -26,13 +27,15 @@ class UserProfileManager: ObservableObject {
     @Published var loginError: String? = nil
     
     private let db = Firestore.firestore()
+    weak var locationManager: LocationManager?
     
     init() {
-        // Optionally fetch profile on initialization if user is already logged in
-        if Auth.auth().currentUser != nil {
-            fetchUserProfile()
-        }
+       // Optionally fetch profile on initialization if the user is already logged in
+       if Auth.auth().currentUser != nil {
+           fetchUserProfile()
+       }
     }
+
     
     func login(email: String, password: String, completion: @escaping (Error?) -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
@@ -48,8 +51,8 @@ class UserProfileManager: ObservableObject {
     }
     
     func fetchProfilePicture(for userProfile: UserProfile, completion: @escaping (UIImage?) -> Void) {
-        guard let url = URL(string: userProfile.profilePictureURL) else {
-            print("Invalid profile picture URL: \(userProfile.profilePictureURL)")
+        guard let url = URL(string: userProfile.profilePictureURL ?? "") else {
+            print("Invalid profile picture URL: \(String(describing: userProfile.profilePictureURL))")
             DispatchQueue.main.async {
                 completion(UIImage(named: "profilePicHolder"))
             }
@@ -101,7 +104,8 @@ class UserProfileManager: ObservableObject {
                     numSwipes: data["numSwipes"] as? Int ?? 0,
                     mealFrequency: data["mealFrequency"] as? String ?? "Unknown",
                     mealCount: data["mealCount"] as? Int ?? 0,
-                    isGiver: data["isGiver"] as? Bool ?? false
+                    isGiver: data["isGiver"] as? Bool ?? false,
+                    location: data["location"] as? GeoPoint ?? GeoPoint(latitude: 0.0, longitude: 0.0)
                 )
                 
                 self.fetchProfilePicture(for: userProfile) { image in
@@ -143,20 +147,27 @@ class UserProfileManager: ObservableObject {
     }
     
     func saveUserProfile(profile: UserProfile, completion: @escaping (Error?) -> Void) {
-        db.collection("users").document(profile.id).setData([
-            "name": profile.name,
-            "profilePictureURL": profile.profilePictureURL,
-            "email": profile.email,
-            "campus": profile.campus,
-            "year": profile.year,
-            "major": profile.major,
-            "numSwipes": profile.numSwipes,
-            "mealFrequency": profile.mealFrequency,
-            "mealCount": profile.mealCount,
-            "isGiver": profile.isGiver
-        ]) { error in
-            completion(error)
-        }
+        var data: [String: Any] = [
+                "name": profile.name,
+                "profilePictureURL": profile.profilePictureURL ?? "",
+                "email": profile.email,
+                "campus": profile.campus,
+                "year": profile.year,
+                "major": profile.major,
+                "numSwipes": profile.numSwipes,
+                "mealFrequency": profile.mealFrequency,
+                "mealCount": profile.mealCount,
+                "isGiver": profile.isGiver
+            ]
+            
+            // add location only if it's not nulll
+            if let location = profile.location {
+                data["location"] = location
+            }
+            
+            db.collection("users").document(profile.id).setData(data) { error in
+                completion(error)
+            }
     }
     
     // Log out the user and reset the profile
@@ -165,8 +176,169 @@ class UserProfileManager: ObservableObject {
             try Auth.auth().signOut()
             self.currentUserProfile = nil
             self.isLoggedIn = false
+            locationManager?.stopMonitoringGeofences() // Stop geofencing
         } catch let error {
             print("Error signing out: \(error)")
         }
     }
+    
+    // update user location when they move in and out of dining hall geofencing
+    func updateUserLocation(uid: String, location: GeoPoint, diningHall: String, completion: @escaping (Error?) -> Void) {
+        db.collection("users").document(uid).updateData(["location": location, "diningHall": diningHall]) { error in
+            if let error = error {
+                print("Error updating user location: \(error.localizedDescription)")
+                completion(error)
+            } else {
+                print("User location updated successfully.")
+                completion(nil)
+            }
+        }
+    }
+    
+    // fetch either receivers or givers in a dining hall
+    private func fetchUsersInDiningHall(role: String, diningHallName: String, completion: @escaping ([UserProfile]) -> Void) {
+        if role == "giver" {
+            db.collection("users")
+                .whereField("diningHall", isEqualTo: diningHallName)
+                .whereField("isGiver", isEqualTo: true)
+                .getDocuments { snapshot, error in
+                    if let error = error {
+                        print("Error fetching users: \(error.localizedDescription)")
+                        completion([]) // Return empty arrays on error
+                        return
+                    }
+                    
+                    let givers = snapshot?.documents.compactMap { doc -> UserProfile? in
+                        let data = doc.data()
+                        guard let id = doc.documentID as String?,
+                              let name = data["name"] as? String,
+                              let isGiver = data["isGiver"] as? Bool,
+                              let location = data["location"] as? GeoPoint else { return nil }
+                        
+                        return UserProfile(
+                            id: id,
+                            name: name,
+                            profilePictureURL: data["profilePictureURL"] as? String ?? "",
+                            email: data["email"] as? String ?? "",
+                            campus: data["campus"] as? String ?? "",
+                            year: data["year"] as? String ?? "",
+                            major: data["major"] as? String ?? "",
+                            numSwipes: data["numSwipes"] as? Int ?? 0,
+                            mealFrequency: data["mealFrequency"] as? String ?? "",
+                            mealCount: data["mealCount"] as? Int ?? 0,
+                            isGiver: isGiver,
+                            location: location
+                        )
+                    } ?? []
+                    
+                    completion(givers)
+                }
+        } else if role == "receiver" {
+            db.collection("users")
+                .whereField("diningHall", isEqualTo: diningHallName)
+                .whereField("isGiver", isEqualTo: false)
+                .getDocuments { snapshot, error in
+                    if let error = error {
+                        print("Error fetching users: \(error.localizedDescription)")
+                        completion([]) // Return empty arrays on error
+                        return
+                    }
+                    
+                    let receivers = snapshot?.documents.compactMap { doc -> UserProfile? in
+                        let data = doc.data()
+                        guard let id = doc.documentID as String?,
+                              let name = data["name"] as? String,
+                              let isGiver = data["isGiver"] as? Bool,
+                              let location = data["location"] as? GeoPoint else { return nil }
+                        
+                        return UserProfile(
+                            id: id,
+                            name: name,
+                            profilePictureURL: data["profilePictureURL"] as? String ?? "",
+                            email: data["email"] as? String ?? "",
+                            campus: data["campus"] as? String ?? "",
+                            year: data["year"] as? String ?? "",
+                            major: data["major"] as? String ?? "",
+                            numSwipes: data["numSwipes"] as? Int ?? 0,
+                            mealFrequency: data["mealFrequency"] as? String ?? "",
+                            mealCount: data["mealCount"] as? Int ?? 0,
+                            isGiver: isGiver,
+                            location: location
+                        )
+                    } ?? []
+                    
+                    completion(receivers)
+                }
+        }
+    }
+    
+    // Get users for a dining hall and specify if you want to include mock users or not
+    func getUsersForDiningHall(role: String, diningHall: DiningHall, includeMock: Bool = true, completion: @escaping ([UserProfile]) -> Void) {
+        fetchUsersInDiningHall(role: role, diningHallName: diningHall.name) { firebaseUsers in
+            var users: [UserProfile] = []
+            
+            if firebaseUsers.isEmpty { // If the query fails or returns no users
+                if includeMock {
+                    if role == "giver" {
+                        users = mockGivers
+                    } else if role == "receiver" {
+                        users = mockReceivers 
+                    }
+                }
+            } else {
+                users = firebaseUsers // Use Firebase users
+                if includeMock {
+                    if role == "giver" {
+                        users.append(contentsOf: mockGivers) // Combine with mock givers
+                    } else if role == "receiver" {
+                        users.append(contentsOf: mockReceivers) // Combine with mock receivers
+                    }
+                }
+            }
+            
+            completion(users)
+        }
+    }
+    
+    func getRecentFulfilledSwipes(for giverId: String, completion: @escaping ([UserProfile]) -> Void) {
+        let fulfilledSwipesRef = db.collection("fulfilledSwipes")
+        fulfilledSwipesRef
+            .whereField("giverId", isEqualTo: giverId) // Filter by giverId
+            .order(by: "timestamp", descending: true) // Sort by most recent requests
+            .limit(to: 5) // Limit to 5
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching recent swipes: \(error.localizedDescription)")
+                    completion([])
+                    return
+                }
+
+                guard let documents = snapshot?.documents else {
+                    completion([])
+                    return
+                }
+
+                var recentReceivers: [UserProfile] = []
+
+                let dispatchGroup = DispatchGroup() // wait for async tasks
+                for document in documents {
+                    let data = document.data()
+                    if let receiverId = data["receiverId"] as? String {
+                        dispatchGroup.enter()
+                        self.fetchUserDetails(userID: receiverId) { userProfile in
+                            if let userProfile = userProfile {
+                                recentReceivers.append(userProfile)
+                            }
+                            dispatchGroup.leave()
+                        }
+                    }
+                }
+
+                dispatchGroup.notify(queue: .main) {
+                    completion(recentReceivers)
+                }
+            }
+    }
+
+
 }

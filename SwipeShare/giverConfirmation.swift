@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import CoreLocation
+import FirebaseFirestore
 
 struct MealSwipeRequestView: View {
     @State private var navigateToMapView = false
@@ -9,7 +10,7 @@ struct MealSwipeRequestView: View {
     @State private var selectedDiningHall: DiningHall? = nil
    // @Binding var selectedDiningHall: DiningHall?
     
-    var giver: Giver
+    var giver: UserProfile
     var diningHall: DiningHall
 
     var body: some View {
@@ -43,7 +44,7 @@ struct MealSwipeRequestView: View {
                     // Profile Section with Consistent Alignment
                     HStack {
                         Spacer().frame(width: 7) // Adjust spacing to align with other elements
-                        giver.profilePicture // Use giver's profile picture
+                        Image(uiImage: giver.profilePicture ?? UIImage()) // Use giver's profile picture
                             .resizable()
                             .scaledToFill()
                             .frame(width: 100, height: 100)
@@ -74,6 +75,8 @@ struct MealSwipeRequestView: View {
                             Text("Give Rate:")
                                 .font(.headline)
                                 .foregroundColor(Constants.DarkPurple)
+                            // TODO: add give rate to user profile??
+                            /*
                             ForEach(0..<5) { index in
                                 if index < giver.giveRate { // Use giver's give rate
                                     Image(systemName: "star.fill")
@@ -83,6 +86,7 @@ struct MealSwipeRequestView: View {
                                         .foregroundColor(Constants.LightPurple)
                                 }
                             }
+                            */
                             Spacer()
                         }
                         .padding(.top, 1)
@@ -93,7 +97,7 @@ struct MealSwipeRequestView: View {
                             Text("Meals Given:")
                                 .font(.headline)
                                 .foregroundColor(Constants.DarkPurple)
-                            Text("\(giver.mealsGiven)") // Use giver's meals given count
+                            Text("\(giver.mealCount)") // Use giver's meals given count
                                 .font(.headline)
                                 .fontWeight(.bold)
                                 .foregroundColor(Constants.DarkPurple)
@@ -243,17 +247,23 @@ struct MealSwipeRequestView: View {
     }
 }
 
+// TODO: remove mock giver and do actual giver that was clicked on
 struct MealSwipeRequestView_Previews: PreviewProvider {
     static var previews: some View {
         // Create a mock Giver object for the preview
-        let mockGiver = Giver(
+        let mockGiver = UserProfile(
             id: UUID().uuidString,
             name: "Tom",
+            profilePicture: UIImage(contentsOfFile: "drake2"),
+            email: "tom@gmail.com",
+            campus: "Columbia University in the City of New York",
             year: "Senior in the School of General Studies",
-            mealsGiven: 18,
-            giveRate:  4, // Updated giveRate value for mock
-            coordinate: CLLocationCoordinate2D(latitude: 40.8057, longitude: -73.9621),
-            profilePicture: Image("drake2")
+            major: "Neuroscience",
+            numSwipes: 19,
+            mealFrequency: "weekly",
+            mealCount: 4,
+            isGiver: true,
+            location: GeoPoint(latitude: 40.8059, longitude: -73.9625)
         )
         let mockDiningHall = DiningHall(
             name: "Hewitt Dining",
