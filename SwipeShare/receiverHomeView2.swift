@@ -42,13 +42,35 @@ struct ReceiverHomeView2: View {
                 )
                 .frame(height: 150)
                 
-                MapView(
-                    diningHalls: diningHalls,
-                    region: $region,
-                    selectedDiningHall: $selectedDiningHall,
-                    selectedGiver: $selectedGiver
-                )
-                .frame(height: 400)
+                ZStack {
+                    MapView(
+                        diningHalls: diningHalls,
+                        region: $region,
+                        selectedDiningHall: $selectedDiningHall,
+                        selectedGiver: $selectedGiver
+                    )
+                    .frame(height: 400)
+                    // "See Entire Map" Button
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Button(action: resetRegion) {
+                                Text("See Entire Map")
+                                    .font(.custom("BalooBhaina2-Regular", size: 13))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 3)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color("primaryPurple"))
+                                    )
+                            }
+                            .padding(.trailing, 15)
+                            .padding(.top, 15)
+                        }
+                        Spacer()
+                    }
+                }
                 
                 if selectedDiningHall != nil {
                     VStack(alignment: .leading) {
