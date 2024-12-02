@@ -34,7 +34,7 @@ struct ReceiverHomeView2: View {
     
     var body: some View {
 
-        NoBackButtonNavigationStack {
+       NavigationStack {
             VStack {
                 HeaderView(
                     title: selectedDiningHall?.name ?? "Select a Dining Hall",
@@ -97,6 +97,7 @@ struct ReceiverHomeView2: View {
             .navigationDestination(isPresented: $navigateToReceiverHome) {
                 ReceiverHomeView1()
             }
+            .navigationBarBackButtonHidden(true)
         }
     }
 

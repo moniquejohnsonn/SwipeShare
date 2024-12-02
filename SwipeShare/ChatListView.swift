@@ -213,7 +213,7 @@ struct ChatListView: View {
                 }
             }
         }
-        .navigationBarHidden(true) // Hide default navigation bar
+        .navigationBarHidden(true)
     }
 }
 

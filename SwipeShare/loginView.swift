@@ -40,7 +40,6 @@ struct loginView: View {
             
             HStack {
                 Spacer()
-                // TODO: - Forgot Password Link Sending
                 Button(action: forgotPassword) {
                     Text("Forgot Password?")
                         .font(.footnote)

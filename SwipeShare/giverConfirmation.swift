@@ -2,17 +2,19 @@ import Foundation
 import SwiftUI
 import CoreLocation
 import FirebaseFirestore
+import FirebaseAuth
 
 struct MealSwipeRequestView: View {
     @State private var navigateToMapView = false
     @State private var showPopup = false // State to control popup visibility
     @State private var confirmationTimer: Timer? = nil // Timer for the delay
     @State private var selectedDiningHall: DiningHall? = nil
-   // @Binding var selectedDiningHall: DiningHall?
+    @Environment(\.presentationMode) var presentationMode
+    // @Binding var selectedDiningHall: DiningHall?
     
     var giver: UserProfile
     var diningHall: DiningHall
-
+    
     var body: some View {
         ZStack {
             
@@ -40,7 +42,7 @@ struct MealSwipeRequestView: View {
                     .padding(.top, 70)
                     .padding(.bottom, 10)
                     .background(Constants.LightPurple)
-
+                    
                     // Profile Section with Consistent Alignment
                     HStack {
                         Spacer().frame(width: 7) // Adjust spacing to align with other elements
@@ -51,7 +53,7 @@ struct MealSwipeRequestView: View {
                             .clipShape(Circle())
                             .overlay(Circle().stroke(Constants.Turquoise, lineWidth: 4))
                             .shadow(radius: 10)
-
+                        
                         
                         VStack(alignment: .leading, spacing: 8) {
                             Text(giver.name) // Display giver's name
@@ -66,7 +68,7 @@ struct MealSwipeRequestView: View {
                         Spacer() // Add spacer to ensure alignment is consistent
                     }
                     .padding(.horizontal)
-
+                    
                     // Give Rate and Meals Given Section with Consistent Alignment
                     VStack(alignment: .leading, spacing: 12) {
                         // Give Rate
@@ -77,20 +79,20 @@ struct MealSwipeRequestView: View {
                                 .foregroundColor(Constants.DarkPurple)
                             // TODO: add give rate to user profile??
                             /*
-                            ForEach(0..<5) { index in
-                                if index < giver.giveRate { // Use giver's give rate
-                                    Image(systemName: "star.fill")
-                                        .foregroundColor(Constants.DarkPurple)
-                                } else {
-                                    Image(systemName: "star")
-                                        .foregroundColor(Constants.LightPurple)
-                                }
-                            }
-                            */
+                             ForEach(0..<5) { index in
+                             if index < giver.giveRate { // Use giver's give rate
+                             Image(systemName: "star.fill")
+                             .foregroundColor(Constants.DarkPurple)
+                             } else {
+                             Image(systemName: "star")
+                             .foregroundColor(Constants.LightPurple)
+                             }
+                             }
+                             */
                             Spacer()
                         }
                         .padding(.top, 1)
-
+                        
                         // Meals Given
                         HStack {
                             Spacer().frame(width: 7) // Align with the profile section
@@ -106,7 +108,7 @@ struct MealSwipeRequestView: View {
                         .padding(.top, 4)
                     }
                     .padding()
-
+                    
                     // Availability Section with Proper Alignment
                     HStack {
                         Spacer().frame(width: 20) // Align with the rest of the content
@@ -126,7 +128,7 @@ struct MealSwipeRequestView: View {
                     .cornerRadius(15)
                     .shadow(color: .gray.opacity(0.4), radius: 5, x: 0, y: 2)
                     .padding(.horizontal)
-
+                    
                     Spacer()
                     
                     // Expanded Confirmation Box
@@ -147,15 +149,16 @@ struct MealSwipeRequestView: View {
                                 .font(.body)
                                 .foregroundColor(Constants.DarkPurple) +
                             Text(diningHall.name)
-                           // Text("Hewitt Dining Hall")
+                            // Text("Hewitt Dining Hall")
                                 .font(.body)
                                 .fontWeight(.bold)
                                 .foregroundColor(Constants.DarkPurple)
                         }
-
+                        
                         HStack(spacing: 40) {
                             Button(action: {
                                 // Cancel action
+                                presentationMode.wrappedValue.dismiss()
                             }) {
                                 Text("Cancel")
                                     .padding()
@@ -171,6 +174,7 @@ struct MealSwipeRequestView: View {
                                 confirmationTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
                                     showPopup = true
                                 }
+                                sendDefaultMessage()
                             }) {
                                 Text("Confirm")
                                     .padding()
@@ -197,7 +201,7 @@ struct MealSwipeRequestView: View {
             }
             .background(Constants.LightPurple)
             .ignoresSafeArea(edges: .top)
-
+            
             // Popup Overlay
             if showPopup {
                 VStack {
@@ -244,6 +248,53 @@ struct MealSwipeRequestView: View {
                 .transition(.scale)
             }
         }
+        .navigationBarBackButtonHidden(true)
+    }
+    
+    func sendDefaultMessage() {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        let giverName = giver.name
+        let diningHallName = diningHall.name
+        let messageText = "You sent \(giverName) a meal request in \(diningHallName)."
+        
+        let db = Firestore.firestore()
+        
+        // Create a new chat document
+        let chatRef = db.collection("chats").document() // Generates a new unique ID
+        let chatId = chatRef.documentID
+        
+        // Define chat metadata
+        let chatData: [String: Any] = [
+            "participants": [userId, giver.id],
+            "createdAt": Timestamp(),
+            "lastMessage": messageText,
+            "lastMessageTimestamp": Timestamp()
+        ]
+        
+        // Define the initial message
+        let messageData: [String: Any] = [
+            "senderID": userId,
+            "content": messageText,
+            "timestamp": Timestamp(),
+            "type": "initial"
+        ]
+        
+        // Save the chat and the message
+        chatRef.setData(chatData) { error in
+            if let error = error {
+                print("Error creating chat: \(error.localizedDescription)")
+                return
+            }
+            
+            chatRef.collection("messages").addDocument(data: messageData) { messageError in
+                if let messageError = messageError {
+                    print("Error sending message: \(messageError.localizedDescription)")
+                } else {
+                    print("Chat and message created successfully!")
+                }
+            }
+        }
     }
 }
 
@@ -272,7 +323,7 @@ struct MealSwipeRequestView_Previews: PreviewProvider {
                 CLLocationCoordinate2D(latitude: 40.80836, longitude: -73.96457), //bottom right
                 CLLocationCoordinate2D(latitude: 40.80896, longitude: -73.964135), //top right
                 CLLocationCoordinate2D(latitude: 40.8090612, longitude: -73.9643846) // top left
-            
+                
             ]
         )
         

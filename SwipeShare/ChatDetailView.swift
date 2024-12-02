@@ -43,13 +43,14 @@ struct ChatDetailView: View {
                     
                     guard let content = data["content"] as? String,
                           let senderId = data["senderID"] as? String,
-                          let timestamp = data["timestamp"] as? Timestamp else {
+                          let timestamp = data["timestamp"] as? Timestamp,
+                          let type = data["type"] as? String else {
                         print("Document data is missing required fields: \(document.documentID)")
                         return // Skip this document if required fields are missing
                     }
                     
                     let isFromCurrentUser = senderId == self.userProfileManager.currentUserProfile?.id
-                    let message = Message(id: document.documentID, content: content, isFromCurrentUser: isFromCurrentUser, timestamp: timestamp.dateValue())
+                    let message = Message(id: document.documentID, content: content, isFromCurrentUser: isFromCurrentUser, timestamp: timestamp.dateValue(), type: type)
                     
                     // Append valid message to the list
                     loadedMessages.append(message)
@@ -118,32 +119,52 @@ struct ChatDetailView: View {
         }
     }
     
+    struct MessageBubbleView: View {
+        let message: ChatDetailView.Message
+
+        var body: some View {
+            HStack {
+                if message.type == "initial" {
+                    Spacer()
+                    Text(message.content)
+                        .padding()
+                        .background(Color("initialChat"))
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .frame(maxWidth: 250, alignment: .trailing)
+                } else {
+                    if message.isFromCurrentUser {
+                        Spacer()
+                        Text(message.content)
+                            .padding()
+                            .background(Color("lightestPurple").opacity(0.6))
+                            .foregroundColor(Color("primaryPurple"))
+                            .cornerRadius(10)
+                            .frame(maxWidth: 250, alignment: .trailing)
+                    } else {
+                        Text(message.content)
+                            .padding()
+                            .background(Color("secondaryGreen").opacity(0.8))
+                            .cornerRadius(10)
+                            .frame(maxWidth: 250, alignment: .leading)
+                        Spacer()
+                    }
+                }
+            }
+        }
+    }
+    
     struct MessagesListView: View {
         let messages: [ChatDetailView.Message]
-        
+
         var body: some View {
             ScrollViewReader { scrollViewProxy in
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(messages) { message in
-                            HStack {
-                                if message.isFromCurrentUser {
-                                    Spacer()
-                                    Text(message.content)
-                                        .padding()
-                                        .background(Color("lightestPurple").opacity(0.6))
-                                        .foregroundColor((Color("primaryPurple")))
-                                        .cornerRadius(10)
-                                        .frame(maxWidth: 250, alignment: .trailing)
-                                } else {
-                                    Text(message.content)
-                                        .padding()
-                                        .background(Color("secondaryGreen").opacity(0.8))
-                                        .cornerRadius(10)
-                                        .frame(maxWidth: 250, alignment: .leading)
-                                    Spacer()
-                                }
-                            }
+                            MessageBubbleView(message: message)
+                                .id(message.id) // Ensure unique IDs for scrolling
                         }
                     }
                     .padding()
@@ -221,7 +242,8 @@ struct ChatDetailView: View {
         let messageData: [String: Any] = [
             "content": newMessage,
             "senderID": userId,
-            "timestamp": FieldValue.serverTimestamp()
+            "timestamp": FieldValue.serverTimestamp(),
+            "type": "message"
         ]
         
         let chatDB = db.collection("chats").document(chat.id ?? "")
@@ -264,6 +286,7 @@ struct ChatDetailView: View {
         var content: String
         var isFromCurrentUser: Bool
         var timestamp: Date
+        var type: String
     }
 }
 

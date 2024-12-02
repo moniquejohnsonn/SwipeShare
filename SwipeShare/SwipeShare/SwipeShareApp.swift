@@ -24,7 +24,7 @@ struct SwipeShareApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NoBackButtonNavigationStack { // Use the custom wrapper
+            NavigationStack {
                 if isLoading {
                     loadingScreen()
                 } else if !userProfileManager.isLoggedIn || userProfileManager.currentUserProfile == nil {
