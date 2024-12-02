@@ -287,7 +287,7 @@ struct FinalizeAccount1: View {
     // update photo url in user profile
     func updateProfilePhoto(with imageUrl: String) {
         let userData: [String: Any] = [
-            "photoURL": imageUrl
+            "profilePictureURL": imageUrl
         ]
         
         let userID = Auth.auth().currentUser?.uid
