@@ -100,7 +100,7 @@ struct SettingsView: View {
                         }
                         
                         Button(action: {
-                            // Change School Action
+                            // TODO: Change School Action
                         }) {
                             Text("Change Schools")
                                 .padding()
@@ -169,25 +169,28 @@ struct SettingsView: View {
                     
                     Divider().padding(.vertical, 8)
                     
-                    // Toggle Buttons
-                    VStack(alignment: .leading, spacing: 16) {
-                        Toggle(isOn: $isActivelyGivingSwipes) {
-                            Text("Actively giving swipes")
-                                .padding(.trailing, 10)
-                                .font(.body)
-                                .foregroundColor(Constants.DarkPurple)
+                    
+                    if userProfileManager.currentUserProfile?.isGiver == true {
+                        // Toggle Buttons
+                        VStack(alignment: .leading, spacing: 16) {
+                            Toggle(isOn: $isActivelyGivingSwipes) {
+                                Text("Actively giving swipes")
+                                    .padding(.trailing, 10)
+                                    .font(.body)
+                                    .foregroundColor(Constants.DarkPurple)
+                            }
+                            .padding(.horizontal)
+                            .tint(Constants.DarkPurple)
+                            
+                            Toggle(isOn: $allowProfileAutoShow) {
+                                Text("Allow profile to automatically be shown to receivers when in a dining hall")
+                                    .padding(.trailing, 10)
+                                    .font(.body)
+                                    .foregroundColor(Constants.DarkPurple)
+                            }
+                            .padding(.horizontal)
+                            .tint(Constants.DarkPurple)
                         }
-                        .padding(.horizontal)
-                        .tint(Constants.DarkPurple)
-                        
-                        Toggle(isOn: $allowProfileAutoShow) {
-                            Text("Allow profile to automatically be shown to receivers when in a dining hall")
-                                .padding(.trailing, 10)
-                                .font(.body)
-                                .foregroundColor(Constants.DarkPurple)
-                        }
-                        .padding(.horizontal)
-                        .tint(Constants.DarkPurple)
                     }
                     
                     // Sign Out Button
