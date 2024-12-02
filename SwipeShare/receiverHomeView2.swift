@@ -6,7 +6,12 @@ struct ReceiverHomeView2: View {
     @Binding var selectedDiningHall: DiningHall?
     @State private var navigateToReceiverHome = false
     @State private var selectedGiver: Giver? = nil
-    @State private var region: MKCoordinateRegion
+  //  @State private var region: MKCoordinateRegion
+   
+    @State private var region: MKCoordinateRegion = MKCoordinateRegion(
+           center: CLLocationCoordinate2D(latitude: 40.80795368887853, longitude: -73.96237958464191),
+           span: MKCoordinateSpan(latitudeDelta: 0.007, longitudeDelta: 0.007)
+       )
     
     // custom initializer
     init(selectedDiningHall: Binding<DiningHall?>) {
@@ -29,6 +34,7 @@ struct ReceiverHomeView2: View {
     }
     
     var body: some View {
+        
         ZStack {
             VStack {
                 // Custom Header
@@ -42,10 +48,19 @@ struct ReceiverHomeView2: View {
                 .frame(height: 150)
                 
                 ZStack {
-                    // Map view
+
                     GeometryReader { geometry in
                         MapView(diningHalls: diningHalls, region: $region, selectedDiningHall: $selectedDiningHall, selectedGiver: $selectedGiver)
                             .frame(width: geometry.size.width, height: 400) // sets fixed size to height of map
+                            .onAppear {
+                                 if let hall = selectedDiningHall {
+                                     // Set the region to the selected dining hall
+                                     region = MKCoordinateRegion(
+                                         center: hall.centerCoordinate,
+                                         span: MKCoordinateSpan(latitudeDelta: 0.0015, longitudeDelta: 0.0015) // set zoom level
+                                     )
+                                 }
+                             }
                     }
                     
                     // Reset Button
@@ -100,12 +115,10 @@ struct ReceiverHomeView2: View {
     private func resetRegion() {
         selectedGiver = nil
         selectedDiningHall = nil
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.region = MKCoordinateRegion(
-                    center: CLLocationCoordinate2D(latitude: 40.80795368887853, longitude: -73.96237958464191),
-                    span: MKCoordinateSpan(latitudeDelta: 0.007, longitudeDelta: 0.007)
-                )
-        }
+        region = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 40.80795368887853, longitude: -73.96237958464191),
+            span: MKCoordinateSpan(latitudeDelta: 0.007, longitudeDelta: 0.007)
+        )
     }
 }
 

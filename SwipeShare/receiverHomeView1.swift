@@ -5,6 +5,7 @@ struct ReceiverHomeView1: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
     @State private var showSidebar = false
     @State private var selectedDiningHall: DiningHall? = nil // state for selected dining hall
+    //@State private var givers: [Giver] = []
 
     var body: some View {
         ZStack {
@@ -27,17 +28,22 @@ struct ReceiverHomeView1: View {
                     .frame(alignment: .leading)
                 
                 ScrollView {
-                    ForEach(diningHalls, id: \.name) { hall in
-                        let hallGivers = getGiversForDiningHall(givers: givers, diningHall: hall)
-                        
-                        // set `selectedDiningHall` when this row is tapped
-                        NavigationLink(
-                            destination: ReceiverHomeView2(selectedDiningHall: .constant(hall))
-                        ) {
-                            DiningHallRow(diningHall: hall, giverCount: hallGivers.count)
-                        }
-                    }
-                }
+                                ForEach(diningHalls, id: \.name) { hall in
+                                    let hallGivers = getGiversForDiningHall(givers: givers, diningHall: hall)
+
+                                    // Pass `selectedDiningHall` as a binding
+                                    NavigationLink(
+                                         destination: ReceiverHomeView2(selectedDiningHall: $selectedDiningHall)
+                                     ) {
+                                         DiningHallRow(diningHall: hall, giverCount: hallGivers.count)
+                                     }
+                                     .simultaneousGesture(
+                                           TapGesture().onEnded {
+                                               selectedDiningHall = hall // Set selectedDiningHall on tap
+                                           }
+                                       )
+                                }
+                            }
                 .padding(.horizontal)
             }
             .edgesIgnoringSafeArea(.top)

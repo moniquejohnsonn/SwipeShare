@@ -124,18 +124,18 @@ struct GiverHomeView: View {
             }
             .edgesIgnoringSafeArea(.top)
             // ensures the app begins tracking the user’s location when the view becomes visible
-            .onAppear {
-                locationManager.startUpdatingLocation()
-            }
+         //   .onAppear {
+          //      locationManager.startUpdatingLocation()
+          //  }
             // monitors changes to giverLocation
-            .onChange(of: locationManager.currentDiningHall, initial: false) { newDiningHall, _ in
-                if let hall = newDiningHall {
+            //.onChange(of: locationManager.currentDiningHall, //initial: false) { newDiningHall, _ in
+             //   if let hall = newDiningHall {
                     // Update UI with dining hall info
-                    print("Currently in \(hall.name)")
-                } else {
-                    print("Not in a dining hall")
-                }
-            }
+                //    print("Currently in \(hall.name)")
+              //  } else {
+                 //   print("Not in a dining hall")
+               // }
+        //    }
 
             // Sidebar Content
             MenuView(isSidebarVisible: $showSidebar)
