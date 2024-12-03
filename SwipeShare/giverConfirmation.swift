@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import CoreLocation
 import FirebaseFirestore
+import FirebaseAuth
 
 struct MealSwipeRequestView: View {
     @State private var navigateToMapView = false // State to trigger navigation
@@ -219,6 +220,53 @@ struct MealSwipeRequestView: View {
                 }
             }
             .navigationBarBackButtonHidden(true) // Hide default back button
+        }
+        .navigationBarBackButtonHidden(true)
+    }
+    
+    func sendDefaultMessage() {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        let giverName = giver.name
+        let diningHallName = diningHall.name
+        let messageText = "You sent \(giverName) a meal request in \(diningHallName)."
+        
+        let db = Firestore.firestore()
+        
+        // Create a new chat document
+        let chatRef = db.collection("chats").document() // Generates a new unique ID
+        let chatId = chatRef.documentID
+        
+        // Define chat metadata
+        let chatData: [String: Any] = [
+            "participants": [userId, giver.id],
+            "createdAt": Timestamp(),
+            "lastMessage": messageText,
+            "lastMessageTimestamp": Timestamp()
+        ]
+        
+        // Define the initial message
+        let messageData: [String: Any] = [
+            "senderID": userId,
+            "content": messageText,
+            "timestamp": Timestamp(),
+            "type": "initial"
+        ]
+        
+        // Save the chat and the message
+        chatRef.setData(chatData) { error in
+            if let error = error {
+                print("Error creating chat: \(error.localizedDescription)")
+                return
+            }
+            
+            chatRef.collection("messages").addDocument(data: messageData) { messageError in
+                if let messageError = messageError {
+                    print("Error sending message: \(messageError.localizedDescription)")
+                } else {
+                    print("Chat and message created successfully!")
+                }
+            }
         }
     }
 }

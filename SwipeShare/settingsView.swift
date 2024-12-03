@@ -246,7 +246,5 @@ struct SettingsView_Previews: PreviewProvider {
 }
 
 #Preview {
-    NoBackButtonNavigationStack {
-        SettingsView()
-    }
+   
 }

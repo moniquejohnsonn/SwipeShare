@@ -223,9 +223,7 @@ struct ReceiverRow: View {
 
 
 #Preview {
-    NoBackButtonNavigationStack {
-        GiverHomeView()
-    }
+
 }
 
 
