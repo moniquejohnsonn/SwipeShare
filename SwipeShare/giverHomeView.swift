@@ -18,6 +18,7 @@ struct GiverHomeView: View {
     @State private var userLocation: CLLocationCoordinate2D? = nil
     @State private var receiversInArea: [UserProfile] = []
     @State private var recentFulfilledRequests: [UserProfile] = []
+    @State private var pendingRequests: [UserProfile] = []
 
     // mocked data
     // TODO: replace mocked data with actual calls to firebase to get total requests filled by giver and total receivers helped by giver
@@ -117,12 +118,16 @@ struct GiverHomeView: View {
                                 .padding()
                                 .frame(maxWidth: .infinity, alignment: .center)
                         }
+                        
+                        PendingRequestsView(pendingRequests: $pendingRequests)
                     }
                     .padding(.top, 10)
                 }
                 .padding(.horizontal)
             }
             .onAppear {
+                fetchPendingRequests()
+                
                 locationManager.updateCurrentDiningHall()
                 if let diningHall = locationManager.currentDiningHall {
                     print("Currently in dining hall: \(diningHall.name)")
@@ -150,6 +155,105 @@ struct GiverHomeView: View {
                 .padding(.leading, 0)
         }
         .navigationBarBackButtonHidden(true)
+    }
+    
+    struct PendingRequestRow: View {
+        let receiver: UserProfile
+        let onAccept: () -> Void
+        let onDecline: () -> Void
+
+        var body: some View {
+            HStack {
+                if let profilePicture = receiver.profilePictureURL {
+                    AsyncImage(url: URL(string: profilePicture)) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                    } placeholder: {
+                        Image("profilePicHolder")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 50, height: 50)
+                            .clipShape(Circle())
+                    }
+                }
+                
+                Text(receiver.name)
+                    .font(.custom("BalooBhaina2-Bold", size: 20))
+                    .foregroundColor(Color("primaryPurple"))
+
+                Spacer()
+
+                HStack(spacing: 16) {
+                    Button(action: onAccept) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(Color.green)
+                            .font(.title)
+                    }
+                    Button(action: onDecline) {
+                        Image(systemName: "x.circle.fill")
+                            .foregroundColor(Color.red)
+                            .font(.title)
+                    }
+                }
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(12)
+            .shadow(radius: 4)
+        }
+    }
+    
+    struct PendingRequestsView: View {
+        @Binding var pendingRequests: [UserProfile]
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Pending Requests")
+                    .font(.custom("BalooBhaina2-Bold", size: 30))
+                    .foregroundColor(Color("primaryPurple"))
+                    .padding(.horizontal, 20)
+                    .frame(alignment: .leading)
+
+                ForEach(pendingRequests) { receiver in
+                    PendingRequestRow(
+                        receiver: receiver,
+                        onAccept: {
+                            print("Accepted request for \(receiver.name)")
+                            // Add accept logic
+                        },
+                        onDecline: {
+                            print("Declined request for \(receiver.name)")
+                            // Add decline logic
+                        }
+                    )
+                    .padding(.horizontal)
+                }
+
+                if pendingRequests.isEmpty {
+                    Text("No pending requests.")
+                        .foregroundColor(Color("secondaryPurple"))
+                        .font(.custom("BalooBhaina2-Regular", size: 18))
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+            }
+        }
+    }
+    
+    private func fetchPendingRequests() {
+        guard let userId = userProfileManager.currentUserProfile?.id else {
+            print("User ID not found")
+            return
+        }
+        userProfileManager.getPendingRequests(for: userId) { fetchedRequests in
+            DispatchQueue.main.async {
+                print("Fetched pending requests: \(fetchedRequests)")
+                self.pendingRequests = fetchedRequests
+            }
+        }
     }
     
     private func fetchReceiversForDiningHall(hall: DiningHall) {

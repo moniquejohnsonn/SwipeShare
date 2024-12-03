@@ -240,7 +240,7 @@ struct MealSwipeRequestView: View {
         
         let giverName = giver.name
         let diningHallName = diningHall.name
-        let messageText = "You sent \(giverName) a meal request in \(diningHallName)."
+        let messageText = " sent \(giverName) a meal request in \(diningHallName)."
         
         let db = Firestore.firestore()
         

@@ -38,12 +38,12 @@ class UserProfileManager: ObservableObject {
     weak var locationManager: LocationManager?
     
     init() {
-       // Optionally fetch profile on initialization if the user is already logged in
-       if Auth.auth().currentUser != nil {
-           fetchUserProfile()
-       }
+        // Optionally fetch profile on initialization if the user is already logged in
+        if Auth.auth().currentUser != nil {
+            fetchUserProfile()
+        }
     }
-
+    
     
     func login(email: String, password: String, completion: @escaping (Error?) -> Void) {
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] result, error in
@@ -89,7 +89,7 @@ class UserProfileManager: ObservableObject {
         }
         task.resume()
     }
-
+    
     
     func fetchUserProfile(completion: @escaping () -> Void = {}) {
         guard let uid = Auth.auth().currentUser?.uid else {
@@ -159,27 +159,125 @@ class UserProfileManager: ObservableObject {
     
     func saveUserProfile(profile: UserProfile, completion: @escaping (Error?) -> Void) {
         var data: [String: Any] = [
-                "name": profile.name,
-                "profilePictureURL": profile.profilePictureURL ?? "",
-                "email": profile.email,
-                "campus": profile.campus,
-                "year": profile.year,
-                "major": profile.major,
-                "numSwipes": profile.numSwipes,
-                "mealFrequency": profile.mealFrequency,
-                "mealCount": profile.mealCount,
-                "isGiver": profile.isGiver
-            ]
-            
-            // add location only if it's not nulll
-            if let location = profile.location {
-                data["location"] = location
-            }
-            
-            db.collection("users").document(profile.id).setData(data) { error in
-                completion(error)
+            "name": profile.name,
+            "profilePictureURL": profile.profilePictureURL ?? "",
+            "email": profile.email,
+            "campus": profile.campus,
+            "year": profile.year,
+            "major": profile.major,
+            "numSwipes": profile.numSwipes,
+            "mealFrequency": profile.mealFrequency,
+            "mealCount": profile.mealCount,
+            "isGiver": profile.isGiver
+        ]
+        
+        // add location only if it's not nulll
+        if let location = profile.location {
+            data["location"] = location
+        }
+        
+        db.collection("users").document(profile.id).setData(data) { error in
+            completion(error)
+        }
+    }
+    
+    func getPendingRequests(for userId: String, completion: @escaping ([UserProfile]) -> Void) {
+        print("Fetching pending requests for userId: \(userId)")
+        
+        var pendingReceivers: [UserProfile] = []
+        
+        guard let userId = currentUserProfile?.id else {
+            print("User ID is nil. Exiting getPendingRequests.")
+            return
+        }
+        
+        print("Fetching chats for user ID: \(userId)")
+        
+        db.collection("chats")
+            .whereField("participants", arrayContains: userId)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching chats: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else { return }
+                
+                let dispatchGroup = DispatchGroup() // To handle async calls for fetching user details
+                
+                for document in documents {
+                    let data = document.data()
+                    let participants = data["participants"] as? [String] ?? []
+                    
+                    // Determine the other participant (receiver)
+                    let receiverId = participants.first { $0 != Auth.auth().currentUser?.uid }
+                    
+                    // Fetch the messages to check if there's an "initial" message
+                    if let receiverId = receiverId {
+                        dispatchGroup.enter()
+                        self.db.collection("chats")
+                            .document(document.documentID)
+                            .collection("messages")
+                            .whereField("type", isEqualTo: "initial")
+                            .getDocuments { messagesSnapshot, messageError in
+                                if let messageError = messageError {
+                                    print("Error fetching messages: \(messageError.localizedDescription)")
+                                } else {
+                                    // If an "initial" message exists, proceed
+                                    if let messages = messagesSnapshot?.documents, !messages.isEmpty {
+                                        let initialMessageSender = messages.first?["senderID"] as? String
+                                        
+                                        // Check if the receiverId matches the senderId of the initial message
+                                        if initialMessageSender == receiverId {
+                                            // Fetch the receiver's profile
+                                            self.db.collection("users").document(receiverId).getDocument { userSnapshot, userError in
+                                                if let userError = userError {
+                                                    print("Error fetching user details: \(userError.localizedDescription)")
+                                                } else if let userData = userSnapshot?.data() {
+                                                    let profile = UserProfile(
+                                                        id: receiverId,
+                                                        name: userData["name"] as? String ?? "Unknown",
+                                                        profilePictureURL: userData["profilePictureURL"] as? String,
+                                                        email: userData["email"] as? String ?? "Unknown",
+                                                        campus: userData["campus"] as? String ?? "Unknown",
+                                                        year: userData["year"] as? String ?? "Unknown",
+                                                        major: userData["major"] as? String ?? "Unknown",
+                                                        numSwipes: userData["numSwipes"] as? Int ?? 0,
+                                                        mealFrequency: userData["mealFrequency"] as? String ?? "Unknown",
+                                                        mealCount: userData["mealCount"] as? Int ?? 0,
+                                                        isGiver: userData["isGiver"] as? Bool ?? false,
+                                                        location: userData["location"] as? GeoPoint ?? GeoPoint(latitude: 0.0, longitude: 0.0),
+                                                        diningHall: userData["diningHall"] as? String ?? "None"
+                                                    )
+                                                    
+                                                    // Only add the profile if it isn't already in the list
+                                                    if !pendingReceivers.contains(where: { $0.id == profile.id }) {
+                                                        print("Adding profile: \(profile.name) to pending requests.")
+                                                        pendingReceivers.append(profile)
+                                                    }
+                                                }
+                                                dispatchGroup.leave()
+                                            }
+                                        } else {
+                                            dispatchGroup.leave()
+                                        }
+                                    } else {
+                                        // No "initial" message found, so we skip
+                                        dispatchGroup.leave()
+                                    }
+                                }
+                            }
+                    }
+                }
+                
+                // Update the UI after all user details are fetched
+                dispatchGroup.notify(queue: .main) {
+                    print("Fetched pending requests: \(pendingReceivers)")
+                    completion(pendingReceivers)
+                }
             }
     }
+    
     
     // Log out the user and reset the profile
     func signOut() {
@@ -250,10 +348,10 @@ class UserProfileManager: ObservableObject {
     func getUsersForDiningHall(role: String, diningHall: DiningHall, includeMock: Bool = true, completion: @escaping ([UserProfile]) -> Void) {
         fetchUsersInDiningHall(role: role, diningHallName: diningHall.name) { firebaseUsers in
             var users: [UserProfile] = []
-
+            
             // Use Firebase users if the query succeeds
             users = firebaseUsers
-
+            
             if includeMock {
                 // Filter mock users based on dining hall
                 if role == "giver" {
@@ -264,7 +362,7 @@ class UserProfileManager: ObservableObject {
                     users.append(contentsOf: filteredMockReceivers)
                 }
             }
-
+            
             print("Success, users: \(users)")
             completion(users)
         }
@@ -282,14 +380,14 @@ class UserProfileManager: ObservableObject {
                     completion([])
                     return
                 }
-
+                
                 guard let documents = snapshot?.documents else {
                     completion([])
                     return
                 }
-
+                
                 var recentReceivers: [UserProfile] = []
-
+                
                 let dispatchGroup = DispatchGroup() // wait for async tasks
                 for document in documents {
                     let data = document.data()
@@ -303,12 +401,12 @@ class UserProfileManager: ObservableObject {
                         }
                     }
                 }
-
+                
                 dispatchGroup.notify(queue: .main) {
                     completion(recentReceivers)
                 }
             }
     }
-
-
+    
+    
 }
