@@ -69,7 +69,7 @@ struct ReceiverHomeView1: View {
     // fetch giver counts for all dining halls
     private func fetchGiverCounts() {
         for hall in diningHalls {
-            userProfileManager.getUsersForDiningHall(role: "giver", diningHall: hall, includeMock: true) { givers in
+            userProfileManager.getUsersForDiningHall(role: "giver", diningHall: hall, includeMock: false) { givers in
                 DispatchQueue.main.async {
                     giverCounts[hall.name] = givers.count
                 }

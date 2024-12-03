@@ -57,7 +57,7 @@ struct MealSwipeRequestView: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Constants.DarkPurple)
                                 
-                                Text(giver.year)
+                                Text("\(giver.year) at \(giver.campus)")
                                     .foregroundColor(Constants.DarkPurple)
                                     .font(.subheadline)
                             }

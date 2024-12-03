@@ -41,7 +41,7 @@ let mockGivers: [UserProfile] = [
     UserProfile(id: UUID().uuidString, name: "Alice", profilePictureURL: "", profilePicture: UIImage(named: "alice"), email: "alice@gmail.com", campus: "Columbia University in the City of New York", year: "Sophomore at Barnard College", major: "Psychology", numSwipes: 132, mealFrequency: "semesterly", mealCount: 10, isGiver: true, location: GeoPoint(latitude: 40.8057, longitude: -73.9621), diningHall: "John Jay Dining Hall"),
     UserProfile(id: UUID().uuidString, name: "Joe", profilePictureURL: "", profilePicture: UIImage(named: "joe"), email: "joe@gmail.com", campus: "Columbia University in the City of New York", year: "Freshman at Columbia College", major: "Neuroscience", numSwipes: 19, mealFrequency: "weekly", mealCount: 4, isGiver: true, location: GeoPoint(latitude: 40.8059, longitude: -73.9625), diningHall: "John Jay Dining Hall"),
     UserProfile(id: UUID().uuidString, name: "Bob", profilePictureURL: "", profilePicture: UIImage(named: "bob"), email: "bob@gmail.com", campus: "Columbia University in the City of New York", year: "Senior at Columbia College", major: "Mathematics", numSwipes: 87, mealFrequency: "semesterly", mealCount: 21, isGiver: true, location: GeoPoint(latitude: 40.8068, longitude: -73.9638), diningHall: "Ferris Booth Commons")
-]
+] 
 
 // mock receivers
 let mockReceivers: [UserProfile] = [

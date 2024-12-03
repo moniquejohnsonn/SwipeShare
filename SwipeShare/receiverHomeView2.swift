@@ -35,93 +35,108 @@ struct ReceiverHomeView2: View {
     
     var body: some View {
 
-       NavigationStack {
-            VStack {
-                HeaderView(
-                    title: selectedDiningHall?.name ?? "Select a Dining Hall",
-                    showBackButton: true,
-                    onHeaderButtonTapped: {
-                        navigateToReceiverHome = true
-                    }
-                )
-                .frame(height: 150)
-                .onAppear {
-                    locationManager.updateCurrentDiningHall()
-                    if let hall = selectedDiningHall {
-                    fetchGiversForSelectedDiningHall()
-                        region = MKCoordinateRegion(
-                            center: hall.centerCoordinate,
-                            span: MKCoordinateSpan(latitudeDelta: 0.0015, longitudeDelta: 0.0015) 
-                        )
-                    }
-                }
-
-
-                ZStack {
-                    MapView(
-                        diningHalls: diningHalls,
-                        region: $region,
-                        selectedDiningHall: $selectedDiningHall,
-                        selectedGiver: $selectedGiver
-                    )
-                    .frame(height: 400)
-                    // "See Entire Map" Button
-
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Button(action: resetRegion) {
-                                Text("See Entire Map")
-                                    .font(.custom("BalooBhaina2-Regular", size: 13))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 3)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color("primaryPurple"))
-                                    )
-                            }
-                            .padding(.trailing, 15)
-                            .padding(.top, 15)
+        NavigationStack {
+            ScrollView {
+                VStack {
+                    HeaderView(
+                        title: selectedDiningHall?.name ?? "Select a Dining Hall",
+                        showBackButton: true,
+                        onHeaderButtonTapped: {
+                            navigateToReceiverHome = true
                         }
-                        Spacer()
-                    }
-                }
-                
-                if selectedDiningHall != nil {
-                    VStack(alignment: .leading) {
-                        GiversListView(
-                            givers: relevantGivers,
-                            selectedGiver: $selectedGiver,
-                            selectedDiningHall: $selectedDiningHall
-                        )
-                    }
+                    )
+                    .frame(height: 150)
                     .onAppear {
-                        fetchGiversForSelectedDiningHall()
+                        locationManager.updateCurrentDiningHall()
+                        if let hall = selectedDiningHall {
+                            fetchGiversForSelectedDiningHall()
+                            region = MKCoordinateRegion(
+                                center: hall.centerCoordinate,
+                                span: MKCoordinateSpan(latitudeDelta: 0.0015, longitudeDelta: 0.0015)
+                            )
+                        }
                     }
-                    .frame(maxHeight: .infinity)
-                } else {
-                    Text("Select a Dining Hall to View Givers")
-                        .font(.headline)
+                    
+                    
+                    ZStack {
+                        MapView(
+                            diningHalls: diningHalls,
+                            region: $region,
+                            selectedDiningHall: $selectedDiningHall,
+                            selectedGiver: $selectedGiver
+                        )
+                        .frame(height: 400)
+                        // "See Entire Map" Button
+                        
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Button(action: resetRegion) {
+                                    Text("See Entire Map")
+                                        .font(.custom("BalooBhaina2-Regular", size: 13))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 3)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color("primaryPurple"))
+                                        )
+                                }
+                                .padding(.trailing, 15)
+                                .padding(.top, 15)
+                            }
+                            Spacer()
+                        }
+                    }
+                    
+                    if selectedDiningHall != nil {
+                        VStack(alignment: .leading) {
+                            GiversListView(
+                                givers: relevantGivers,
+                                selectedGiver: $selectedGiver,
+                                selectedDiningHall: $selectedDiningHall
+                            )
+                        }
+                        .onAppear {
+                            fetchGiversForSelectedDiningHall()
+                        }
                         .frame(maxHeight: .infinity)
+                    } else {
+                        Text("Select a Dining Hall to View Givers")
+                            .font(.headline)
+                            .frame(maxHeight: .infinity)
+                    }
                 }
+                .navigationDestination(isPresented: $navigateToReceiverHome) {
+                    ReceiverHomeView1()
+                }
+                .navigationBarBackButtonHidden(true)
             }
-            .navigationDestination(isPresented: $navigateToReceiverHome) {
-                ReceiverHomeView1()
-            }
-            .navigationBarBackButtonHidden(true)
         }
     }
 
     private func fetchGiversForSelectedDiningHall() {
         guard let diningHall = selectedDiningHall else {
-               relevantGivers = []
-               return
-           }
+            relevantGivers = []
+            return
+        }
 
-        userProfileManager.getUsersForDiningHall(role: "giver", diningHall: diningHall, includeMock: true) { givers in
-            DispatchQueue.main.async {
-                self.relevantGivers = givers
+        userProfileManager.getUsersForDiningHall(role: "giver", diningHall: diningHall, includeMock: false) { givers in
+            let dispatchGroup = DispatchGroup()
+            var updatedGivers: [UserProfile] = []
+
+            for giver in givers {
+                var giverCopy = giver
+                dispatchGroup.enter()
+                userProfileManager.fetchProfilePicture(for: giver) { image in
+                    giverCopy.profilePicture = image
+                    updatedGivers.append(giverCopy)
+                    dispatchGroup.leave()
+                }
+            }
+
+            dispatchGroup.notify(queue: .main) {
+                self.relevantGivers = updatedGivers.sorted { $0.name < $1.name } // Example sort by name
             }
         }
     }
@@ -171,7 +186,7 @@ struct GiverCardView: View {
                 
                 
                 // Giver Year
-                Text(giver.year)
+                Text("\(giver.year) at \(giver.campus)")
                     .font(.custom("BalooBhaina2-Regular", size: 14))
                     .foregroundColor((selectedGiver?.id == giver.id) ? Color.white : Color("darkestPurple"))
                 
@@ -340,21 +355,28 @@ struct MapView: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         uiView.setRegion(region, animated: true)
 
-        // Refresh annotations with `allGivers`
-        uiView.removeAnnotations(uiView.annotations)
+        let existingAnnotations = uiView.annotations.compactMap { $0 as? GiverAnnotation }
+
         for giver in allGivers {
-            if let location = giver.location {
+            if let location = giver.location,
+               !existingAnnotations.contains(where: { $0.title == giver.name }) {
                 let annotation = GiverAnnotation(
                     location: location,
                     title: giver.name,
                     subtitle: giver.year,
-                    profileImage: giver.profilePicture ?? UIImage()
+                    profileImage: giver.profilePicture ?? UIImage(named: "profilePicHolder")!
                 )
                 uiView.addAnnotation(annotation)
             }
         }
 
-        // Highlight the selected giver's annotation
+        let giverNames = allGivers.map { $0.name }
+        for annotation in existingAnnotations {
+            if !giverNames.contains(annotation.title ?? "") {
+                uiView.removeAnnotation(annotation)
+            }
+        }
+
         if let selectedGiver = selectedGiver {
             if let annotation = uiView.annotations.first(where: { ($0 as? GiverAnnotation)?.title == selectedGiver.name }) {
                 uiView.selectAnnotation(annotation, animated: true)
@@ -367,31 +389,37 @@ struct MapView: UIViewRepresentable {
     // Fetch all givers across dining halls
     private func fetchAllGivers(mapView: MKMapView) {
         var fetchedGivers: [UserProfile] = []
+        let dispatchGroup = DispatchGroup()
 
         for diningHall in diningHalls {
-            userProfileManager.getUsersForDiningHall(role: "giver", diningHall: diningHall, includeMock: true) { relevantGivers in
-                DispatchQueue.main.async {
-                    fetchedGivers.append(contentsOf: relevantGivers)
-
-                    for giver in relevantGivers {
-                        if let location = giver.location {
-                            let annotation = GiverAnnotation(
-                                location: location,
-                                title: giver.name,
-                                subtitle: giver.year,
-                                profileImage: giver.profilePicture ?? UIImage()
-                            )
-                            mapView.addAnnotation(annotation)
+            userProfileManager.getUsersForDiningHall(role: "giver", diningHall: diningHall, includeMock: false) { relevantGivers in
+                for giver in relevantGivers {
+                    dispatchGroup.enter()
+                    var giverWithPicture = giver
+                    userProfileManager.fetchProfilePicture(for: giver) { image in
+                        giverWithPicture.profilePicture = image
+                        if let location = giverWithPicture.location {
+                            DispatchQueue.main.async {
+                                let annotation = GiverAnnotation(
+                                    location: location,
+                                    title: giverWithPicture.name,
+                                    subtitle: "\(giverWithPicture.year) at \(giverWithPicture.campus)",
+                                    profileImage: giverWithPicture.profilePicture ?? UIImage(named: "profilePicHolder")!
+                                )
+                                mapView.addAnnotation(annotation)
+                            }
                         }
-                    }
-
-                    if diningHall == diningHalls.last {
-                        DispatchQueue.main.async {
-                            self.allGivers = fetchedGivers
-                        }
+                        fetchedGivers.append(giverWithPicture)
+                        dispatchGroup.leave()
                     }
                 }
             }
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            // Update `allGivers` after all profile pictures are fetched
+            self.allGivers = fetchedGivers.sorted { $0.name < $1.name } // Example: Sort by name
+            print("All givers with profile pictures loaded.")
         }
     }
 
