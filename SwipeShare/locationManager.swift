@@ -28,12 +28,13 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         for hall in diningHalls {
             let region = CLCircularRegion(
                 center: hall.centerCoordinate,
-                radius: 50, // geofence radius
+                radius: 100, // geofence radius
                 identifier: hall.name
             )
             region.notifyOnEntry = true
             region.notifyOnExit = true
             locationManager.startMonitoring(for: region)
+            print("SETUP FENCE FOR \(hall)")
         }
     }
     
@@ -118,6 +119,33 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 print("User location updated successfully in Firebase.")
             }
         }
+    }
+    
+    func updateCurrentDiningHall() {
+        // Always request the user's location
+        print("Requesting current location...")
+        locationManager.requestLocation()
+
+        // Guard against nil userLocation until the location is updated
+        guard let userLocation = self.userLocation else {
+            print("User location not available yet.")
+            return
+        }
+
+        print("Validating current dining hall with user location: \(userLocation)")
+
+        // Find the nearest dining hall within a certain distance threshold
+        let nearbyDiningHall = diningHalls.first { diningHall in
+            let hallLocation = CLLocation(latitude: diningHall.centerCoordinate.latitude, longitude: diningHall.centerCoordinate.longitude)
+            let userLocationCL = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
+            return hallLocation.distance(from: userLocationCL) <= 50 // 50 meters threshold
+        }
+
+        DispatchQueue.main.async {
+            self.currentDiningHall = nearbyDiningHall
+        }
+
+        updateUserLocationInFirebase()
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

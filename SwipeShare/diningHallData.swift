@@ -45,9 +45,9 @@ let mockGivers: [UserProfile] = [
 
 // mock receivers
 let mockReceivers: [UserProfile] = [
-    UserProfile(id: UUID().uuidString, name: "Jon", profilePictureURL: "", profilePicture: UIImage(named: "joe"), email: "jon@gmail.com", campus: "Columbia University in the City of New York", year: "Senior at Columbia Engineering", major: "Computer Science", numSwipes: 0, mealFrequency: "", mealCount: 0, isGiver: false, location: GeoPoint(latitude: 40.8057, longitude: -73.9621)),
-    UserProfile(id: UUID().uuidString, name: "Lily", profilePictureURL: "", profilePicture: UIImage(named: "alice"), email: "lily@gmail.com", campus: "Columbia University in the City of New York", year: "Junior at the School of General Studies", major: "Human Rights", numSwipes: 0, mealFrequency: "", mealCount: 0, isGiver: false, location: GeoPoint(latitude: 40.8057, longitude: -73.9621)),
-    UserProfile(id: UUID().uuidString, name: "Sam", profilePictureURL: "", profilePicture: UIImage(named: "bob"), email: "sam@gmail.com", campus: "Columbia University in the City of New York", year: "Sophomore at Columbia College", major: "Biology", numSwipes: 0, mealFrequency: "", mealCount: 0, isGiver: false, location: GeoPoint(latitude: 40.8057, longitude: -73.9621)),
+    UserProfile(id: UUID().uuidString, name: "Jon", profilePictureURL: "", profilePicture: UIImage(named: "joe"), email: "jon@gmail.com", campus: "Columbia University in the City of New York", year: "Senior at Columbia Engineering", major: "Computer Science", numSwipes: 0, mealFrequency: "", mealCount: 0, isGiver: false, location: GeoPoint(latitude: 40.8057, longitude: -73.9621), diningHall: "Ferris Booth Commons"),
+    UserProfile(id: UUID().uuidString, name: "Lily", profilePictureURL: "", profilePicture: UIImage(named: "alice"), email: "lily@gmail.com", campus: "Columbia University in the City of New York", year: "Junior at the School of General Studies", major: "Human Rights", numSwipes: 0, mealFrequency: "", mealCount: 0, isGiver: false, location: GeoPoint(latitude: 40.8057, longitude: -73.9648422), diningHall: "Hewitt Dining"),
+    UserProfile(id: UUID().uuidString, name: "Sam", profilePictureURL: "", profilePicture: UIImage(named: "bob"), email: "sam@gmail.com", campus: "Columbia University in the City of New York", year: "Sophomore at Columbia College", major: "Biology", numSwipes: 0, mealFrequency: "", mealCount: 0, isGiver: false, location: GeoPoint(latitude: 40.8057, longitude: -73.9621), diningHall: "John Jay Dining Hall"),
 ]
 
 

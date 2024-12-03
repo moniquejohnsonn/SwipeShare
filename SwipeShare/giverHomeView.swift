@@ -15,15 +15,14 @@ struct GiverHomeView: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
     @EnvironmentObject var locationManager: LocationManager
     @State private var showSidebar = false
-    @State private var currentDiningHall: DiningHall? = nil
     @State private var userLocation: CLLocationCoordinate2D? = nil
     @State private var receiversInArea: [UserProfile] = []
     @State private var recentFulfilledRequests: [UserProfile] = []
 
     // mocked data
     // TODO: replace mocked data with actual calls to firebase to get total requests filled by giver and total receivers helped by giver
-    let totalRequestsFulfilled = 25
-    let totalReceiversHelped = 15
+    let totalRequestsFulfilled = 5
+    let totalReceiversHelped = 3
 
     var body: some View {
         ZStack {
@@ -59,7 +58,7 @@ struct GiverHomeView: View {
                         Text("Your Location:")
                             .font(.headline)
 
-                        if let diningHall = currentDiningHall {
+                        if let diningHall = locationManager.currentDiningHall {
                             HStack{
                                 Image(systemName: "fork.knife")
                                     .resizable()
@@ -68,11 +67,11 @@ struct GiverHomeView: View {
                                     .foregroundColor(Color("primaryGreen"))
                                 Text(diningHall.name)
                                     .font(.headline)
-                                    .foregroundColor(.green)
+                                    .foregroundColor(Color("primaryGreen"))
                             }
-                            Text("(\(receiversInArea.count) receivers in \(diningHall.name)")
+                            Text("\(receiversInArea.count) receivers in \(diningHall.name)")
                                 .font(.subheadline)
-                                .foregroundColor(.green)
+                                .foregroundColor(Color("primaryPurple"))
                         } else {
                             HStack {
                                 Image(systemName: "xmark")
@@ -123,18 +122,24 @@ struct GiverHomeView: View {
                 }
                 .padding(.horizontal)
             }
-            .onAppear(perform: fetchRecentFulfilledRequests)
+            .onAppear {
+                locationManager.updateCurrentDiningHall()
+                if let diningHall = locationManager.currentDiningHall {
+                    print("Currently in dining hall: \(diningHall.name)")
+                    fetchReceiversForDiningHall(hall: diningHall)
+                } else {
+                    print("not currently in dining hall")
+                }
+            }
             .edgesIgnoringSafeArea(.top)
 
             // monitors changes to giverLocation
             .onChange(of: locationManager.currentDiningHall, initial: false) { newDiningHall, _ in
                 if let hall = newDiningHall {
                         // Fetch receivers for the current dining hall
+                        print("Entered dining hall: \(hall.name)")
                         fetchReceiversForDiningHall(hall: hall)
-                        self.currentDiningHall = hall
                     } else {
-                        // Clear receivers when not in a dining hall
-                        self.currentDiningHall = nil
                         self.receiversInArea = []
                     }
             }

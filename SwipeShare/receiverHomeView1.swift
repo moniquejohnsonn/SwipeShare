@@ -3,6 +3,7 @@ import MapKit
 
 struct ReceiverHomeView1: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
+    @EnvironmentObject var locationManager: LocationManager
     @State private var showSidebar = false
     @State private var selectedDiningHall: DiningHall? = nil // state for selected dining hall
 
@@ -51,6 +52,7 @@ struct ReceiverHomeView1: View {
                 .padding(.horizontal)
                 .onAppear {
                     fetchGiverCounts()
+                    locationManager.updateCurrentDiningHall()
                 } // fetch giver counts when the view appears
             }
             .edgesIgnoringSafeArea(.top)

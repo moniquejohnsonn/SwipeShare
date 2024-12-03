@@ -4,6 +4,7 @@ import FirebaseFirestore
 
 struct ReceiverHomeView2: View {
     @EnvironmentObject var userProfileManager: UserProfileManager
+    @EnvironmentObject var locationManager: LocationManager
     @Binding var selectedDiningHall: DiningHall?
     @State private var navigateToReceiverHome = false
 
@@ -45,16 +46,17 @@ struct ReceiverHomeView2: View {
                 )
                 .frame(height: 150)
                 .onAppear {
-                                                 if let hall = selectedDiningHall {
-                                    
-                                                     region = MKCoordinateRegion(
-                                                         center: hall.centerCoordinate,
-                                                         span: MKCoordinateSpan(latitudeDelta: 0.0015, longitudeDelta: 0.0015) 
-                                                     )
-                                                 }
-                                             }
+                    locationManager.updateCurrentDiningHall()
+                    if let hall = selectedDiningHall {
+                    fetchGiversForSelectedDiningHall()
+                        region = MKCoordinateRegion(
+                            center: hall.centerCoordinate,
+                            span: MKCoordinateSpan(latitudeDelta: 0.0015, longitudeDelta: 0.0015) 
+                        )
+                    }
+                }
 
-                
+
                 ZStack {
                     MapView(
                         diningHalls: diningHalls,
@@ -112,7 +114,10 @@ struct ReceiverHomeView2: View {
     }
 
     private func fetchGiversForSelectedDiningHall() {
-        guard let diningHall = selectedDiningHall else { return }
+        guard let diningHall = selectedDiningHall else {
+               relevantGivers = []
+               return
+           }
 
         userProfileManager.getUsersForDiningHall(role: "giver", diningHall: diningHall, includeMock: true) { givers in
             DispatchQueue.main.async {
@@ -125,10 +130,16 @@ struct ReceiverHomeView2: View {
     private func resetRegion() {
         selectedGiver = nil
         selectedDiningHall = nil
-        region = MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 40.80795368887853, longitude: -73.96237958464191),
-            span: MKCoordinateSpan(latitudeDelta: 0.007, longitudeDelta: 0.007)
-        )
+        relevantGivers = []
+        
+        print("selctedDiningHall after reset: \(String(describing: selectedDiningHall))")
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                region = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: 40.80795368887853, longitude: -73.96237958464191),
+                    span: MKCoordinateSpan(latitudeDelta: 0.007, longitudeDelta: 0.007)
+                )
+        }
     }
 }
 
@@ -221,33 +232,80 @@ struct GiverCardView: View {
 }
     
     
-    struct GiversListView: View {
-        let givers: [UserProfile]
+struct GiversListView: View {
+    let givers: [UserProfile]
         @Binding var selectedGiver: UserProfile?
         @Binding var selectedDiningHall: DiningHall?
-        
+
         var body: some View {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Givers")
-                    .font(.custom("BalooBhaina2-Bold", size: 30))
-                    .foregroundColor(Color("primaryPurple"))
-                    .padding(.top, 10)
-                    .padding(.leading, 12)
+                headerView
                 
-                ScrollView {
-                    VStack(spacing: 10) {
-                        ForEach(givers) { giver in
-                            GiverCardView(giver: giver, selectedGiver: $selectedGiver, selectedDiningHall: $selectedDiningHall)
-                        }
-                    }
-                }
-                .padding(.horizontal)
+                content
             }
             .padding(.top, 20)
             .background(Color.white)
             .cornerRadius(16)
         }
-    }
+
+        // MARK: - Header View
+        private var headerView: some View {
+            Text("Givers")
+                .font(.custom("BalooBhaina2-Bold", size: 30))
+                .foregroundColor(Color("primaryPurple"))
+                .padding(.top, 10)
+                .padding(.leading, 12)
+        }
+
+        // MARK: - Content View
+        private var content: some View {
+            Group {
+                if selectedDiningHall == nil {
+                    noDiningHallSelectedView
+                } else if givers.isEmpty {
+                    noGiversView
+                } else {
+                    giversList
+                }
+            }
+        }
+
+        // MARK: - No Dining Hall Selected
+        private var noDiningHallSelectedView: some View {
+            Text("Select a dining hall to view givers.")
+                .font(.custom("BalooBhaina2-Regular", size: 18))
+                .foregroundColor(Color.gray)
+                .padding(.top, 20)
+                .padding(.horizontal, 12)
+                .frame(maxWidth: .infinity, alignment: .center)
+        }
+
+        // MARK: - No Givers Available
+        private var noGiversView: some View {
+            Text("No givers at \(selectedDiningHall?.name ?? "this dining hall").")
+                .font(.custom("BalooBhaina2-Regular", size: 18))
+                .foregroundColor(Color.gray)
+                .padding(.top, 20)
+                .padding(.horizontal, 12)
+                .frame(maxWidth: .infinity, alignment: .center)
+        }
+
+        // MARK: - Givers List
+        private var giversList: some View {
+            ScrollView {
+                VStack(spacing: 10) {
+                    ForEach(givers) { giver in
+                        GiverCardView(
+                            giver: giver,
+                            selectedGiver: $selectedGiver,
+                            selectedDiningHall: $selectedDiningHall
+                        )
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+}
     
 struct MapView: UIViewRepresentable {
     @EnvironmentObject var userProfileManager: UserProfileManager
@@ -433,7 +491,9 @@ class GiverAnnotation: NSObject, MKAnnotation {
         }
         
         func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-            selectedGiver = nil // clear the selection when a pin is deselected
+            DispatchQueue.main.async {
+                self.selectedGiver = nil // clear the selection when a pin is deselected
+            }
         }
         
         
@@ -489,7 +549,7 @@ class GiverAnnotation: NSObject, MKAnnotation {
                 
                 // if point inside polygon, update selected dining hall and region
                 if renderer.path.contains(pointInRenderer) {
-                    selectedDiningHall = hall
+                    self.selectedDiningHall = hall
                     region = MKCoordinateRegion(
                         center: hall.centerCoordinate,  // set center of region
                         span: MKCoordinateSpan(latitudeDelta: 0.0015, longitudeDelta: 0.0015)  // sets the zoom level
