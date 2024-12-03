@@ -16,6 +16,7 @@
 		71D256382CE5A02800D563A2 /* receiverHomeView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256342CE5A02800D563A2 /* receiverHomeView2.swift */; };
 		71D256392CE5A02800D563A2 /* giverConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256352CE5A02800D563A2 /* giverConfirmation.swift */; };
 		71D256562CE5A14A00D563A2 /* diningHallData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71D256552CE5A14600D563A2 /* diningHallData.swift */; };
+		B40646532CFEB5F100093BD6 /* receiverToGiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40646522CFEB5F100093BD6 /* receiverToGiver.swift */; };
 		B430F4FA2CE86890002A0EE6 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B430F4F92CE86890002A0EE6 /* ChatListView.swift */; };
 		B430F4FC2CE86F81002A0EE6 /* ChatDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B430F4FB2CE86F81002A0EE6 /* ChatDetailView.swift */; };
 		B443C8542CE12377006F9891 /* loadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B443C8532CE12377006F9891 /* loadingScreen.swift */; };
@@ -71,6 +72,7 @@
 		71D256352CE5A02800D563A2 /* giverConfirmation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = giverConfirmation.swift; sourceTree = "<group>"; };
 		71D256362CE5A02800D563A2 /* settingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsView.swift; sourceTree = "<group>"; };
 		71D256552CE5A14600D563A2 /* diningHallData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = diningHallData.swift; sourceTree = "<group>"; };
+		B40646522CFEB5F100093BD6 /* receiverToGiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = receiverToGiver.swift; sourceTree = "<group>"; };
 		B430F4F92CE86890002A0EE6 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
 		B430F4FB2CE86F81002A0EE6 /* ChatDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailView.swift; sourceTree = "<group>"; };
 		B443C8132CE11D8D006F9891 /* SwipeShare.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwipeShare.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -176,6 +178,7 @@
 				B4AA7ECB2CE98FD40070A239 /* UserProfile.swift */,
 				B443C8532CE12377006F9891 /* loadingScreen.swift */,
 				B443C8572CE1278A006F9891 /* startUpView.swift */,
+				B40646522CFEB5F100093BD6 /* receiverToGiver.swift */,
 				B4C47D752CE1B09500FB450F /* loginView.swift */,
 				C88A3C3E2CE25BF0000B4051 /* createAccountView.swift */,
 				C88A3CE42CE278EE000B4051 /* createAccountView2.swift */,
@@ -379,6 +382,7 @@
 				C88A3C3F2CE25BF8000B4051 /* createAccountView.swift in Sources */,
 				B430F4FC2CE86F81002A0EE6 /* ChatDetailView.swift in Sources */,
 				B4AA7ECC2CE98FD40070A239 /* UserProfile.swift in Sources */,
+				B40646532CFEB5F100093BD6 /* receiverToGiver.swift in Sources */,
 				C88A3D212CE2ADF9000B4051 /* finalizeAccount1.swift in Sources */,
 				71212B692CE47B6E00812C48 /* giverHomeView.swift in Sources */,
 			);
