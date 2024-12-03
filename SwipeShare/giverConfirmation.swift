@@ -43,14 +43,24 @@ struct MealSwipeRequestView: View {
                         
                         // Profile Section
                         HStack {
-                            Image(uiImage: giver.profilePicture ?? UIImage())
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Constants.Turquoise, lineWidth: 4))
-                                .shadow(radius: 10)
-                            
+                            if let profilePictureURL = giver.profilePictureURL {
+                                AsyncImage(url: URL(string: profilePictureURL)) { image in
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipShape(Circle())
+                                        .overlay(Circle().stroke(Constants.Turquoise, lineWidth: 4))
+                                        .shadow(radius: 10)
+                                }
+                                placeholder: {
+                                    Image("profilePicHolder")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 100, height: 100)
+                                        .clipShape(Circle())
+                                }
+                            }
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(giver.name)
                                     .font(.title)

@@ -11,7 +11,7 @@ struct CampusPermissionView: View {
     @State private var navigateToFinalizeAccount = false
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
-
+    
     // Initialize mock schools for testing in Canvas
     @State private var schools: [School] = []
     
@@ -122,8 +122,8 @@ struct CampusPermissionView: View {
         "Women's and Gender Studies",
         "Yiddish Studies"
     ]
-
-
+    
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
@@ -174,7 +174,7 @@ struct CampusPermissionView: View {
                 }
                 
                 Spacer().frame(height: 20)
-
+                
                 // Year Picker
                 Picker("Select your year", selection: $selectedYear) {
                     ForEach(years, id: \.self) { year in
@@ -189,9 +189,9 @@ struct CampusPermissionView: View {
                         .stroke(Color(red: 0.03, green: 0.75, blue: 0.72), lineWidth: 2)
                 )
                 .cornerRadius(8)
-
+                
                 Spacer().frame(height: 20)
-
+                
                 // Major Picker
                 Picker("Select your major", selection: $selectedMajor) {
                     ForEach(majors, id: \.self) { major in
@@ -244,6 +244,7 @@ struct CampusPermissionView: View {
         .navigationDestination(isPresented: $navigateToFinalizeAccount) {
             FinalizeAccount1()
         }
+        .navigationBarBackButtonHidden(true)
     }
     
     // Fetch Schools Function
