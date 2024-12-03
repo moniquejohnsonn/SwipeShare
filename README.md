@@ -38,8 +38,11 @@ SwipeShare is an iOS application designed to connect college students with exces
 
 ---
 
-## Presentation link
+## Presentation Slides link
 https://www.canva.com/design/DAGYE81m9Ek/SlygOmHZSt2cnk6zgbbpmw/view?utm_content=DAGYE81m9Ek&utm_campaign=designshare&utm_medium=link&utm_source=editor
+
+## Presentation Video Link
+https://www.youtube.com/watch?v=pdBHOy7RTGo&ab_channel=amf2285
 
 
 
