@@ -217,7 +217,7 @@ struct SettingsView: View {
                 StartUpView()
             }
             .navigationDestination(isPresented: $navigateToGiverOnboarding) {
-                FinalizeAccount1() // Navigate to the Giver Onboarding view
+                receiverToGiver() // Navigate to the Giver Onboarding view
             }
             
             // sidebar content
