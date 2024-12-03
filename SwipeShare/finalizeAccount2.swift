@@ -142,6 +142,7 @@ struct FinalizeAccount2: View {
             .background(Color.white)
             .edgesIgnoringSafeArea(.all)
         }
+        .hideKeyboardOnTap()
         .navigationBarBackButtonHidden(true)
     }
 }
@@ -188,6 +189,14 @@ struct ProgressIndicatorView4: View {
             .frame(width: geometry.size.width, alignment: .center)
         }
         .frame(height: 20)
+    }
+}
+
+extension View {
+    func hideKeyboardOnTap() -> some View {
+        self.onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
     }
 }
 
