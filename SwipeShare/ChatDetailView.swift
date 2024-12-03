@@ -120,19 +120,31 @@ struct ChatDetailView: View {
     }
     
     struct MessageBubbleView: View {
+        let chat: Chat
         let message: ChatDetailView.Message
-
+        
         var body: some View {
             HStack {
                 if message.type == "initial" {
                     Spacer()
-                    Text(message.content)
-                        .padding()
-                        .background(Color("initialChat"))
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                        .frame(maxWidth: 250, alignment: .trailing)
+                    if message.isFromCurrentUser {
+                        Text("You" + message.content)
+                            .padding()
+                            .background(Color("initialChat"))
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .frame(maxWidth: 250, alignment: .trailing)
+                    }
+                    else {
+                        Text(chat.name + message.content)
+                            .padding()
+                            .background(Color("initialChat"))
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .frame(maxWidth: 250, alignment: .leading)
+                    }
                 } else {
                     if message.isFromCurrentUser {
                         Spacer()
@@ -156,14 +168,15 @@ struct ChatDetailView: View {
     }
     
     struct MessagesListView: View {
+        let chat: Chat
         let messages: [ChatDetailView.Message]
-
+        
         var body: some View {
             ScrollViewReader { scrollViewProxy in
                 ScrollView {
                     VStack(spacing: 10) {
                         ForEach(messages) { message in
-                            MessageBubbleView(message: message)
+                            MessageBubbleView(chat: chat, message: message)
                                 .id(message.id) // Ensure unique IDs for scrolling
                         }
                     }
@@ -218,7 +231,7 @@ struct ChatDetailView: View {
             VStack(spacing: 0) {
                 HeaderView(chat: chat)
                 
-                MessagesListView(messages: messages)
+                MessagesListView(chat: chat, messages: messages)
                 
                 InputAreaView(newMessage: $newMessage, sendMessage: sendMessage)
             }
