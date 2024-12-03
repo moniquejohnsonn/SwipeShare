@@ -32,13 +32,19 @@ struct ReceiverHomeView1: View {
 
                     ForEach(diningHalls, id: \.name) { hall in
                         NavigationLink(
-                            destination: ReceiverHomeView2(selectedDiningHall: .constant(hall))
+                            destination: ReceiverHomeView2(selectedDiningHall: $selectedDiningHall)
                         ) {
                             DiningHallRow(
                                 diningHall: hall,
                                 giverCount: giverCounts[hall.name, default: 0]
                             )
                         }
+                        .simultaneousGesture(
+                                                                                       TapGesture().onEnded {
+                                                                                           selectedDiningHall = hall // set selectedDiningHall on tap
+                                                                                       }
+                                                                                   )
+
                     }
                 }
 

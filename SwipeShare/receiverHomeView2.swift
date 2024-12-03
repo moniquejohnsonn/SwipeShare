@@ -44,6 +44,16 @@ struct ReceiverHomeView2: View {
                     }
                 )
                 .frame(height: 150)
+                .onAppear {
+                                                 if let hall = selectedDiningHall {
+                                    
+                                                     region = MKCoordinateRegion(
+                                                         center: hall.centerCoordinate,
+                                                         span: MKCoordinateSpan(latitudeDelta: 0.0015, longitudeDelta: 0.0015) 
+                                                     )
+                                                 }
+                                             }
+
                 
                 ZStack {
                     MapView(
