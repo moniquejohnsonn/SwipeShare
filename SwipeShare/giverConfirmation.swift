@@ -20,13 +20,10 @@ struct MealSwipeRequestView: View {
             ZStack {
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Add space to shift content down
-                        Spacer().frame(height: 20)
-
-                        // Custom Back Button Header
                         HStack {
                             Button(action: {
-                                dismiss() // Navigate back to the previous view
+                                navigateToMapView = true
+                                
                             }) {
                                 HStack {
                                     Image(systemName: "chevron.left")
@@ -40,9 +37,10 @@ struct MealSwipeRequestView: View {
                             Spacer()
                         }
                         .padding(.horizontal)
-                        .padding(.vertical, 10)
+                        .padding(.top, 70)
+                        .padding(.bottom, 10)
                         .background(Constants.LightPurple)
-
+                        
                         // Profile Section
                         HStack {
                             Image(uiImage: giver.profilePicture ?? UIImage())
@@ -136,6 +134,7 @@ struct MealSwipeRequestView: View {
                             HStack(spacing: 40) {
                                 Button(action: {
                                     // Cancel action
+                                    dismiss()
                                 }) {
                                     Text("Cancel")
                                         .padding()
@@ -151,6 +150,7 @@ struct MealSwipeRequestView: View {
                                     confirmationTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
                                         showPopup = true
                                     }
+                                    sendDefaultMessage()
                                 }) {
                                     Text("Confirm")
                                         .padding()
@@ -172,6 +172,9 @@ struct MealSwipeRequestView: View {
                 }
                 .background(Constants.LightPurple)
                 .ignoresSafeArea(edges: .top)
+                .navigationDestination(isPresented: $navigateToMapView) {
+                    ReceiverHomeView2(selectedDiningHall: $selectedDiningHall)
+                }
                 
                 // Popup Overlay
                 if showPopup {
@@ -221,9 +224,7 @@ struct MealSwipeRequestView: View {
             }
             .navigationBarBackButtonHidden(true) // Hide default back button
         }
-        .navigationBarBackButtonHidden(true)
     }
-    
     func sendDefaultMessage() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
@@ -270,4 +271,5 @@ struct MealSwipeRequestView: View {
         }
     }
 }
+
 
